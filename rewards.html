@@ -1,0 +1,506 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AvalonFlow Rewards</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #0d0d0d;
+        color: #fff;
+        overflow-x: hidden;
+    }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+        /* ---------- Floating Background ---------- */
+        #floating-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatParticles linear infinite;
+            box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
+        }
+        @keyframes floatParticles {
+            0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+    /* ---------- Sidebar ---------- */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background: rgba(15,15,25,0.95);
+        backdrop-filter: blur(14px);
+        z-index: 5;
+        padding: 25px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+    #sidebar button {
+        width: 100%;
+        margin: 12px 0;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        font-size: 16px;
+    }
+
+    #overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 4;
+        display: none;
+    }
+    #overlay.active { display: block; }
+
+    #menuBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 6;
+        background: #6b2cd8;
+        border: none;
+        color: #fff;
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
+
+    #content {
+        position: relative;
+        z-index: 1;
+        padding: 40px 40px 100px 70px;
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    #titleContainer {
+        font-size: 24px;
+        margin: 20px 0;
+        padding-left: 20px;
+    }
+
+    .glass-card {
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 18px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #6b2cd8, #b393ff);
+        border-radius: 10px;
+        position: relative;
+        transition: width linear;
+    }
+    .progress-fill::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -50%;
+        width: 200%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            -45deg,
+            rgba(255,255,255,0.15),
+            rgba(255,255,255,0.15) 10px,
+            transparent 10px,
+            transparent 20px
+        );
+        animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
+        border-radius: 10px;
+    }
+    @keyframes wave {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    @keyframes wavePulse {
+        0% { transform: translateX(0) translateY(0); }
+        100% { transform: translateX(-50%) translateY(3px); }
+    }
+
+    /* Notification Bar */
+    .notification-bar {
+        position: fixed;
+        top: -80px;
+        right: 20px;
+        background: rgba(30, 144, 255, 0.25);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(30,144,255,0.4);
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 14px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        transition: top 0.5s ease, opacity 0.5s ease;
+        z-index: 9999;
+        opacity: 0;
+        max-width: 350px;
+        white-space: normal;
+        overflow: hidden;
+    }
+    .notification-bar.show {
+        top: 20px;
+        opacity: 1;
+    }
+    .notification-bar::before {
+        content: '';
+        position: absolute;
+        left: -50%;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        background: rgba(255,255,255,0.3);
+        transform: skewX(-25deg);
+        animation: liquidWave 2s linear infinite;
+    }
+    @keyframes liquidWave {
+        0% { left: -50%; }
+        100% { left: 100%; }
+    }
+
+    /* Sticky Footer */
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 18px 0;
+        font-size: 14px;
+        color: #aaa;
+        background: rgba(15,15,25,0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+        z-index: 6;
+    }
+
+    #floating-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.7;
+    }
+</style>
+</head>
+<body>
+
+<div id="floating-bg"></div>
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+<div id="sidebar">
+    <h1>AvalonFlow</h1>
+    <button onclick="window.location.href='dashboard.html'">Dashboard</button>
+    <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
+    <button onclick="window.location.href='branches.html'">Branches</button>
+    <button onclick="window.location.href='rewards.html'">Rewards</button>
+    <button onclick="window.location.href='support.html'">Support</button>
+    <button onclick="logout()">Logout</button>
+</div>
+<div id="overlay" onclick="toggleSidebar()"></div>
+<div id="rewardNotification" class="notification-bar"></div>
+
+<div id="content">
+    <div id="titleContainer">Rewards / Progress</div>
+    <p>Track your progress on the Logical Wing branches below:</p>
+
+    <div class="glass-card">
+        <h4>AvalonCare — The Foundation Branch</h4>
+        <div class="progress-bar"><div class="progress-fill" id="careFill"></div></div>
+        <p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
+
+        <details>
+            <summary>Rewards Summary ▾</summary>
+            <div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
+            <div class="reward-line">Credits per 12h: ≈ 14.29 ACU</div>
+            <div class="reward-line">Credits activated: <span class="ac-value" id="careAC">0.00</span></div>
+            <div class="reward-line ref">Reference value: ≈ 1$ = 10 ACU</div>
+            <div class="reward-line">Reset in: <span id="careReset">--:--:--</span></div>
+        </details>
+    </div>
+
+    <div class="glass-card">
+        <h4>AvalonGrow — The Expansion Branch</h4>
+        <div class="progress-bar"><div class="progress-fill" id="growFill"></div></div>
+        <p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
+
+        <details>
+            <summary>Rewards Summary ▾</summary>
+            <div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
+            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
+            <div class="reward-line">Credits activated: <span class="ac-value" id="growAC">0.00</span></div>
+            <div class="reward-line ref">Reference value: ≈ 1$ = 10 ACU</div>
+            <div class="reward-line">Reset in: <span id="growReset">--:--:--</span></div>
+        </details>
+    </div>
+
+    <div class="glass-card">
+        <h4>AvalonEase — The Mastery Branch</h4>
+        <div class="progress-bar"><div class="progress-fill" id="easeFill"></div></div>
+        <p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
+
+        <details>
+            <summary>Rewards Summary ▾</summary>
+            <div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
+            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
+            <div class="reward-line">Credits activated: <span class="ac-value" id="easeAC">0.00</span></div>
+            <div class="reward-line ref">Reference value: ≈ 1$ = 10 ACU</div>
+            <div class="reward-line">Reset in: <span id="easeReset">--:--:--</span></div>
+        </details>
+    </div>
+
+</div>
+
+<!-- Sticky Footer -->
+<footer>
+    © 2026 AvalonFlow | Powered by Centrical™
+</footer>
+
+<script>
+        /* Floating particles */
+        const bg = document.getElementById('floating-bg');
+        const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
+        function particle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const s = Math.random()*20+10;
+            p.style.width = s+'px';
+            p.style.height = s+'px';
+            p.style.left = Math.random()*100+'vw';
+            p.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random()*3)]}, transparent)`;
+            p.style.animationDuration = (Math.random()*20+10)+'s';
+            bg.appendChild(p);
+            setTimeout(()=>p.remove(),30000);
+        }
+        setInterval(particle,800); 
+
+/* ---------- Sidebar toggle ---------- */
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+
+    // Branch data - must be before any logic
+const branches = {
+    care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
+    grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
+    ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
+};
+
+const ALL_BRANCHES = ['care', 'grow', 'ease'];
+const now = Date.now();
+
+/* ---------- Identity & State Init ---------- */
+
+// ---------- Identity & State Init ----------
+const userId = localStorage.getItem("userId"); // NO fallback
+const FULL_ACCESS_ID = "AF-F0QD-O5MO";
+
+// Persistent reward state
+let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+
+// ---------- Trial Setup ----------
+const TRIAL_KEY = 'trialStart_' + userId;
+let trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
+const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+// Start trial only if no previous record and not full-access ID
+if (!trialStart && userId !== FULL_ACCESS_ID) {
+    trialStart = now;
+    localStorage.setItem(TRIAL_KEY, trialStart);
+    ALL_BRANCHES.forEach(branch => {
+        unlockedBranches[branch] = true;
+        unlockTimes[branch] = now;
+    });
+    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+}
+
+// ---------- Minimal Anti-Tamper Protection ----------
+if (userId !== FULL_ACCESS_ID) {
+    const cleanUnlocks = {};
+    const cleanTimes = {};
+    ALL_BRANCHES.forEach(branch => {
+        if (unlockedBranches[branch] === true && unlockTimes[branch]) {
+            cleanUnlocks[branch] = true;
+            cleanTimes[branch] = unlockTimes[branch];
+        }
+    });
+    unlockedBranches = cleanUnlocks;
+    unlockTimes = cleanTimes;
+    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+}
+
+// ---------- Full Access Initialization ----------
+if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
+    ALL_BRANCHES.forEach(branch => {
+        unlockedBranches[branch] = true;
+        unlockTimes[branch] = now;
+    });
+    localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+    localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+    localStorage.setItem('fullAccessInit', 'true');
+}
+
+// ---------- Rewards Animation ----------
+let displayedAC = { care: 0, grow: 0, ease: 0 };
+
+function updateRewards() {
+    const now = Date.now();
+
+    Object.keys(branches).forEach(key => {
+        const b = branches[key];
+        const fill = document.getElementById(b.fill);
+        const lock = document.getElementById(b.lock);
+        const cyclesEl = document.getElementById(b.cycles);
+        const acEl = document.getElementById(b.ac);
+        const resetEl = document.getElementById(b.reset);
+
+        let unlocked = unlockedBranches[key] || false;
+
+        // Lock trial after 7 days
+        if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
+            unlocked = false;
+        }
+
+        lock.style.display = unlocked ? 'none' : 'block';
+
+        if (!unlocked) {
+            fill.style.width = '0%';
+            cyclesEl.textContent = 0;
+            acEl.textContent = displayedAC[key].toFixed(2) + ' ACU'; // keep accumulated
+            resetEl.textContent = '--:--:--';
+            return;
+        }
+
+        const cycleMs = 12 * 60 * 60 * 1000;
+        const elapsed = now - (unlockTimes[key] || now);
+        const cycleProgress = (elapsed % cycleMs) / cycleMs;
+
+        fill.style.width = `${cycleProgress * 100}%`;
+
+        const cycles = Math.floor(elapsed / cycleMs);
+        cyclesEl.textContent = cycles;
+
+        const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
+        displayedAC[key] += (targetAC - displayedAC[key]) * 0.05;
+        acEl.textContent = displayedAC[key].toFixed(2) + ' ACU';
+
+        // Remaining time for current 12h cycle
+        const remainingMs = cycleMs - (elapsed % cycleMs);
+        const h = Math.floor(remainingMs / 3600000);
+        const m = Math.floor((remainingMs % 3600000) / 60000);
+        const s = Math.floor((remainingMs % 60000) / 1000);
+        resetEl.textContent =
+            `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+
+        // Live trial countdown display (optional, per branch)
+        const trialCountdownEl = document.getElementById(b.trialCountdown);
+        if (trialCountdownEl && trialStart && userId !== FULL_ACCESS_ID) {
+            const remainingTrialMs = TRIAL_MS - (now - trialStart);
+            if (remainingTrialMs > 0) {
+                const d = Math.floor(remainingTrialMs / (1000 * 60 * 60 * 24));
+                const h = Math.floor((remainingTrialMs % (1000 * 60 * 60 * 24)) / 3600000);
+                const m = Math.floor((remainingTrialMs % 3600000) / 60000);
+                const s = Math.floor((remainingTrialMs % 60000) / 1000);
+                trialCountdownEl.textContent = `Trial ends in ${d}d ${h}h ${m}m ${s}s`;
+            } else {
+                trialCountdownEl.textContent = "Trial ended";
+            }
+        }
+    });
+}
+
+function animate() {
+    updateRewards();
+    requestAnimationFrame(animate);
+}
+
+// ---------- Page Load Logic ----------
+window.addEventListener("load", () => {
+    const notification = document.getElementById("rewardNotification");
+    const now = Date.now();
+
+    // Welcome message first
+    notification.textContent = "Welcome — Rewards / Progress";
+    notification.classList.add("show");
+
+    setTimeout(() => {
+        // Trial message if applicable
+        if (userId !== FULL_ACCESS_ID && trialStart && now - trialStart < TRIAL_MS) {
+            notification.textContent = "7-day trial is active!";
+        } else if (userId === FULL_ACCESS_ID) {
+            notification.textContent = "Full access active — all branches running";
+        } else if (trialStart && now - trialStart >= TRIAL_MS) {
+            notification.textContent = "Trial ended — branches locked";
+        }
+    }, 2500);
+
+    setTimeout(() => notification.classList.remove("show"), 5500);
+
+    animate();
+    window.history.replaceState({}, document.title, window.location.pathname);
+});
+
+// ---------- Auto Logout ----------
+let logoutTimer;
+const logoutTime = 8 * 60 * 60 * 1000;
+function resetLogoutTimer() {
+    clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(() => { alert("No activity detected for 8 hours."); }, logoutTime);
+}
+document.onmousemove = resetLogoutTimer;
+document.onkeydown = resetLogoutTimer;
+resetLogoutTimer();
+</script>
+</body>
+</html>
