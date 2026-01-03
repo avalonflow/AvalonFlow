@@ -214,113 +214,108 @@ input::before {
 </footer>
 
 <script>
-/* ---------- Floating Particles ---------- */
-const container = document.getElementById('floating-bg');
-for(let i=0;i<60;i++){
-    const p=document.createElement('div');
-    p.className='particle';
-    const size=Math.random()*20+10;
-    p.style.width=size+'px';
-    p.style.height=size+'px';
-    p.style.left=Math.random()*100+'vw';
-    p.style.animationDuration=(Math.random()*20+10)+'s';
-    container.appendChild(p);
-}
-
-/* ---------- Identity Generator ---------- */
-function generateID(){
-    return "AF-" + Math.random().toString(36).substring(2,6).toUpperCase()
-           + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
-}
-
-function generatePassword(){
-    return Math.random().toString(36).substring(2,10) + "!";
-}
-
-function generateSession(){
-    return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +
-           Math.random().toString(36).substring(2,6).toUpperCase();
-}
-
-/* ---------- Load or Create Identity ---------- */
-let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
-
-if(!identity){
-    identity = {
-        id: generateID(),
-        password: generatePassword(),
-        sessionRef: generateSession()
-    };
-    localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
-}
-
-/* ---------- Mini TV Display ---------- */
-document.getElementById("credentialsDisplay").textContent =
-    `🆔: ${identity.id} | 🔑: ${identity.password}`;
-
-const tvMessages = [
-    "Keep your access credentials safe.",
-    "Your session is unique per login.",
-    "Do not share your AvalonFlow ID.",
-    "Contact support with your session reference."
-];
-
-let tvIndex = 0;
-const guidanceDiv = document.getElementById("guidanceMessage");
-let tvIndex = 0;
-
-function fadeMessage() {
-    // Fade out
-    guidanceDiv.style.opacity = 0;
-
-    setTimeout(() => {
-        // Change text
-        guidanceDiv.textContent = tvMessages[tvIndex];
-        // Fade in
-        guidanceDiv.style.opacity = 1;
-
-        // Prepare next index
-        tvIndex = (tvIndex + 1) % tvMessages.length;
-    }, 1000); // matches the CSS transition duration
-}
-
-// Start immediately and then every 4 seconds
-fadeMessage();
-setInterval(fadeMessage, 4000);
-
-/* ---------- Login ---------- */
-function login(){
-    const idInput = document.getElementById("AvalonFlowID").value;
-    const passInput = document.getElementById("password").value;
-
-    if(idInput === identity.id && passInput === identity.password){
-        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
-    } else {
-        document.getElementById("loginError").innerText =
-            "Access details not recognized.";
-    }
-}
-
-/* ---------- Biometric Login ---------- */
-async function biometricLogin(){
-    if(!window.PublicKeyCredential){
-        alert("Device security not supported.");
-        return;
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    /* ---------- Floating Particles ---------- */
+    const container = document.getElementById('floating-bg');
+    for(let i=0;i<60;i++){
+        const p=document.createElement('div');
+        p.className='particle';
+        const size=Math.random()*20+10;
+        p.style.width=size+'px';
+        p.style.height=size+'px';
+        p.style.left=Math.random()*100+'vw';
+        p.style.animationDuration=(Math.random()*20+10)+'s';
+        container.appendChild(p);
     }
 
-    try{
-        await navigator.credentials.get({
-            publicKey:{
-                challenge:new Uint8Array(32),
-                userVerification:"required",
-                timeout:60000
-            }
-        });
-        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
-    }catch(e){
-        alert("Authentication cancelled.");
+    /* ---------- Identity Generator ---------- */
+    function generateID(){
+        return "AF-" + Math.random().toString(36).substring(2,6).toUpperCase()
+               + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
     }
-}
+
+    function generatePassword(){
+        return Math.random().toString(36).substring(2,10) + "!";
+    }
+
+    function generateSession(){
+        return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +
+               Math.random().toString(36).substring(2,6).toUpperCase();
+    }
+
+    /* ---------- Load or Create Identity ---------- */
+    let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
+
+    if(!identity){
+        identity = {
+            id: generateID(),
+            password: generatePassword(),
+            sessionRef: generateSession()
+        };
+        localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
+    }
+
+    /* ---------- Mini TV Display ---------- */
+    document.getElementById("credentialsDisplay").textContent =
+        `🆔: ${identity.id} | 🔑: ${identity.password}`;
+
+    const tvMessages = [
+        "Keep your access credentials safe.",
+        "Your session is unique per login.",
+        "Do not share your AvalonFlow ID.",
+        "Contact support with your session reference."
+    ];
+
+    const guidanceDiv = document.getElementById("guidanceMessage");
+    let tvIndex = 0;
+
+    function fadeMessage() {
+        guidanceDiv.style.opacity = 0;
+        setTimeout(() => {
+            guidanceDiv.textContent = tvMessages[tvIndex];
+            guidanceDiv.style.opacity = 1;
+            tvIndex = (tvIndex + 1) % tvMessages.length;
+        }, 1000);
+    }
+
+    fadeMessage();
+    setInterval(fadeMessage, 4000);
+
+    /* ---------- Login ---------- */
+    window.login = function(){
+        const idInput = document.getElementById("AvalonFlowID").value;
+        const passInput = document.getElementById("password").value;
+
+        if(idInput === identity.id && passInput === identity.password){
+            window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+        } else {
+            document.getElementById("loginError").innerText =
+                "Access details not recognized.";
+        }
+    }
+
+    /* ---------- Biometric Login ---------- */
+    window.biometricLogin = async function(){
+        if(!window.PublicKeyCredential){
+            alert("Device security not supported.");
+            return;
+        }
+
+        try{
+            await navigator.credentials.get({
+                publicKey:{
+                    challenge:new Uint8Array(32),
+                    userVerification:"required",
+                    timeout:60000
+                }
+            });
+            window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+        }catch(e){
+            alert("Authentication cancelled.");
+        }
+    }
+});
 </script>
 
 </body>
