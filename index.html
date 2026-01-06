@@ -300,35 +300,114 @@ function login(){
     }
 }
 
-/* ---------- Biometric Registration & Login ---------- */
-async function biometricLogin(){
-    if(!window.PublicKeyCredential){ alert("Device security not supported."); return; }
+/* ---------- Device Detection (UX tuning only) ---------- */
+const DEVICE = (() => {
+  const ua = navigator.userAgent || "";
+  return {
+    isAndroid: /Android/i.test(ua),
+    isiOS: /iPhone|iPad|iPod/i.test(ua),
+    isDesktop: !/Android|iPhone|iPad|iPod/i.test(ua)
+  };
+})();
 
-    try{
-        let storedCredential = localStorage.getItem("avalonflow_biometric");
-        if(!storedCredential){
-            // Register new credential
-            const credential = await navigator.credentials.create({
-                publicKey: {
-                    challenge: new Uint8Array(32),
-                    rp: { name: "AvalonFlow" },
-                    user: { id: new TextEncoder().encode(identity.id), name: identity.id, displayName: identity.id },
-                    pubKeyCredParams: [{ type:"public-key", alg:-7 }],
-                    timeout:60000,
-                    attestation:"direct"
-                }
-            });
-            localStorage.setItem("avalonflow_biometric", JSON.stringify(credential));
-            alert("Device security registered. You can now use biometrics for login.");
+/* ---------- Biometric Limits ---------- */
+const BIOMETRIC_COOLDOWN = 60_000; // 1 minute
+const BIOMETRIC_MAX_TRIES = 3;
+const BIOMETRIC_TIMEOUT = DEVICE.isiOS ? 45_000 : 60_000; // 🔧 faster on iOS
+
+function biometricLocked() {
+  const lastFail = Number(localStorage.getItem("bio_last_fail") || 0);
+  return Date.now() - lastFail < BIOMETRIC_COOLDOWN;
+}
+
+function recordBiometricFail() {
+  const tries = Number(localStorage.getItem("bio_tries") || 0) + 1;
+  localStorage.setItem("bio_tries", tries);
+  localStorage.setItem("bio_last_fail", Date.now());
+}
+
+function resetBiometricFails() {
+  localStorage.removeItem("bio_tries");
+  localStorage.removeItem("bio_last_fail");
+}
+
+/* ---------- Biometric Login ---------- */
+async function biometricLogin() {
+  if (!window.PublicKeyCredential) {
+    return fallbackLogin("Device security not supported.");
+  }
+
+  if (biometricLocked()) {
+    return fallbackLogin("Too many attempts. Use fallback.");
+  }
+
+  try {
+    // 🔐 FIRST-TIME ENABLE
+    if (localStorage.getItem("avalonflow_biometric_enabled") !== "true") {
+      await navigator.credentials.create({
+        publicKey: {
+          challenge: crypto.getRandomValues(new Uint8Array(32)),
+
+          // 🔧 RP = your site identity
+          rp: {
+            name: "AvalonFlow",
+            id: location.hostname
+          },
+
+          // 🔧 Local, device-only user placeholder
+          user: {
+            id: crypto.getRandomValues(new Uint8Array(16)),
+            name: "avalonflow-user",
+            displayName: "AvalonFlow User"
+          },
+
+          pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+
+          authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required",
+
+            // 🔧 Android vs iOS tuning
+            residentKey: DEVICE.isAndroid ? "preferred" : "required"
+          },
+
+          timeout: BIOMETRIC_TIMEOUT
         }
+      });
 
-        // Authenticate
-        const assertion = await navigator.credentials.get({
-            publicKey: { challenge:new Uint8Array(32), userVerification:"required", timeout:60000 }
-        });
+      localStorage.setItem("avalonflow_biometric_enabled", "true");
+    }
 
-        window.location.href=`dashboard.html?ticket=${identity.sessionRef}`;
-    }catch(e){ alert("Authentication cancelled or failed."); }
+    // 🔓 UNLOCK
+    await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        userVerification: "required",
+        timeout: BIOMETRIC_TIMEOUT
+      }
+    });
+
+    resetBiometricFails();
+    document.body.classList.remove("locked");
+
+    // ✅ REDIRECT after successful login
+    window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+
+  } catch (err) {
+    recordBiometricFail();
+
+    if (Number(localStorage.getItem("bio_tries")) >= BIOMETRIC_MAX_TRIES) {
+      fallbackLogin("Biometric locked. Use fallback.");
+    } else {
+      fallbackLogin("Authentication cancelled or failed.");
+    }
+  }
+}
+
+/* ---------- Fallback ---------- */
+function fallbackLogin(message) {
+  if (message) alert(message);
+  document.body.classList.add("show-fallback");
 }
 </script>
 
