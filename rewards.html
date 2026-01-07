@@ -250,7 +250,7 @@
     <p>Track your progress on the Logical Wing branches below:</p>
 
     <div class="glass-card">
-        <h4>AvalonCare Premium</h4>
+        <h4>🪽 AvalonCare Premium</h4>
         <div class="progress-bar"><div class="progress-fill" id="premiumFill"></div></div>
         <p class="locked-text" id="premiumLock">🔒 Locked — Activate access to unlock</p>
 
@@ -265,7 +265,7 @@
     </div>
 
     <div class="glass-card">
-        <h4>AvalonCare Basic</h4>
+        <h4>🪽 AvalonCare Basic</h4>
         <div class="progress-bar"><div class="progress-fill" id="basicFill"></div></div>
         <p class="locked-text" id="basicLock">🔒 Locked — Activate access to unlock</p>
 
@@ -280,7 +280,7 @@
     </div>
 
     <div class="glass-card">
-        <h4>AvalonCare Lite</h4>
+        <h4>🪽 AvalonCare Lite</h4>
         <div class="progress-bar"><div class="progress-fill" id="liteFill"></div></div>
         <p class="locked-text" id="liteLock">🔒 Locked — Activate access to unlock</p>
 
@@ -461,7 +461,7 @@ function updateInterests() {
 }
 
 function animate() {
-    updateRewards();
+    updateInterests();
     requestAnimationFrame(animate);
 }
 
@@ -479,7 +479,7 @@ window.addEventListener("load", () => {
         if (userId !== FULL_ACCESS_ID && trialStart && now - trialStart < TRIAL_MS) {
             notification.textContent = "7-day trial is active!";
         } else if (userId === FULL_ACCESS_ID) {
-            notification.textContent = "Full access activated;
+            notification.textContent = "Full access activated";
         } else if (trialStart && now - trialStart >= TRIAL_MS) {
             notification.textContent = "Trial ended — branches locked";
         }
