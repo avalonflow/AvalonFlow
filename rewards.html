@@ -250,47 +250,47 @@
     <p>Track your progress on the Logical Wing branches below:</p>
 
     <div class="glass-card">
-        <h4>AvalonCare — The Foundation Branch</h4>
-        <div class="progress-bar"><div class="progress-fill" id="careFill"></div></div>
-        <p class="locked-text" id="careLock">🔒 Locked — Complete payment to unlock</p>
+        <h4>AvalonCare Premium</h4>
+        <div class="progress-bar"><div class="progress-fill" id="premiumFill"></div></div>
+        <p class="locked-text" id="premiumLock">🔒 Locked — Activate access to unlock</p>
 
         <details>
-            <summary>Rewards Summary ▾</summary>
-            <div class="reward-line">Cycles completed: <span id="careCycles">0</span></div>
-            <div class="reward-line">Credits per 12h: ≈ 14.29 ACU</div>
-            <div class="reward-line">Credits activated: <span class="ac-value" id="careAC">0.00</span></div>
-            <div class="reward-line ref">Reference value: ≈ 1$ = 10 ACU</div>
-            <div class="reward-line">Reset in: <span id="careReset">--:--:--</span></div>
+            <summary>Interests Summary ▾</summary>
+            <div class="interest-line">Cycles completed: <span id="premiumCycles">0</span></div>
+            <div class="interest-line">Credits per 12h: ≈ 14.15 ACU</div>
+            <div class="interest-line">Credits activated: <span class="ac-value" id="premiumAC">0.00</span></div>
+            <div class="interest-line ref">Reference value: ≈ 1$ = 10 ACU</div>
+            <div class="interest-line">Reset in: <span id="premiumReset">--:--:--</span></div>
         </details>
     </div>
 
     <div class="glass-card">
-        <h4>AvalonGrow — The Expansion Branch</h4>
-        <div class="progress-bar"><div class="progress-fill" id="growFill"></div></div>
-        <p class="locked-text" id="growLock">🔒 Locked — Complete payment to unlock</p>
+        <h4>AvalonCare Basic</h4>
+        <div class="progress-bar"><div class="progress-fill" id="basicFill"></div></div>
+        <p class="locked-text" id="basicLock">🔒 Locked — Activate access to unlock</p>
 
         <details>
-            <summary>Rewards Summary ▾</summary>
-            <div class="reward-line">Cycles completed: <span id="growCycles">0</span></div>
-            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
-            <div class="reward-line">Credits activated: <span class="ac-value" id="growAC">0.00</span></div>
-            <div class="reward-line ref">Reference value: ≈ 1$ = 10 ACU</div>
-            <div class="reward-line">Reset in: <span id="growReset">--:--:--</span></div>
+            <summary>Interests Summary ▾</summary>
+            <div class="interest-line">Cycles completed: <span id="basicCycles">0</span></div>
+            <div class="interest-line">Credits per 12h: ≈ 47.15 ACU</div>
+            <div class="interest-line">Credits activated: <span class="ac-value" id="basicAC">0.00</span></div>
+            <div class="interest-line ref">Reference value: ≈ 1$ = 5 ACU</div>
+            <div class="interest-line">Reset in: <span id="basicReset">--:--:--</span></div>
         </details>
     </div>
 
     <div class="glass-card">
-        <h4>AvalonEase — The Mastery Branch</h4>
-        <div class="progress-bar"><div class="progress-fill" id="easeFill"></div></div>
-        <p class="locked-text" id="easeLock">🔒 Locked — Complete payment to unlock</p>
+        <h4>AvalonCare Lite</h4>
+        <div class="progress-bar"><div class="progress-fill" id="liteFill"></div></div>
+        <p class="locked-text" id="liteLock">🔒 Locked — Activate access to unlock</p>
 
         <details>
-            <summary>Rewards Summary ▾</summary>
-            <div class="reward-line">Cycles completed: <span id="easeCycles">0</span></div>
-            <div class="reward-line">Credits per 12h: ≈ 14.28 ACU</div>
-            <div class="reward-line">Credits activated: <span class="ac-value" id="easeAC">0.00</span></div>
-            <div class="reward-line ref">Reference value: ≈ 1$ = 10 ACU</div>
-            <div class="reward-line">Reset in: <span id="easeReset">--:--:--</span></div>
+            <summary>Interests Summary ▾</summary>
+            <div class="interest-line">Cycles completed: <span id="liteCycles">0</span></div>
+            <div class="interest-line">Credits per 12h: ≈ 45.15 ACU</div>
+            <div class="interest-line">Credits activated: <span class="ac-value" id="liteAC">0.00</span></div>
+            <div class="interest-line ref">Reference value: ≈ 1$ = 10 ACU</div>
+            <div class="interest-line">Reset in: <span id="liteReset">--:--:--</span></div>
         </details>
     </div>
 
@@ -329,12 +329,12 @@ function toggleSidebar() {
 
     // Branch data - must be before any logic
 const branches = {
-    care: { days: 14, totalAC: 400, fill: 'careFill', lock: 'careLock', ac: 'careAC', cycles: 'careCycles', reset: 'careReset', per12h: 14.29 },
-    grow: { days: 28, totalAC: 800, fill: 'growFill', lock: 'growLock', ac: 'growAC', cycles: 'growCycles', reset: 'growReset', per12h: 14.28 },
-    ease: { days: 42, totalAC: 1200, fill: 'easeFill', lock: 'easeLock', ac: 'easeAC', cycles: 'easeCycles', reset: 'easeReset', per12h: 14.28 }
+    premium: { days: 30, totalAC: 856.8, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 14.15 },
+    basic: { days: 30, totalAC: 2856.8, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 47.15 },
+    lite: { days: 30, totalAC: 2708.7, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 45.15 }
 };
 
-const ALL_BRANCHES = ['care', 'grow', 'ease'];
+const ALL_BRANCHES = ['premium', 'basic', 'lite'];
 const now = Date.now();
 
 /* ---------- Identity & State Init ---------- */
@@ -392,9 +392,9 @@ if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
 }
 
 // ---------- Rewards Animation ----------
-let displayedAC = { care: 0, grow: 0, ease: 0 };
+let displayedAC = { premium: 0, basic: 0, lite: 0 };
 
-function updateRewards() {
+function updateInterests() {
     const now = Date.now();
 
     Object.keys(branches).forEach(key => {
@@ -479,7 +479,7 @@ window.addEventListener("load", () => {
         if (userId !== FULL_ACCESS_ID && trialStart && now - trialStart < TRIAL_MS) {
             notification.textContent = "7-day trial is active!";
         } else if (userId === FULL_ACCESS_ID) {
-            notification.textContent = "Full access active — all branches running";
+            notification.textContent = "Full access activated;
         } else if (trialStart && now - trialStart >= TRIAL_MS) {
             notification.textContent = "Trial ended — branches locked";
         }
@@ -490,6 +490,10 @@ window.addEventListener("load", () => {
     animate();
     window.history.replaceState({}, document.title, window.location.pathname);
 });
+
+function logout() {
+            window.location.href = "index.html";
+        }
 
 // ---------- Auto Logout ----------
 let logoutTimer;
