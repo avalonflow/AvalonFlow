@@ -235,11 +235,11 @@
 
 <div id="sidebar">
     <h1>AvalonFlow</h1>
-    <button onclick="window.location.href='dashboard.html'">Dashboard</button>
-    <button onclick="window.location.href='ecosystem.html'">Ecosystem</button>
-    <button onclick="window.location.href='branches.html'">Branches</button>
-    <button onclick="window.location.href='rewards.html'">Rewards</button>
-    <button onclick="window.location.href='support.html'">Support</button>
+    <button onclick="window.location.href='/dashboard'">Dashboard</button>
+    <button onclick="window.location.href='/ecosystem'">Ecosystem</button>
+    <button onclick="window.location.href='/branches'">Branches</button>
+    <button onclick="window.location.href='/rewards'">Rewards</button>
+    <button onclick="window.location.href='/support'">Support</button>
     <button onclick="logout()">Logout</button>
 </div>
 <div id="overlay" onclick="toggleSidebar()"></div>
@@ -477,14 +477,11 @@
 
         setTimeout(() => {
             // Trial message if applicable
-            if (userId !== FULL_ACCESS_ID && trialStart && now - trialStart < TRIAL_MS) {
-                notification.textContent = "7-day trial is active!";
-            } else if (userId === FULL_ACCESS_ID) {
-                notification.textContent = "Full access activated";
-            } else if (trialStart && now - trialStart >= TRIAL_MS) {
-            notification.textContent = "Full access activated";
-        } else if (trialStart && now - trialStart >= TRIAL_MS) {
-            notification.textContent = "Trial ended — branches locked";
+            if (userId === FULL_ACCESS_ID) {
+    notification.textContent = "Access activated";
+}
+else if (trialStart && now - trialStart >= TRIAL_MS) {
+    notification.textContent = "Branches locked";
         }
     }, 2500);
 
