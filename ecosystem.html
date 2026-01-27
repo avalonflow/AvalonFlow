@@ -123,6 +123,22 @@
             border-radius: 10px;
         }
 
+        /* ---------- Footer ---------- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 14px;
+            color: #aaa;
+            background: rgba(15,15,25,0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+            z-index: 6;
+        }
+
         /* ---------- Notification Bar (Dashboard style) ---------- */
         .notification-bar {
             position: fixed;
@@ -199,11 +215,11 @@
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
-        <button onclick="navigateTo('dashboard.html')">Dashboard</button>
-        <button onclick="navigateTo('ecosystem.html')">Ecosystem</button>
-        <button onclick="navigateTo('branches.html')">Branches</button>
-        <button onclick="navigateTo('rewards.html')">Rewards</button>
-        <button onclick="navigateTo('support.html')">Support</button>
+        <button onclick="navigateTo('/dashboard')">Dashboard</button>
+        <button onclick="navigateTo('/ecosystem')">Ecosystem</button>
+        <button onclick="navigateTo('/branches')">Branches</button>
+        <button onclick="navigateTo('/rewards')">Rewards</button>
+        <button onclick="navigateTo('/support')">Support</button>
         <button onclick="logout()">Logout</button>
     </div>
 
