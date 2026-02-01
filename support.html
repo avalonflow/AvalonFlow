@@ -308,7 +308,7 @@ const quotes = [
   "Every day is a fresh start.",
   “Faith is the compass that guides you through life’s storms.”,
   “Pray not just for what you want, but   for the strength to receive it.”,
-  “Trust God’s timing; He never runs late.”
+  “Trust God’s timing; He never runs late.”,
   “Your faith can move mountains, but your actions must build the path.”,
   “God doesn’t call the equipped; He equips the called.”,
   “Gratitude turns what we have into enough.”,
@@ -359,7 +359,7 @@ function addUserMessage(msg){
 // Bot logic
 function botReply(msg){
     msg = msg.toLowerCase();
-    const unlocked=JSON.parse(localStorage.getItem('unlockedBranches'))||{};
+    const unlocked=JSON.parse(localStorage.getItem('unlockedPlans'))||{};
     const unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
     if(/hi|hello|hey|yo/.test(msg)){
         addBotMessage("Hi! I'm Kairos. I can guide you, provide info on rewards, or share motivational quotes.");
