@@ -237,7 +237,7 @@
     <h1>AvalonFlow</h1>
     <button onclick="window.location.href='/dashboard'">Dashboard</button>
     <button onclick="window.location.href='/ecosystem'">Ecosystem</button>
-    <button onclick="window.location.href='/branches'">Branches</button>
+    <button onclick="window.location.href='/plans'">Plans</button>
     <button onclick="window.location.href='/rewards'">Rewards</button>
     <button onclick="window.location.href='/support'">Support</button>
     <button onclick="logout()">Logout</button>
@@ -247,7 +247,7 @@
 
 <div id="content">
     <div id="titleContainer">Rewards / Progress</div>
-    <p>Track your progress on the Logical Wing branches below:</p>
+    <p>Track your progress on the Logical Wing plans below:</p>
 
     <div class="glass-card">
         <h4>🪽 AvalonCare Premium</h4>
@@ -328,13 +328,13 @@
     }   
 
     // Branch data - must be before any logic
-    const branches = {
+    const plans = {
         premium: { days: 30, totalAC: 856.8, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 14.15 },
         basic: { days: 30, totalAC: 2856.8, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 47.15 },
         lite: { days: 30, totalAC: 2708.7, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 45.15 }
     };
 
-    const ALL_BRANCHES = ['premium', 'basic', 'lite'];
+    const ALL_PLANS = ['premium', 'basic', 'lite'];
     const now = Date.now();
 
     /* ---------- Identity & State Init ---------- */
@@ -342,7 +342,7 @@
     const FULL_ACCESS_ID = "AF-F0QD-O5MO";
 
     // Persistent reward state
-    let unlockedBranches = JSON.parse(localStorage.getItem('unlockedBranches')) || {};
+    let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
     let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
 
     // ---------- Trial Setup ----------
@@ -354,11 +354,11 @@
     if (!trialStart && userId !== FULL_ACCESS_ID) {
         trialStart = now;
         localStorage.setItem(TRIAL_KEY, trialStart);
-        ALL_BRANCHES.forEach(branch => {
-            unlockedBranches[branch] = true;
-            unlockTimes[branch] = now;
+        ALL_PLANS.forEach(plan => {
+            unlockedPlans[plan] = true;
+            unlockTimes[plan] = now;
         });
-        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
         localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
     }
 
@@ -366,25 +366,25 @@
     if (userId !== FULL_ACCESS_ID) {
         const cleanUnlocks = {};
         const cleanTimes = {};
-        ALL_BRANCHES.forEach(branch => {
-            if (unlockedBranches[branch] === true && unlockTimes[branch]) {
-                cleanUnlocks[branch] = true;
-                cleanTimes[branch] = unlockTimes[branch];
+        ALL_PLANS.forEach(plan => {
+            if (unlockedPlans[plan] === true && unlockTimes[plan]) {
+                cleanUnlocks[plan] = true;
+                cleanTimes[plan] = unlockTimes[plan];
             }
         });
-        unlockedBranches = cleanUnlocks;
+        unlockedPlans = cleanUnlocks;
         unlockTimes = cleanTimes;
-        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
         localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
     }
 
     // ---------- Full Access Initialization ----------
     if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
-        ALL_BRANCHES.forEach(branch => {
-            unlockedBranches[branch] = true;
-            unlockTimes[branch] = now;
+        ALL_PLANS.forEach(plan => {
+            unlockedPlans[plan] = true;
+            unlockTimes[plan] = now;
         });
-        localStorage.setItem('unlockedBranches', JSON.stringify(unlockedBranches));
+        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
         localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
         localStorage.setItem('fullAccessInit', 'true');
     }
@@ -395,15 +395,15 @@
     function updateInterests() {
         const now = Date.now();
 
-        Object.keys(branches).forEach(key => {
-            const b = branches[key];
+        Object.keys(plans).forEach(key => {
+            const b = plans[key];
             const fill = document.getElementById(b.fill);
             const lock = document.getElementById(b.lock);
             const cyclesEl = document.getElementById(b.cycles);
             const acEl = document.getElementById(b.ac);
             const resetEl = document.getElementById(b.reset);
 
-            let unlocked = unlockedBranches[key] || false;
+            let unlocked = unlockedPlans[key] || false;
 
             // Lock trial after 7 days
             if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
@@ -441,7 +441,7 @@
             resetEl.textContent =
                 `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
-            // Live trial countdown display (optional, per branch)
+            // Live trial countdown display (optional, per plan)
             const trialCountdownEl = document.getElementById(b.trialCountdown);
             if (trialCountdownEl && trialStart && userId !== FULL_ACCESS_ID) {
                 const remainingTrialMs = TRIAL_MS - (now - trialStart);
@@ -481,7 +481,7 @@
     notification.textContent = "Access activated";
 }
 else if (trialStart && now - trialStart >= TRIAL_MS) {
-    notification.textContent = "Branches locked";
+    notification.textContent = "Plans locked";
         }
     }, 2500);
 
