@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AvalonFlow Branches</title>
+    <title>AvalonFlow Plans</title>
 
     <style>
         /* ---------- Base ---------- */
@@ -222,7 +222,7 @@
         <h2>AvalonFlow</h2>
         <button onclick="window.location.href='/dashboard'">Dashboard</button>
         <button onclick="window.location.href='/ecosystem'">Ecosystem</button>
-        <button onclick="window.location.href='/branches'">Branches</button>
+        <button onclick="window.location.href='/plans'">Plans</button>
         <button onclick="window.location.href='/rewards'">Rewards</button>
         <button onclick="window.location.href='/support'">Support</button>
         <button onclick="logout()">Logout</button>
@@ -236,9 +236,9 @@
     <div id="content">
 
         <!-- Branches Header -->
-        <h3>Branches</h3>
+        <h3>Plans</h3>
         <p style="margin-bottom:20px; font-size:14px; opacity:0.85;">
-            About the AvalonFlow Branches
+            About the AvalonFlow Plans
         </p>
 
         <!-- AvalonCare Glass Card -->
@@ -249,8 +249,8 @@
                     Supports progress, alignment, and financial growth.
                 </span>
             </div>
-            <div class="branch-pay">
-                <img class="branch-logo"
+            <div class="plan-pay">
+                <img class="plan-logo"
                      src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
                      alt="AvalonCare Premium Logo">
                 <a href="https://app.paymento.io/payment-link/5e887f901356404788e989c5e2c4cb47" target="_blank">
@@ -267,8 +267,8 @@
                     Enables sustainable systems with minimal friction.
                 </span>
             </div>
-            <div class="branch-pay">
-                <img class="branch-logo"
+            <div class="plan-pay">
+                <img class="plan-logo"
                      src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
                      alt="AvalonCare Basic Logo">
                 <a href="https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79" target="_blank">
@@ -285,8 +285,8 @@
                     Focuses on stability, clarity, and easing daily pressure.
                 </span>
             </div>
-            <div class="branch-pay">
-                <img class="branch-logo"
+            <div class="plan-pay">
+                <img class="plan-logo"
                      src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
                      alt="AvalonCare Lite Logo">
                 <a href="https://app.paymento.io/payment-link/a860137ccb2743df9135b45f5c5c3334" target="_blank">
@@ -298,7 +298,7 @@
         <!-- Mini TV: Member Reflection -->
         <p style="text-align:center; font-weight:bold; margin-top:20px;">View a Member Reflection</p>
         <div class="video-container">
-            <video id="branchVideo" controls controlsList="nodownload">
+            <video id="planVideo" controls controlsList="nodownload">
                 <source src="assets/videos/2025-12-15-201525736.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -348,14 +348,14 @@
 
         // Show option 1 notification only
         window.addEventListener("load", () => {
-            const notification = document.getElementById("branchNotification");
-            notification.textContent = "Select a branch to continue.";
+            const notification = document.getElementById("planNotification");
+            notification.textContent = "Select a plan to continue.";
             setTimeout(()=>notification.classList.add("show"),300);
             setTimeout(()=>notification.classList.remove("show"),3300);
         });
 
         // Video volume
-        const video = document.getElementById("branchVideo");
+        const video = document.getElementById("planVideo");
         const volumeControl = document.getElementById("volumeControl");
         volumeControl.addEventListener("input", e => { video.volume = e.target.value; });
 
