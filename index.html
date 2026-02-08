@@ -293,7 +293,7 @@ function login(){
     const passInput = document.getElementById("password").value;    
     
     if(idInput === identity.id && passInput === identity.password){    
-        window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;    
+        window.location.href = `dashboard?ticket=${identity.sessionRef}`;    
     } else {    
         document.getElementById("loginError").innerText =    
             "Access details not recognized.";    
