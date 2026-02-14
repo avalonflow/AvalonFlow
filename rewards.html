@@ -259,12 +259,12 @@
         <p class="locked-text" id="premiumLock">🔒 Locked — Activate access to unlock</p>
 
         <details>
-            <summary>Interests Summary ▾</summary>
-            <div class="interest-line">Cycles completed: <span id="premiumCycles">0</span></div>
-            <div class="interest-line">Credits per 12h: ≈ 14.15 ACU</div>
-            <div class="interest-line">Credits activated: <span class="ac-value" id="premiumAC">0.00</span></div>
+            <summary>Returns Summary ▾</summary>
+            <div class="return-line">Cycles completed: <span id="premiumCycles">0</span></div>
+            <div class="return-line">Credits per 12h: ≈ 64.29 ACU</div>
+            <div class="return-line">Credits activated: <span class="ac-value" id="premiumAC">0.00</span></div>
             <div class="interest-line ref">Reference value: ≈ 1$ = 1 ACU</div>
-            <div class="interest-line">Reset in: <span id="premiumReset">--:--:--</span></div>
+            <div class="return-line">Reset in: <span id="premiumReset">--:--:--</span></div>
         </details>
     </div>
 
@@ -274,11 +274,11 @@
         <p class="locked-text" id="basicLock">🔒 Locked — Activate access to unlock</p>
 
         <details>
-            <summary>Interests Summary ▾</summary>
-            <div class="interest-line">Cycles completed: <span id="basicCycles">0</span></div>
-            <div class="interest-line">Credits per 12h: ≈ 47.15 ACU</div>
-            <div class="interest-line">Credits activated: <span class="ac-value" id="basicAC">0.00</span></div>
-            <div class="interest-line ref">Reference value: ≈ 1$ = 5 ACU</div>
+            <summary>Returns Summary ▾</summary>
+            <div class="return-line">Cycles completed: <span id="basicCycles">0</span></div>
+            <div class="return-line">Credits per 12h: ≈ 24.11 ACU</div>
+            <div class="return-line">Credits activated: <span class="ac-value" id="basicAC">0.00</span></div>
+            <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
             <div class="interest-line">Reset in: <span id="basicReset">--:--:--</span></div>
         </details>
     </div>
@@ -289,12 +289,12 @@
         <p class="locked-text" id="liteLock">🔒 Locked — Activate access to unlock</p>
 
         <details>
-            <summary>Interests Summary ▾</summary>
-            <div class="interest-line">Cycles completed: <span id="liteCycles">0</span></div>
-            <div class="interest-line">Credits per 12h: ≈ 45.15 ACU</div>
-            <div class="interest-line">Credits activated: <span class="ac-value" id="liteAC">0.00</span></div>
-            <div class="interest-line ref">Reference value: ≈ 1$ = 10 ACU</div>
-            <div class="interest-line">Reset in: <span id="liteReset">--:--:--</span></div>
+            <summary>Return Summary ▾</summary>
+            <div class="return-line">Cycles completed: <span id="liteCycles">0</span></div>
+            <div class="return-line">Credits per 12h: ≈ 12.13 ACU</div>
+            <div class="return-line">Credits activated: <span class="ac-value" id="liteAC">0.00</span></div>
+            <div class="interest-line ref">Reference value: ≈ 1$ = 1 ACU</div>
+            <div class="return-line">Reset in: <span id="liteReset">--:--:--</span></div>
         </details>
     </div>
 
@@ -333,9 +333,9 @@
 
     // Branch data - must be before any logic
     const plans = {
-        premium: { days: 30, totalAC: 856.8, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 14.15 },
-        basic: { days: 30, totalAC: 2856.8, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 47.15 },
-        lite: { days: 30, totalAC: 2708.7, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 45.15 }
+        premium: { days: 30, totalAC: 3600, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 64.29 },
+        basic: { days: 30, totalAC: 1350, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 24.11 },
+        lite: { days: 30, totalAC: 728, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 12.13 }
     };
 
     const ALL_PLANS = ['premium', 'basic', 'lite'];
@@ -396,7 +396,7 @@
     // ---------- Rewards Animation ----------
     let displayedAC = { premium: 0, basic: 0, lite: 0 };
 
-    function updateInterests() {
+    function updateReturns() {
         const now = Date.now();
 
         Object.keys(plans).forEach(key => {
@@ -466,7 +466,7 @@
     setInterval(updateInterests, 30000);
 
     function animate() {
-        updateInterests();
+        updateReturns();
         requestAnimationFrame(animate);
     }
 
