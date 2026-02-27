@@ -263,7 +263,7 @@
 
 <div id="content">
     <div id="titleContainer">Rewards / Progress</div>
-    <p>Track your progress on the Logical Wing plans below:</p>
+    <p>Track your returns on the AvalonCare Wing plans below:</p>
 
     <div class="glass-card">
         <h4>🪽 AvalonCare Premium</h4>
@@ -273,7 +273,7 @@
         <details>
             <summary>Returns Summary ▾</summary>
             <div class="return-line">Cycles completed: <span id="premiumCycles">0</span></div>
-            <div class="return-line">Credits per 12h: ≈ 64.29 ACU</div>
+            <div class="return-line">Credits per 12h: ≈ 298.29 ACU</div>
             <div class="return-line">Credits activated: <span class="ac-value" id="premiumAC">0.00</span></div>
             <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
             <div class="return-line">Reset in: <span id="premiumReset">--:--:--</span></div>
@@ -288,7 +288,7 @@
         <details>
             <summary>Returns Summary ▾</summary>
             <div class="return-line">Cycles completed: <span id="basicCycles">0</span></div>
-            <div class="return-line">Credits per 12h: ≈ 24.11 ACU</div>
+            <div class="return-line">Credits per 12h: ≈ 183.29 ACU</div>
             <div class="return-line">Credits activated: <span class="ac-value" id="basicAC">0.00</span></div>
             <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
             <div class="return-line">Reset in: <span id="basicReset">--:--:--</span></div>
@@ -303,7 +303,7 @@
         <details>
             <summary>Return Summary ▾</summary>
             <div class="return-line">Cycles completed: <span id="liteCycles">0</span></div>
-            <div class="return-line">Credits per 12h: ≈ 12.13 ACU</div>
+            <div class="return-line">Credits per 12h: ≈ 118.29 ACU</div>
             <div class="return-line">Credits activated: <span class="ac-value" id="liteAC">0.00</span></div>
             <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
             <div class="return-line">Reset in: <span id="liteReset">--:--:--</span></div>
@@ -345,9 +345,9 @@
 
     // Branch data - must be before any logic
     const plans = {
-        premium: { days: 30, totalAC: 3600, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 64.29 },
-        basic: { days: 30, totalAC: 1350, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 24.11 },
-        lite: { days: 30, totalAC: 728, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 12.13 }
+        premium: { days: 30, totalAC: 17,897, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 298.29 },
+        basic: { days: 30, totalAC: 10,997, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 183.29 },
+        lite: { days: 30, totalAC: 7,097, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 118.29 }
     };
 
     const ALL_PLANS = ['premium', 'basic', 'lite'];
