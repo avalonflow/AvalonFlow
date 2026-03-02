@@ -116,61 +116,201 @@
         padding-left: 20px;
     }
 
-    .glass-card {
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(12px);
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-    }
+    /* ---------------- GLASS CARD ---------------- */
+.glass-card {
+    background: rgba(18, 20, 35, 0.75);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 28px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.02) inset,
+        0 20px 60px rgba(0,0,0,0.6);
+    transition: 0.4s ease;
+    position: relative;
+}
 
-    .progress-bar {
-        width: 100%;
-        height: 18px;
-        background: rgba(255,255,255,0.08);
-        border-radius: 10px;
-        overflow: hidden;
-        margin: 10px 0;
+.glass-card:hover {
+    transform: translateY(-6px);
+}
+
+/* Premium emphasis */
+.premium {
+    box-shadow:
+        0 0 60px rgba(150,100,255,0.18),
+        0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* ---------------- HEADER ---------------- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ---------------- STATUS BADGE ---------------- */
+.tier-badge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: 0.3s ease;
+}
+
+/* Active */
+.status-active {
+    background: rgba(150,100,255,0.15);
+    color: #c7a6ff;
+    box-shadow: 0 0 15px rgba(150,100,255,0.4);
+}
+
+/* Pending */
+.status-pending {
+    background: rgba(255,200,0,0.15);
+    color: #ffd95e;
+    box-shadow: 0 0 15px rgba(255,200,0,0.4);
+}
+
+/* Locked */
+.status-locked {
+    background: rgba(255,70,70,0.15);
+    color: #ff6b6b;
+    box-shadow: 0 0 15px rgba(255,70,70,0.4);
+}
+
+/* ---------------- PROGRESS BAR ---------------- */
+.progress-bar {
+    width: 100%;
+    height: 18px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 18px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 12px;
+    position: relative;
+    transition: width 0.6s ease;
+}
+
+/* Tier color identity */
+.premium .progress-fill {
+    background: linear-gradient(90deg,#6b2cd8,#b393ff);
+    box-shadow: 0 0 20px rgba(179,147,255,0.6);
+}
+
+.basic .progress-fill {
+    background: linear-gradient(90deg,#4facfe,#00f2fe);
+    box-shadow: 0 0 20px rgba(79,172,254,0.6);
+}
+
+.lite .progress-fill {
+    background: linear-gradient(90deg,#00d4aa,#00ffcc);
+    box-shadow: 0 0 20px rgba(0,255,204,0.6);
+}
+
+/* Energy flow */
+.progress-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: energyFlow 2.5s linear infinite;
+}
+
+@keyframes energyFlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ---------------- LOCKED STATE ---------------- */
+.locked {
+    filter: grayscale(25%) brightness(0.85);
+}
+
+.locked-text {
+    text-align: center;
+    font-weight: 600;
+    margin: 15px 0;
+    color: rgba(255,255,255,0.7);
+}
+
+/* ---------------- RETURNS ---------------- */
+.return-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.65);
+}
+
+.return-line span:last-child {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.highlight {
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+}
+
+/* Credits emphasis */
+.ac-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg,#ffffff,#9f7bff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(159,123,255,0.4);
+}
+
+/* Reference line */
+.ref {
+    opacity: 0.5;
+    font-size: 0.75rem;
+}
+
+/* Details */
+details summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Cycle Completion Burst */
+@keyframes cycleBurst {
+    0% {
+        box-shadow: 0 0 0px rgba(179,147,255,0);
     }
-    .progress-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #6b2cd8, #b393ff);
-        border-radius: 10px;
-        position: relative;
-        transition: width linear;
+    50% {
+        box-shadow: 0 0 60px rgba(179,147,255,0.9);
     }
-    .progress-fill::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -50%;
-        width: 200%;
-        height: 100%;
-        background: repeating-linear-gradient(
-            -45deg,
-            rgba(255,255,255,0.15),
-            rgba(255,255,255,0.15) 10px,
-            transparent 10px,
-            transparent 20px
-        );
-        animation: wave 2s linear infinite, wavePulse 1.5s ease-in-out infinite alternate;
-        border-radius: 10px;
+    100% {
+        box-shadow: 0 0 0px rgba(179,147,255,0);
     }
-    @keyframes wave {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-    }
-    @keyframes wavePulse {
-        0% { transform: translateX(0) translateY(0); }
-        100% { transform: translateX(-50%) translateY(3px); }
-    }
+}
+
+.cycle-burst {
+    animation: cycleBurst 1.2s ease;
+}
+
+@keyframes valuePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+.value-pulse {
+    animation: valuePulse 0.4s ease;
+}
 
     /* Notification Bar */
     .notification-bar {
@@ -265,51 +405,127 @@
     <div id="titleContainer">Rewards / Progress</div>
     <p>Track your returns on the AvalonCare Wing plans below:</p>
 
-    <div class="glass-card">
+    <div class="glass-card premium locked" id="premiumCard">
+    <div class="card-header">
         <h4>🪽 AvalonCare Premium</h4>
-        <div class="progress-bar"><div class="progress-fill" id="premiumFill"></div></div>
-        <p class="locked-text" id="premiumLock">🔒 Locked — Activate access to unlock</p>
-
-        <details>
-            <summary>Returns Summary ▾</summary>
-            <div class="return-line">Cycles completed: <span id="premiumCycles">0</span></div>
-            <div class="return-line">Credits per 12h: ≈ 298.29 ACU</div>
-            <div class="return-line">Credits activated: <span class="ac-value" id="premiumAC">0.00</span></div>
-            <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
-            <div class="return-line">Reset in: <span id="premiumReset">--:--:--</span></div>
-        </details>
+        <span class="tier-badge status-locked" id="premiumStatus">🔴 Locked</span>
     </div>
 
-    <div class="glass-card">
+    <div class="progress-bar">
+        <div class="progress-fill" id="premiumFill"></div>
+    </div>
+
+    <p class="locked-text" id="premiumLock">Activate access to unlock</p>
+
+    <details>
+            <summary>Returns Summary ▾</summary>
+            <div class="return-line">
+            <span>Cycles completed</span>
+            <span id="premiumCycles">0</span>
+        </div>
+
+        <div class="return-line">
+            <span>Credits per 12h</span>
+            <span>≈ 298.29 ACU</span>
+        </div>
+
+        <div class="return-line highlight">
+            <span>Credits activated</span>
+            <span class="ac-value" id="premiumAC">0.00 ACU</span>
+        </div>
+
+        <div class="return-line">
+            <span>Reset in</span>
+            <span id="premiumReset">--:--:--</span>
+        </div>
+
+        <div class="return-line ref">
+            <span>Reference value</span>
+            <span>≈ 1$ = 1 ACU</span>
+        </div>
+    </details>
+</div>
+
+    <div class="glass-card basic locked" id="basicCard">
+    <div class="card-header">
         <h4>🪽 AvalonCare Basic</h4>
-        <div class="progress-bar"><div class="progress-fill" id="basicFill"></div></div>
-        <p class="locked-text" id="basicLock">🔒 Locked — Activate access to unlock</p>
+        <span class="tier-badge status-locked" id="basicStatus">🔴 Locked</span>
+    </div>
 
-        <details>
+    <div class="progress-bar">
+        <div class="progress-fill" id="basicFill"></div>
+    </div>
+
+    <p class="locked-text" id="basicLock">Activate access to unlock</p>
+
+    <details>
             <summary>Returns Summary ▾</summary>
-            <div class="return-line">Cycles completed: <span id="basicCycles">0</span></div>
-            <div class="return-line">Credits per 12h: ≈ 183.29 ACU</div>
-            <div class="return-line">Credits activated: <span class="ac-value" id="basicAC">0.00</span></div>
-            <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
-            <div class="return-line">Reset in: <span id="basicReset">--:--:--</span></div>
-        </details>
-    </div>
+            <div class="return-line">
+            <span>Cycles completed</span>
+            <span id="basicCycles">0</span>
+        </div>
 
-    <div class="glass-card">
+        <div class="return-line">
+            <span>Credits per 12h</span>
+            <span>≈ 183.29 ACU</span>
+        </div>
+
+        <div class="return-line highlight">
+            <span>Credits activated</span>
+            <span class="ac-value" id="basicAC">0.00 ACU</span>
+        </div>
+
+        <div class="return-line">
+            <span>Reset in</span>
+            <span id="basicReset">--:--:--</span>
+        </div>
+
+        <div class="return-line ref">
+            <span>Reference value</span>
+            <span>≈ 1$ = 1 ACU</span>
+        </div>
+    </details>
+</div>
+
+    <div class="glass-card lite locked" id="liteCard">
+    <div class="card-header">
         <h4>🪽 AvalonCare Lite</h4>
-        <div class="progress-bar"><div class="progress-fill" id="liteFill"></div></div>
-        <p class="locked-text" id="liteLock">🔒 Locked — Activate access to unlock</p>
-
-        <details>
-            <summary>Return Summary ▾</summary>
-            <div class="return-line">Cycles completed: <span id="liteCycles">0</span></div>
-            <div class="return-line">Credits per 12h: ≈ 118.29 ACU</div>
-            <div class="return-line">Credits activated: <span class="ac-value" id="liteAC">0.00</span></div>
-            <div class="return-line ref">Reference value: ≈ 1$ = 1 ACU</div>
-            <div class="return-line">Reset in: <span id="liteReset">--:--:--</span></div>
-        </details>
+        <span class="tier-badge status-locked" id="liteStatus">🔴 Locked</span>
     </div>
 
+    <div class="progress-bar">
+        <div class="progress-fill" id="liteFill"></div>
+    </div>
+
+    <p class="locked-text" id="liteLock">Activate access to unlock</p>
+
+    <details>
+            <summary>Return Summary ▾</summary>
+            <div class="return-line">
+            <span>Cycles completed</span>
+            <span id="liteCycles">0</span>
+        </div>
+
+        <div class="return-line">
+            <span>Credits per 12h</span>
+            <span>≈ 118.29 ACU</span>
+        </div>
+
+        <div class="return-line highlight">
+            <span>Credits activated</span>
+            <span class="ac-value" id="liteAC">0.00 ACU</span>
+        </div>
+
+        <div class="return-line">
+            <span>Reset in</span>
+            <span id="liteReset">--:--:--</span>
+        </div>
+
+        <div class="return-line ref">
+            <span>Reference value</span>
+            <span>≈ 1$ = 1 ACU</span>
+        </div>
+    </details>
 </div>
 
 <!-- Sticky Footer -->
@@ -407,6 +623,7 @@
 
     // ---------- Rewards Animation ----------
     let displayedAC = { premium: 0, basic: 0, lite: 0 };
+let lastCycleCount = { premium: 0, basic: 0, lite: 0 };
 
     function updateReturns() {
         const now = Date.now();
@@ -420,6 +637,43 @@
             const resetEl = document.getElementById(b.reset);
 
             let unlocked = unlockedPlans[key] || false;
+
+// -------- STATUS SYSTEM --------
+const card = document.getElementById(key + "Card");
+const badge = document.getElementById(key + "Status");
+
+let statusText = "🔴 Locked";
+let statusClass = "status-locked";
+
+// Trial expired lock
+if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
+    unlocked = false;
+}
+
+// Determine status
+if (!unlocked) {
+    statusText = "🔴 Locked";
+    statusClass = "status-locked";
+    card.classList.add("locked");
+} else {
+    const cycleMs = 12 * 60 * 60 * 1000;
+    const elapsed = now - (unlockTimes[key] || now);
+    const cycleProgress = (elapsed % cycleMs) / cycleMs;
+
+    if (cycleProgress > 0.95) {
+        statusText = "🟡 Pending";
+        statusClass = "status-pending";
+    } else {
+        statusText = "🟣 Active";
+        statusClass = "status-active";
+    }
+
+    card.classList.remove("locked");
+}
+
+// Apply badge
+badge.textContent = statusText;
+badge.className = "tier-badge " + statusClass;
 
             // Lock trial after 7 days
             if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
@@ -445,9 +699,32 @@
             const cycles = Math.floor(elapsed / cycleMs);
             cyclesEl.textContent = cycles;
 
+// Trigger glow burst when new cycle completes
+if (cycles > lastCycleCount[key]) {
+    const card = document.getElementById(key + "Card");
+    card.classList.add("cycle-burst");
+
+    setTimeout(() => {
+        card.classList.remove("cycle-burst");
+    }, 1200);
+
+    lastCycleCount[key] = cycles;
+}
+
             const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
-            displayedAC[key] += (targetAC - displayedAC[key]) * 0.05;
-            acEl.textContent = displayedAC[key].toFixed(2) + ' ACU';
+            const diff = targetAC - displayedAC[key];
+displayedAC[key] += diff * 0.08;
+            const newValue = displayedAC[key].toFixed(2) + ' ACU';
+
+if (acEl.textContent !== newValue) {
+    acEl.classList.add("value-pulse");
+
+    setTimeout(() => {
+        acEl.classList.remove("value-pulse");
+    }, 400);
+}
+
+acEl.textContent = newValue;
 
             // Remaining time for current 12h cycle
             const remainingMs = cycleMs - (elapsed % cycleMs);
