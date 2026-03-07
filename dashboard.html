@@ -384,60 +384,76 @@
     lite:    { per12h: 118.29 }
 };
 
+const ALL_PLANS = ['premium','basic','lite'];
+
+// Load unlocked plans and activation times
+let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
+let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+
 // Track displayed AC for animation
 let displayedAC = { premium: 0, basic: 0, lite: 0 };
-let lastCycleCount = { premium: 0, basic: 0, lite: 0 };
 
-// Start times for simulation (use localStorage for persistence if needed)
-const now = Date.now();
-let unlockTimes = {
-    premium: now,
-    basic: now,
-    lite: now
-};
-
-// Pulse animation
+// Pulse animation for total
 function animateTotalChange() {
     const el = document.getElementById('totalACU');
     el.classList.add('value-pulse');
     setTimeout(() => el.classList.remove('value-pulse'), 400);
 }
 
-// Update total ACU
-function updateTotalACU() {
-    const total = Object.values(displayedAC).reduce((a,b) => a+b, 0);
-    const totalEl = document.getElementById('totalACU');
-    const prevValue = parseFloat(totalEl.textContent) || 0;
-    if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();
-    totalEl.textContent = total.toFixed(2) + ' ACU';
-}
+// Read activated credits from localStorage for each plan
+function readActivatedCredits() {
+    ALL_PLANS.forEach(plan => {
+        const key = plan + 'AC'; // e.g., premiumAC
+        let stored = parseFloat(localStorage.getItem(key)) || 0;
 
-// Update returns (just total)
-function updateReturns() {
-    const now = Date.now();
-    const cycleMs = 12 * 60 * 60 * 1000; // 12h
-
-    Object.keys(plans).forEach(key => {
-        const elapsed = now - (unlockTimes[key] || now);
-        const cycles = Math.floor(elapsed / cycleMs);
-        const cycleProgress = (elapsed % cycleMs) / cycleMs;
-
-        const targetAC = cycles * plans[key].per12h + cycleProgress * plans[key].per12h;
-        const diff = targetAC - displayedAC[key];
-        displayedAC[key] += diff * 0.08; // smooth animation
+        // Only count if unlocked
+        if (unlockedPlans[plan]) {
+            const diff = stored - displayedAC[plan];
+            displayedAC[plan] += diff * 0.08; // smooth animation
+        }
     });
-
-updateTotalACU();
 }
 
-    // Call the update function every 30 seconds to refresh the rewards or ACU cycle
-animate();
-    setInterval(updateReturns, 30000);
+// Update total ACU and save back to localStorage
+function updateTotalACU() {
+    const total = ALL_PLANS.reduce((sum, plan) => {
+        return unlockedPlans[plan] ? sum + displayedAC[plan] : sum;
+    }, 0);
 
-    function animate() {
-        updateReturns();
-        requestAnimationFrame(animate);
-    }
+    const el = document.getElementById('totalACU');
+    const prevValue = parseFloat(el.textContent) || 0;
+
+    if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();
+
+    el.textContent = total.toFixed(2) + ' ACU';
+
+    // Save total to localStorage for persistence
+    localStorage.setItem('totalACU', total.toFixed(2));
+}
+
+// Main update function
+function updateACU() {
+    readActivatedCredits();
+    updateTotalACU();
+}
+
+// Animate continuously
+function animate() {
+    updateACU();
+    requestAnimationFrame(animate);
+}
+
+// Start animation
+animate();
+
+
+// Auto-refresh total ACU every 30 seconds
+setInterval(() => {
+    updateACU();
+}, 30000); // 30,000 ms = 30 seconds
+
+// Optional: update every 30s in case localStorage changes externally
+setInterval(animateFromStorage, 30000);
 
         /* Dashboard Notification */
         window.addEventListener("load", () => {
