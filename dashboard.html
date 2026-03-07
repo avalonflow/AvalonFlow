@@ -115,15 +115,15 @@
 
         /* ---------- Panels & Glass Cards ---------- */
         .panel, .glass-card {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        }
-        transition: transform 0.3s, box-shadow 0.3s;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
+
 .panel:hover, .glass-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 20px 40px rgba(107,44,216,0.5);
@@ -341,11 +341,9 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         function toggleSidebar(){
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-
-document.getElementById('content').classList.toggle('shift');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+    document.getElementById('content').classList.toggle('shift');
 }
 
         function navigateTo(page){
@@ -433,6 +431,7 @@ updateTotalACU();
 }
 
     // Call the update function every 30 seconds to refresh the rewards or ACU cycle
+animate();
     setInterval(updateReturns, 30000);
 
     function animate() {
