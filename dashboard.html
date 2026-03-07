@@ -357,25 +357,30 @@
 
         /* Dashboard Progress Bar Animation */
         const progressFill = document.getElementById("progressFill");
-        const fillDuration = 12*60*60*1000; // 12 hours
-        let startTime = localStorage.getItem("logicalWingStart");
-        if(!startTime){
-            startTime = Date.now();
-            localStorage.setItem("logicalWingStart", startTime);
-        } else { startTime = parseInt(startTime); }
+const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
 
-        function updateDashboardProgress(){
-            const now = Date.now();
-            let elapsed = now - startTime;
-            if(elapsed >= fillDuration){
-                startTime = now;
-                localStorage.setItem("logicalWingStart", startTime);
-                elapsed = 0;
-            }
-            const timeProgress = (elapsed/fillDuration)*100;
-            progressFill.style.width = timeProgress+"%";
-        }
-        setInterval(updateDashboardProgress,1000);
+function updateDashboardProgress() {
+    const now = Date.now();
+
+    // Determine start time (use unlockTimes for unlocked plans, trialStart for trial)
+    // Example: using "premium" plan as reference
+    const planKey = "premium"; // replace with the plan you want to show
+    const startTime = unlockTimes[planKey] || (trialActive ? trialStart : now);
+
+    let elapsed = now - startTime;
+
+    // Keep progress within one cycle
+    const cycleElapsed = elapsed % fillDuration;
+    const timeProgress = (cycleElapsed / fillDuration) * 100;
+
+    progressFill.style.width = timeProgress + "%";
+}
+
+// Update every second
+setInterval(updateDashboardProgress, 1000);
+
+// Optional: run once immediately
+updateDashboardProgress();
 
     // Branch data - must be before any logic
                    const plans = {
