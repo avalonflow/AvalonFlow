@@ -355,35 +355,8 @@
             window.location.href = 'https://profile-login.avalonflow.site';
         }
 
-        /* Dashboard Progress Bar Animation */
-        const progressFill = document.getElementById("progressFill");
-const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
-
-function updateDashboardProgress() {
-    const now = Date.now();
-
-    // Determine start time (use unlockTimes for unlocked plans, trialStart for trial)
-    // Example: using "premium" plan as reference
-    const planKey = "premium"; // replace with the plan you want to show
-    const startTime = unlockTimes[planKey] || (trialActive ? trialStart : now);
-
-    let elapsed = now - startTime;
-
-    // Keep progress within one cycle
-    const cycleElapsed = elapsed % fillDuration;
-    const timeProgress = (cycleElapsed / fillDuration) * 100;
-
-    progressFill.style.width = timeProgress + "%";
-}
-
-// Update every second
-setInterval(updateDashboardProgress, 1000);
-
-// Optional: run once immediately
-updateDashboardProgress();
-
-    // Branch data - must be before any logic
-                   const plans = {
+        // Branch data - must be before any logic
+const plans = {
     premium: { per12h: 298.29 },
     basic:   { per12h: 183.29 },
     lite:    { per12h: 118.29 }
@@ -391,7 +364,7 @@ updateDashboardProgress();
 
 const ALL_PLANS = ['premium','basic','lite'];
 
-// Load unlocked plans and activation times
+// ---------- Load State ----------
 let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
 let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
 
@@ -411,6 +384,28 @@ function animateTotalChange() {
     el.classList.add('value-pulse');
     setTimeout(() => el.classList.remove('value-pulse'), 400);
 }
+
+// ---------- Dashboard Progress Bar ----------
+const progressFill = document.getElementById("progressFill");
+const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
+
+function updateDashboardProgress() {
+    const now = Date.now();
+
+    // Use "premium" as reference plan for dashboard progress
+    const planKey = "premium";
+    const startTime = unlockTimes[planKey] || (trialActive ? trialStart : now);
+    const elapsed = now - startTime;
+
+    const cycleElapsed = elapsed % fillDuration;
+    const timeProgress = (cycleElapsed / fillDuration) * 100;
+
+    progressFill.style.width = timeProgress + "%";
+}
+
+// Update progress every second
+setInterval(updateDashboardProgress, 1000);
+updateDashboardProgress(); // run once immediately
 
 // ---------- Read Activated Credits (with 12-hour cycle growth) ----------
 function readActivatedCredits() {
@@ -453,7 +448,6 @@ function readActivatedCredits() {
 // ---------- Update Total ACU (instant from localStorage) ----------
 function updateTotalACU() {
     const total = ALL_PLANS.reduce((sum, plan) => {
-        // Use max of stored value and 12-hour cycle for real-time sync
         const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
         const startTime = unlockTimes[plan] || (trialActive ? trialStart : Date.now());
         const elapsed = Date.now() - startTime;
