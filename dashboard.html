@@ -390,11 +390,11 @@ const ALL_PLANS = ['premium','basic','lite'];
 let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
 let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
 
-// Track displayed AC for smooth animation
+// Track displayed AC for smooth per-plan animation
 let displayedAC = { premium: 0, basic: 0, lite: 0 };
 
 // ---------- Trial Setup ----------
-const userId = localStorage.getItem("userId"); // current user
+const userId = localStorage.getItem("userId");
 const TRIAL_KEY = 'trialStart_' + userId;
 const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
@@ -407,30 +407,58 @@ function animateTotalChange() {
     setTimeout(() => el.classList.remove('value-pulse'), 400);
 }
 
-// Read activated credits from localStorage for each plan
+// ---------- Read Activated Credits (with 12-hour cycle growth) ----------
 function readActivatedCredits() {
-    ALL_PLANS.forEach(plan => {
-        const key = plan + 'AC'; // e.g., premiumAC
-        let stored = parseFloat(localStorage.getItem(key)) || 0;
+    const now = Date.now();
+    const cycleMs = 12 * 60 * 60 * 1000; // 12 hours
 
-        // ---------- Read Activated Credits ----------
-function readActivatedCredits() {
     ALL_PLANS.forEach(plan => {
-        const key = plan + 'AC'; // e.g., premiumAC
-        let stored = parseFloat(localStorage.getItem(key)) || 0;
-
-        // Count if unlocked OR trial is active
         if (unlockedPlans[plan] || trialActive) {
-            const diff = stored - displayedAC[plan];
-            displayedAC[plan] += diff * 0.08; // smooth animation
+            const key = plan + 'AC';
+            const stored = parseFloat(localStorage.getItem(key)) || 0;
+
+            // Determine start time: use unlockTimes or trial start for trial users
+            const startTime = unlockTimes[plan] || (trialActive ? trialStart : now);
+            const elapsed = now - startTime;
+
+            // 12-hour cycle growth
+            const cycles = Math.floor(elapsed / cycleMs);
+            const cycleProgress = (elapsed % cycleMs) / cycleMs;
+            const targetAC = cycles * plans[plan].per12h + cycleProgress * plans[plan].per12h;
+
+            // Smoothly animate displayedAC toward either stored value or calculated growth
+            const target = Math.max(stored, targetAC);
+            const diff = target - displayedAC[plan];
+            displayedAC[plan] += diff * 0.08;
+
+            // Update per-plan element if exists
+            const el = document.getElementById(key);
+            if (el) {
+                const newValue = displayedAC[plan].toFixed(2) + ' ACU';
+                if (el.textContent !== newValue) {
+                    el.classList.add('value-pulse');
+                    setTimeout(() => el.classList.remove('value-pulse'), 400);
+                    el.textContent = newValue;
+                }
+            }
         }
     });
 }
 
-// ---------- Update Total ACU ----------
+// ---------- Update Total ACU (instant from localStorage) ----------
 function updateTotalACU() {
     const total = ALL_PLANS.reduce((sum, plan) => {
-        return (unlockedPlans[plan] || trialActive) ? sum + displayedAC[plan] : sum;
+        // Use max of stored value and 12-hour cycle for real-time sync
+        const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
+        const startTime = unlockTimes[plan] || (trialActive ? trialStart : Date.now());
+        const elapsed = Date.now() - startTime;
+        const cycleMs = 12 * 60 * 60 * 1000;
+        const cycles = Math.floor(elapsed / cycleMs);
+        const cycleProgress = (elapsed % cycleMs) / cycleMs;
+        const growthAC = cycles * plans[plan].per12h + cycleProgress * plans[plan].per12h;
+
+        const value = Math.max(stored, growthAC);
+        return (unlockedPlans[plan] || trialActive) ? sum + value : sum;
     }, 0);
 
     const el = document.getElementById('totalACU');
@@ -439,8 +467,6 @@ function updateTotalACU() {
     if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();
 
     el.textContent = total.toFixed(2) + ' ACU';
-
-    // Save total to localStorage for persistence
     localStorage.setItem('totalACU', total.toFixed(2));
 }
 
