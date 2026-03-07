@@ -413,6 +413,12 @@ function readActivatedCredits() {
         const key = plan + 'AC'; // e.g., premiumAC
         let stored = parseFloat(localStorage.getItem(key)) || 0;
 
+        // ---------- Read Activated Credits ----------
+function readActivatedCredits() {
+    ALL_PLANS.forEach(plan => {
+        const key = plan + 'AC'; // e.g., premiumAC
+        let stored = parseFloat(localStorage.getItem(key)) || 0;
+
         // Count if unlocked OR trial is active
         if (unlockedPlans[plan] || trialActive) {
             const diff = stored - displayedAC[plan];
@@ -421,7 +427,7 @@ function readActivatedCredits() {
     });
 }
 
-// Update total ACU and save back to localStorage
+// ---------- Update Total ACU ----------
 function updateTotalACU() {
     const total = ALL_PLANS.reduce((sum, plan) => {
         return (unlockedPlans[plan] || trialActive) ? sum + displayedAC[plan] : sum;
@@ -438,24 +444,23 @@ function updateTotalACU() {
     localStorage.setItem('totalACU', total.toFixed(2));
 }
 
-// Main update function
+// ---------- Main Update ----------
 function updateACU() {
     readActivatedCredits();
     updateTotalACU();
 }
 
-// Animate continuously
+// ---------- Animation Loop ----------
 function animate() {
     updateACU();
     requestAnimationFrame(animate);
 }
 
-// Start animation
+// ---------- Start Animation ----------
 animate();
 
-
-// Auto-refresh total ACU every 30 seconds (in case localStorage changes externally)
-setInterval(updateACU, 30000); // 30,000 ms = 30 seconds
+// ---------- Auto-refresh in case localStorage changes externally ----------
+setInterval(updateACU, 30000); // every 30 seconds
 
         /* Dashboard Notification */
         window.addEventListener("load", () => {
