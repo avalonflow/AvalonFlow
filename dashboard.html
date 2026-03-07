@@ -421,7 +421,7 @@
     let displayedAC = { premium: 0, basic: 0, lite: 0 };
 let lastCycleCount = { premium: 0, basic: 0, lite: 0 };
 
-    function animateTotalChange() {
+function animateTotalChange() {
     const el = document.getElementById('totalACU');
     el.classList.add('value-pulse');
     setTimeout(() => el.classList.remove('value-pulse'), 400);
@@ -429,36 +429,27 @@ let lastCycleCount = { premium: 0, basic: 0, lite: 0 };
 
 function updateTotalACU() {
     let total = 0;
-    Object.keys(displayedAC).forEach(plan => {
-        total += displayedAC[plan];
-    });
-
+    Object.keys(displayedAC).forEach(plan => total += displayedAC[plan]);
     const totalEl = document.getElementById('totalACU');
     const prevValue = parseFloat(totalEl.textContent) || 0;
 
-    if (total.toFixed(2) !== prevValue.toFixed(2)) {
-        animateTotalChange();
-    }
-
+    if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();
     totalEl.textContent = total.toFixed(2) + ' ACU';
 }
 
 function updateReturns() {
     const now = Date.now();
+    Object.keys(plans).forEach(key => {
+        const b = plans[key];
+        const fill = document.getElementById(b.fill);
+        const lock = document.getElementById(b.lock);
+        const cyclesEl = document.getElementById(b.cycles);
+        const acEl = document.getElementById(b.ac);
+        const resetEl = document.getElementById(b.reset);
+        const card = document.getElementById(key + "Card");
+        const badge = document.getElementById(key + "Status");
 
-        Object.keys(plans).forEach(key => {
-            const b = plans[key];
-            const fill = document.getElementById(b.fill);
-            const lock = document.getElementById(b.lock);
-            const cyclesEl = document.getElementById(b.cycles);
-            const acEl = document.getElementById(b.ac);
-            const resetEl = document.getElementById(b.reset);
-
-            let unlocked = unlockedPlans[key] || false;
-
-  // Update total ACU after updating all plans
-    updateTotalACU();
-}
+        let unlocked = unlockedPlans[key] || false;
 
 // -------- STATUS SYSTEM --------
 const card = document.getElementById(key + "Card");
@@ -556,6 +547,10 @@ acEl.textContent = newValue;
             resetEl.textContent =
                 `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
+// Update total ACU once per cycle
+    updateTotalACU();
+}
+
             // Live trial countdown display (optional, per plan)
             const trialCountdownEl = document.getElementById(b.trialCountdown);
             if (trialCountdownEl && trialStart && userId !== FULL_ACCESS_ID) {
@@ -572,6 +567,7 @@ acEl.textContent = newValue;
             }
         });
     }  
+
 
     // Call the update function every 30 seconds to refresh the rewards or ACU cycle
     setInterval(updateReturns, 30000);
