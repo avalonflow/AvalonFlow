@@ -300,9 +300,7 @@
             <div id="progressContainer">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div id="progressText">Rewards accumulate automatically daily—explore what each branch holds.</div>
-            </div>
+                </div>
 
             <div class="glass-card">
                 <a href="https://linkly.link/2WFYR" target="_blank" style="font-size: 18px; font-weight: bold;">
@@ -381,218 +379,57 @@ document.getElementById('content').classList.toggle('shift');
         setInterval(updateDashboardProgress,1000);
 
     // Branch data - must be before any logic
-    const plans = {
-        premium: { days: 30, totalAC: 17897, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 298.29 },
-        basic: { days: 30, totalAC: 10997, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 183.29 },
-        lite: { days: 30, totalAC: 7097, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 118.29 }
-    };
+                   const plans = {
+    premium: { per12h: 298.29 },
+    basic:   { per12h: 183.29 },
+    lite:    { per12h: 118.29 }
+};
 
-    const ALL_PLANS = ['premium', 'basic', 'lite'];
-    const now = Date.now();
-
-    /* ---------- Identity & State Init ---------- */
-    const userId = localStorage.getItem("userId"); // NO fallback
-    const FULL_ACCESS_ID = "AF-F0QD-O5MO";
-
-    // Persistent reward state
-    let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
-    let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
-
-    // ---------- Trial Setup ----------
-    const TRIAL_KEY = 'trialStart_' + userId;
-    let trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
-    const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-    // Start trial only if no previous record and not full-access ID
-    if (!trialStart && userId !== FULL_ACCESS_ID) {
-        trialStart = now;
-        localStorage.setItem(TRIAL_KEY, trialStart);
-        ALL_PLANS.forEach(plan => {
-            unlockedPlans[plan] = true;
-            unlockTimes[plan] = now;
-        });
-        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-    }
-
-    // ---------- Minimal Anti-Tamper Protection ----------
-    if (userId !== FULL_ACCESS_ID) {
-        const cleanUnlocks = {};
-        const cleanTimes = {};
-        ALL_PLANS.forEach(plan => {
-            if (unlockedPlans[plan] === true && unlockTimes[plan]) {
-                cleanUnlocks[plan] = true;
-                cleanTimes[plan] = unlockTimes[plan];
-            }
-        });
-        unlockedPlans = cleanUnlocks;
-        unlockTimes = cleanTimes;
-        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-    }
-
-    // ---------- Full Access Initialization ----------
-    if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
-        ALL_PLANS.forEach(plan => {
-            unlockedPlans[plan] = true;
-            unlockTimes[plan] = now;
-        });
-        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-        localStorage.setItem('fullAccessInit', 'true');
-    }
-
-    // ---------- Rewards Animation ----------
-    let displayedAC = { premium: 0, basic: 0, lite: 0 };
+// Track displayed AC for animation
+let displayedAC = { premium: 0, basic: 0, lite: 0 };
 let lastCycleCount = { premium: 0, basic: 0, lite: 0 };
 
+// Start times for simulation (use localStorage for persistence if needed)
+const now = Date.now();
+let unlockTimes = {
+    premium: now,
+    basic: now,
+    lite: now
+};
+
+// Pulse animation
 function animateTotalChange() {
     const el = document.getElementById('totalACU');
     el.classList.add('value-pulse');
     setTimeout(() => el.classList.remove('value-pulse'), 400);
 }
 
+// Update total ACU
 function updateTotalACU() {
-    let total = 0;
-    Object.keys(displayedAC).forEach(plan => total += displayedAC[plan]);
+    const total = Object.values(displayedAC).reduce((a,b) => a+b, 0);
     const totalEl = document.getElementById('totalACU');
     const prevValue = parseFloat(totalEl.textContent) || 0;
-
     if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();
     totalEl.textContent = total.toFixed(2) + ' ACU';
 }
 
+// Update returns (just total)
 function updateReturns() {
     const now = Date.now();
+    const cycleMs = 12 * 60 * 60 * 1000; // 12h
+
     Object.keys(plans).forEach(key => {
-        const b = plans[key];
-        const fill = document.getElementById(b.fill);
-        const lock = document.getElementById(b.lock);
-        const cyclesEl = document.getElementById(b.cycles);
-        const acEl = document.getElementById(b.ac);
-        const resetEl = document.getElementById(b.reset);
-        const card = document.getElementById(key + "Card");
-        const badge = document.getElementById(key + "Status");
+        const elapsed = now - (unlockTimes[key] || now);
+        const cycles = Math.floor(elapsed / cycleMs);
+        const cycleProgress = (elapsed % cycleMs) / cycleMs;
 
-        let unlocked = unlockedPlans[key] || false;
+        const targetAC = cycles * plans[key].per12h + cycleProgress * plans[key].per12h;
+        const diff = targetAC - displayedAC[key];
+        displayedAC[key] += diff * 0.08; // smooth animation
+    });
 
-// -------- STATUS SYSTEM --------
-const card = document.getElementById(key + "Card");
-const badge = document.getElementById(key + "Status");
-
-let statusText = "🔴 Locked";
-let statusClass = "status-locked";
-
-// Trial expired lock
-if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-    unlocked = false;
+updateTotalACU();
 }
-
-// Determine status
-if (!unlocked) {
-    statusText = "🔴 Locked";
-    statusClass = "status-locked";
-    card.classList.add("locked");
-} else {
-    const cycleMs = 12 * 60 * 60 * 1000;
-    const elapsed = now - (unlockTimes[key] || now);
-    const cycleProgress = (elapsed % cycleMs) / cycleMs;
-
-    if (cycleProgress > 0.95) {
-        statusText = "🟡 Pending";
-        statusClass = "status-pending";
-    } else {
-        statusText = "🟣 Active";
-        statusClass = "status-active";
-    }
-
-    card.classList.remove("locked");
-}
-
-// Apply badge
-badge.textContent = statusText;
-badge.className = "tier-badge " + statusClass;
-
-            // Lock trial after 7 days
-            if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-                unlocked = false;
-            }
-
-            lock.style.display = unlocked ? 'none' : 'block';
-
-            if (!unlocked) {
-                fill.style.width = '0%';
-                cyclesEl.textContent = 0;
-                acEl.textContent = displayedAC[key].toFixed(2) + ' ACU'; // keep accumulated
-                resetEl.textContent = '--:--:--';
-                return;
-            }
-
-            const cycleMs = 12 * 60 * 60 * 1000;
-            const elapsed = now - (unlockTimes[key] || now);
-            const cycleProgress = (elapsed % cycleMs) / cycleMs;
-
-            fill.style.width = `${cycleProgress * 100}%`;
-
-            const cycles = Math.floor(elapsed / cycleMs);
-            cyclesEl.textContent = cycles;
-
-// Trigger glow burst when new cycle completes
-if (cycles > lastCycleCount[key]) {
-    const card = document.getElementById(key + "Card");
-    card.classList.add("cycle-burst");
-
-    setTimeout(() => {
-        card.classList.remove("cycle-burst");
-    }, 1200);
-
-    lastCycleCount[key] = cycles;
-}
-
-            const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
-            const diff = targetAC - displayedAC[key];
-displayedAC[key] += diff * 0.08;
-            const newValue = displayedAC[key].toFixed(2) + ' ACU';
-
-if (acEl.textContent !== newValue) {
-    acEl.classList.add("value-pulse");
-
-    setTimeout(() => {
-        acEl.classList.remove("value-pulse");
-    }, 400);
-}
-
-acEl.textContent = newValue;
-
-            // Remaining time for current 12h cycle
-            const remainingMs = cycleMs - (elapsed % cycleMs);
-            const h = Math.floor(remainingMs / 3600000);
-            const m = Math.floor((remainingMs % 3600000) / 60000);
-            const s = Math.floor((remainingMs % 60000) / 1000);
-            resetEl.textContent =
-                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-
-// Update total ACU once per cycle
-    updateTotalACU();
-}
-
-            // Live trial countdown display (optional, per plan)
-            const trialCountdownEl = document.getElementById(b.trialCountdown);
-            if (trialCountdownEl && trialStart && userId !== FULL_ACCESS_ID) {
-                const remainingTrialMs = TRIAL_MS - (now - trialStart);
-                if (remainingTrialMs > 0) {
-                    const d = Math.floor(remainingTrialMs / (1000 * 60 * 60 * 24));
-                    const h = Math.floor((remainingTrialMs % (1000 * 60 * 60 * 24)) / 3600000);
-                    const m = Math.floor((remainingTrialMs % 3600000) / 60000);
-                    const s = Math.floor((remainingTrialMs % 60000) / 1000);
-                    trialCountdownEl.textContent = `Trial ends in ${d}d ${h}h ${m}m ${s}s`;
-                } else {
-                    trialCountdownEl.textContent = "Trial ended";
-                }
-            }
-        });
-    }  
-
 
     // Call the update function every 30 seconds to refresh the rewards or ACU cycle
     setInterval(updateReturns, 30000);
