@@ -447,13 +447,8 @@ function animate() {
 animate();
 
 
-// Auto-refresh total ACU every 30 seconds
-setInterval(() => {
-    updateACU();
-}, 30000); // 30,000 ms = 30 seconds
-
-// Optional: update every 30s in case localStorage changes externally
-setInterval(animateFromStorage, 30000);
+// Auto-refresh total ACU every 30 seconds (in case localStorage changes externally)
+setInterval(updateACU, 30000); // 30,000 ms = 30 seconds
 
         /* Dashboard Notification */
         window.addEventListener("load", () => {
