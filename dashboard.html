@@ -59,11 +59,10 @@ radial-gradient(circle at 80% 60%, rgba(0,255,255,0.15), transparent 40%);
 z-index:-1;
 }
 
-/* ---------- Topbar Background (still fixed) ---------- */
 #topbar {
-     position: relative;              /* background stays fixed */
+    position: relative;              /* scrolls with content naturally */
     top: 0;
-    left: 70px;                    /* aligned after menu button */
+    left: 70px;                      /* default distance from menu button */
     width: calc(100% - 70px);
     height: 60px;
 
@@ -72,23 +71,8 @@ z-index:-1;
     border-bottom: 1px solid rgba(255,255,255,0.06);
     z-index: 20;
 
-    pointer-events: none;          /* allows content to scroll under it */
-}
-
-/* ---------- Topbar Title (scrolls with content) ---------- */
-#topbar {
-    position: relative;          /* scrolls with page instead of being fixed */
-    top: 0;
-    left: 70px;                  /* keeps horizontal offset from menu button */
-    width: calc(100% - 70px);    /* full width minus offset */
-    height: 60px;
-
-    background: rgba(10,10,18,0.7);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    z-index: 20;
-
-    pointer-events: auto;        /* allow clicks and interactions */
+    pointer-events: auto;            /* allow clicks */
+    transition: left 0.3s ease, width 0.3s ease; /* smooth shift when sidebar opens */
 }
 
 #topbarTitle h2 {
@@ -477,9 +461,21 @@ const content = document.getElementById('content');
 
 const menuBtn = document.getElementById('menuBtn');
 
-function toggleSidebar(){
-sidebar.classList.toggle('open');
-menuBtn.classList.toggle('shift');
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menuBtn');
+    const topbar = document.getElementById('topbar');
+
+    sidebar.classList.toggle('open');
+    menuBtn.classList.toggle('shift');
+
+    if (sidebar.classList.contains('open')) {
+        topbar.style.left = '300px';            // match sidebar width
+        topbar.style.width = 'calc(100% - 300px)';
+    } else {
+        topbar.style.left = '70px';             // default distance from menu button
+        topbar.style.width = 'calc(100% - 70px)';
+    }
 }
 
         function navigateTo(page){
