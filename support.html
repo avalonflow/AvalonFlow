@@ -158,13 +158,15 @@ body.light-mode .notification-bar { background: rgba(30,144,255,0.25); color: #1
 <button id="themeToggle">🌙 Toggle Dark/Light</button>
 <div id="supportNotification" class="notification-bar"></div>
 
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
 <div id="sidebar">
-    <h2>AvalonFlow</h2>
-    <button onclick="nav('/dashboard')">Dashboard</button>
-    <button onclick="nav('/ecosystem')">Ecosystem</button>
-    <button onclick="nav('/plans')">Plans</button>
-    <button onclick="nav('/rewards')">Rewards</button>
-    <button onclick="nav('/support')">Support</button>
+    <h1>AvalonFlow</h1>
+    <button onclick="window.location.href='/dashboard'">Dashboard</button>
+    <button onclick="window.location.href='/ecosystem'">Ecosystem</button>
+    <button onclick="window.location.href='/plans'">Plans</button>
+    <button onclick="window.location.href='/rewards'">Rewards</button>
+    <button onclick="window.location.href='/support'">Support</button>
     <button onclick="logout()">Logout</button>
 </div>
 
