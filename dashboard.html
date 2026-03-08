@@ -59,30 +59,38 @@ radial-gradient(circle at 80% 60%, rgba(0,255,255,0.15), transparent 40%);
 z-index:-1;
 }
 
-/* ---------- Topbar ---------- */
-
+/* ---------- Topbar Background (still fixed) ---------- */
 #topbar {
-    position: relative;           /* now scrolls with the page */
-    display: flex;
-    align-items: center;          /* vertical centering */
-    gap: 15px;
-
-    padding: 0 20px;              /* horizontal padding inside topbar */
+    position: fixed;               /* background stays fixed */
+    top: 0;
+    left: 70px;                    /* aligned after menu button */
+    width: calc(100% - 70px);
     height: 60px;
 
     background: rgba(10,10,18,0.7);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    z-index: 20;                  /* optional; doesn't affect normal flow */
+    z-index: 20;
+
+    pointer-events: none;          /* allows content to scroll under it */
 }
 
-#topbar h2 {
+/* ---------- Topbar Title (scrolls with content) ---------- */
+#topbarTitle {
+    position: relative;            /* scrolls with page */
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding-left: 20px;
+    pointer-events: auto;          /* allow interaction */
+}
+
+#topbarTitle h2 {
     font-size: 28px;
     letter-spacing: 1.5px;
     color: #a78bfa;
     font-weight: 800;
-    margin: 0;                    /* remove default margin */
-    padding-left: 10px;           /* optional small gap from left edge */
+    margin: 0;
 }
 
 
@@ -368,8 +376,11 @@ font-size:38px;
     <!-- Dashboard Notification -->
     <div id="dashboardNotification" class="notification-bar"></div>
 
-        <div id="topbar">
+        <!-- Topbar -->
+<div id="topbar">
+    <div id="topbarTitle">
         <h2>AvalonFlow</h2>
+    </div>
 </div>
 
 <div id="sidebar">
