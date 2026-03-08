@@ -71,10 +71,12 @@ z-index:20;
 }
 
 #topbar h2{
-font-size:20px;
-letter-spacing:1px;
-color:#a78bfa;
-font-weight:700;
+    font-size:28px;
+    letter-spacing:1.5px;
+    color:#a78bfa;
+    font-weight:800;
+    margin:0;
+    text-shadow: 0 2px 6px rgba(107,44,216,0.6);
 }
 
 
@@ -140,21 +142,20 @@ left:300px;
 
 
 
-        #content{
-position:relative;
-z-index:1;
+#content{
+    position:relative;
+    z-index:1;
 
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-align-items:stretch;
-gap:28px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    align-items:stretch;
+    gap:28px;
 
-max-width:1400px;
-margin:auto;
+    max-width:1400px;
+    margin:auto;
 
-padding:100px 40px 200px 40px;
-
-min-height:calc(100vh - 160px);
+    padding:100px 40px 280px 40px; /* <-- bottom padding helps show the last card */
+    min-height:calc(100vh - 160px);
 }
 
 /* ---------- Glass Cards ---------- */
