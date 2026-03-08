@@ -57,26 +57,26 @@ z-index:-1;
 
 /* ---------- Topbar ---------- */
 
-#topbar{
-display:flex;
-align-items:center;
-gap:15px;
-padding-left:80px;
-padding-right:20px;
+#topbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 80px;
+    padding-right: 20px;
 
-background:rgba(10,10,18,0.7);
-backdrop-filter:blur(14px);
-border-bottom:1px solid rgba(255,255,255,0.06);
-z-index:20;
+    height: 60px; /* same vertical alignment reference */
+    background: rgba(10,10,18,0.7);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    z-index: 20;
 }
 
-#topbar h2{
-    font-size:28px;
-    letter-spacing:1.5px;
-    color:#a78bfa;
-    font-weight:800;
-    margin:0;
-    text-shadow: 0 2px 6px rgba(107,44,216,0.6);
+#topbar h2 {
+    font-size: 28px; /* slightly bigger */
+    letter-spacing: 1.5px;
+    color: #a78bfa;
+    font-weight: 800;
+    margin: 0;
 }
 
 
@@ -140,22 +140,22 @@ left:300px;
 
 /* ---------- Content Grid ---------- */
 
+#content {
+    position: relative;
+    z-index: 1;
 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    align-items: stretch;
+    gap: 28px;
 
-#content{
-    position:relative;
-    z-index:1;
+    max-width: 1400px;
+    margin: auto;
 
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    align-items:stretch;
-    gap:28px;
-
-    max-width:1400px;
-    margin:auto;
-
-    padding:100px 40px 280px 40px; /* <-- bottom padding helps show the last card */
-    min-height:calc(100vh - 160px);
+    padding: 100px 40px 40px 40px; /* smaller bottom padding so cards stop above footer */
+    
+    /* allow natural height and scrolling */
+    min-height: auto;
 }
 
 /* ---------- Glass Cards ---------- */
