@@ -63,9 +63,13 @@ top:0;
 left:0;
 right:0;
 height:70px;
+
 display:flex;
 align-items:center;
-padding:0 30px;
+gap:15px;
+
+padding:0 20px;
+
 background:rgba(10,10,18,0.7);
 backdrop-filter:blur(14px);
 border-bottom:1px solid rgba(255,255,255,0.06);
@@ -332,6 +336,23 @@ font-weight:600;
             top: 20px;
             opacity: 1;
         }
+
+@media (max-width:768px){
+
+#content{
+grid-template-columns:1fr;
+padding:18px;
+}
+
+.metric-card{
+grid-column:span 1;
+}
+
+#totalACU{
+font-size:38px;
+}
+
+}
     </style>
 </head>
 
@@ -429,10 +450,11 @@ Launch Engine
 
         /* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        function toggleSidebar(){
-    sidebar.classList.toggle('open');
-    document.getElementById('content').classList.toggle('shift');
+const content = document.getElementById('content');
+
+function toggleSidebar(){
+sidebar.classList.toggle('open');
+content.classList.toggle('hide');
 }
 
         function navigateTo(page){
