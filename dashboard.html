@@ -518,34 +518,44 @@ function readActivatedCredits() {
     const cycleMs = 12 * 60 * 60 * 1000; // 12 hours
 
     ALL_PLANS.forEach(plan => {
-        if (unlockedPlans[plan] || trialActive) {
+
+        // Lock plan if trial expired, but keep existing ACU
+        if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
+            unlockedPlans[plan] = false;
+        }
+
+        // Only calculate new ACU if plan is unlocked
+        if (unlockedPlans[plan] || (trialStart && now - trialStart < TRIAL_MS)) {
             const key = plan + 'AC';
             const stored = parseFloat(localStorage.getItem(key)) || 0;
 
-            // Determine start time: use unlockTimes or trial start for trial users
             const startTime = unlockTimes[plan] || (trialActive ? trialStart : now);
             const elapsed = now - startTime;
 
-            // 12-hour cycle growth
             const cycles = Math.floor(elapsed / cycleMs);
             const cycleProgress = (elapsed % cycleMs) / cycleMs;
             const targetAC = cycles * plans[plan].per12h + cycleProgress * plans[plan].per12h;
 
-            // Smoothly animate displayedAC toward either stored value or calculated growth
-            const target = Math.max(stored, targetAC);
-            const diff = target - displayedAC[plan];
-            displayedAC[plan] += diff * 0.08;
+            // ---------- Machine-style ticking ----------
+            if (displayedAC[plan] < targetAC) {
+                // Increment in small whole-ish steps for a mechanical feel
+                let step = Math.max(0.01, Math.floor((targetAC - displayedAC[plan]) * 0.01));
+                displayedAC[plan] += step;
+                if (displayedAC[plan] > targetAC) displayedAC[plan] = targetAC;
+            }
 
-            // Update per-plan element if exists
             const el = document.getElementById(key);
             if (el) {
                 const newValue = displayedAC[plan].toFixed(2) + ' ACU';
                 if (el.textContent !== newValue) {
-                    el.classList.add('value-pulse');
-                    setTimeout(() => el.classList.remove('value-pulse'), 400);
                     el.textContent = newValue;
+                    el.classList.add('value-pulse'); // subtle machine pulse
+                    setTimeout(() => el.classList.remove('value-pulse'), 150);
                 }
             }
+
+            // Save accumulated AC
+            localStorage.setItem(key, displayedAC[plan].toFixed(2));
         }
     });
 }
