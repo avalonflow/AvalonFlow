@@ -64,7 +64,7 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-        /* ---------- Sidebar ---------- */
+                /* ---------- Sidebar ---------- */
         #sidebar {
             position: fixed;
             top: 0;
@@ -78,33 +78,23 @@
             transform: translateX(-100%);
             transition: transform 0.3s ease;
         }
-
         #sidebar.open { transform: translateX(0); }
-
-        #sidebar h2 { color: #6b2cd8; margin-top: 0; }
-
+        #sidebar h2{
+font-size:22px;
+margin-bottom:20px;
+color:#a78bfa;
+}
         #sidebar button {
             width: 100%;
             margin: 12px 0;
             padding: 12px;
             border: none;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             color: #fff;
             font-size: 16px;
         }
 
-        /* ---------- Overlay ---------- */
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 4;
-            display: none;
-        }
-
-        #overlay.active { display: block; }
 
         /* ---------- Content ---------- */
         #content {
@@ -126,7 +116,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         }
 
-        /* ---------- Menu Button ---------- */
+                /* ---------- Menu Button ---------- */
         #menuBtn {
             position: fixed;
             top: 20px;
@@ -137,7 +127,12 @@
             color: #fff;
             padding: 12px 14px;
             border-radius: 10px;
-        }
+}
+
+/* move button when sidebar opens */
+#menuBtn.shift{
+left:300px;
+}
 
         /* ---------- Footer ---------- */
         footer {
@@ -347,14 +342,23 @@
         }
 
         setInterval(particle, 800);
-
+        /* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
+const content = document.getElementById('content');
 
-        function toggleSidebar() {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
+const menuBtn = document.getElementById('menuBtn');
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menuBtn');
+
+    sidebar.classList.toggle('open');
+    menuBtn.classList.toggle('shift');
+}
+
+function navigateTo(page){
+    window.location.href = page;
+}
 
         function logout() {
             window.location.href = "https://profile-login.avalonflow.site";
