@@ -30,6 +30,10 @@ color:white;
 overflow-x:hidden;
 }
 
+html, body {
+    height: 100%;
+}
+
 /* ---------- Cyber Grid Background ---------- */
 
 body::before{
@@ -152,10 +156,8 @@ left:300px;
     max-width: 1400px;
     margin: auto;
 
-    padding: 100px 40px 40px 40px; /* smaller bottom padding so cards stop above footer */
-    
-    /* allow natural height and scrolling */
-    min-height: auto;
+    padding: 100px 40px 120px 40px; /* extra bottom padding for footer */
+    min-height: 100vh; /* ensures content fills the screen even if short */
 }
 
 /* ---------- Glass Cards ---------- */
@@ -334,10 +336,9 @@ font-weight:600;
         }
 
 @media (max-width:768px){
-
-#content{
-grid-template-columns:1fr;
-padding:18px;
+    #content {
+        padding: 100px 18px 140px 18px; /* extra space for mobile */
+    }
 }
 
 .metric-card{
