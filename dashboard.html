@@ -82,40 +82,33 @@ letter-spacing:1px;
 color:#a78bfa;
 }
 
-/* ---------- Sidebar ---------- */
 
-#sidebar{
-position:fixed;
-top:70px;
-left:-260px;
-width:240px;
-bottom:0;
-background:rgba(12,12,20,0.85);
-backdrop-filter:blur(16px);
-border-right:1px solid rgba(255,255,255,0.05);
-padding:25px;
-transition:0.35s;
-}
-
-#sidebar button{
-width:100%;
-margin:10px 0;
-padding:12px;
-border-radius:10px;
-border:none;
-background:rgba(255,255,255,0.05);
-color:white;
-transition:0.3s;
-}
-
-#sidebar button:hover{
-background:#6b2cd8;
-transform:translateX(6px);
-}
-
-#sidebar.open{
-left:0;
-}
+        /* ---------- Sidebar ---------- */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 5;
+            padding: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        #sidebar.open { transform: translateX(0); }
+        #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+        #sidebar button {
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 16px;
+        }
 
 /* ---------- Menu Button ---------- */
 
@@ -145,10 +138,15 @@ background:#6b2cd8;
 
 /* ---------- Content Grid ---------- */
 
-#content{
-margin-left:0;
-margin-top:90px;
-padding:30px;
+
+
+        #content {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            margin: auto;
+            padding-bottom: 80px;
+        }
 
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -363,8 +361,8 @@ font-size:38px;
     <!-- Dashboard Notification -->
     <div id="dashboardNotification" class="notification-bar"></div>
 
-    <div id="topbar">
-<h1>AVALONFLOW CONTROL PANEL</h1>
+        <div id="topbar">
+        <h2>AvalonFlow</h2>
 </div>
 
 <div id="sidebar">
