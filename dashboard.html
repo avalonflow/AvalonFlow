@@ -76,13 +76,19 @@ z-index:-1;
 }
 
 /* ---------- Topbar Title (scrolls with content) ---------- */
-#topbarTitle {
-    position: relative;            /* scrolls with page */
-    display: flex;
-    align-items: center;
+#topbar {
+    position: relative;          /* scrolls with page instead of being fixed */
+    top: 0;
+    left: 70px;                  /* keeps horizontal offset from menu button */
+    width: calc(100% - 70px);    /* full width minus offset */
     height: 60px;
-    padding-left: 20px;
-    pointer-events: auto;          /* allow interaction */
+
+    background: rgba(10,10,18,0.7);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    z-index: 20;
+
+    pointer-events: auto;        /* allow clicks and interactions */
 }
 
 #topbarTitle h2 {
