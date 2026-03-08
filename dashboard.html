@@ -111,17 +111,14 @@ left:300px;
 }
 
 /* ---------- Content Grid ---------- */
-
-#content{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:24px;
-
-max-width:1400px;
-margin:auto;
-
-padding:100px 24px 120px 24px;
-min-height:100vh;
+#content {
+  max-width: 1400px;         /* limits width for large screens */
+  margin: auto;              /* centers horizontally */
+  padding: 100px 24px 120px 24px; /* top, sides, bottom */
+  min-height: 100vh;         /* full viewport height */
+  display: flex;
+  flex-direction: column;    /* stack metric rows vertically */
+  gap: 24px;                 /* spacing between dashboard title and rows */
 }
 
 /* ---------- Glass Cards ---------- */
@@ -168,41 +165,54 @@ linear-gradient(#000 0 0);
 opacity:0.25;
 }
 
-/* ---------- Hero Metric ---------- */
-
-.metric-card{
-grid-column:span 2;
-text-align:center;
+/* ---------- Dashboard Title ---------- */
+.dashboard-title {
+  grid-column: 1 / -1; /* full width if you were using grid */
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-.metric-card h2{
-font-size:16px;
-color:#aaa;
-}
-
+/* ---------- Metric Row Flex Container ---------- */
 .metric-row {
   display: flex;
   gap: 24px;
-  flex-wrap: wrap; /* allows wrapping on small screens */
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
 }
 
-.metric-row .glass-card {
-  flex: 1 1 260px; /* grow/shrink, min 260px */
+/* ---------- Hero Card (Total ACU) ---------- */
+.hero-card {
+  flex: 2 1 400px; /* larger than stat cards, flexible */
+  min-width: 260px;
+  text-align: center;
 }
 
-#totalACU{
-font-size:52px;
-font-weight:700;
-color:#00f2fe;
-text-shadow:0 0 25px rgba(0,242,254,0.8);
+.hero-card h2 {
+  font-size: clamp(32px, 4vw, 52px); /* scales responsively */
+  color: #00f2fe;
+  font-weight: 700;
+  text-shadow: 0 0 25px rgba(0,242,254,0.8);
+  margin: 0;
 }
 
 /* ---------- Small Stat Cards ---------- */
+.stat-card {
+  flex: 1 1 180px; /* smaller than hero, flexible width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 
-.stat{
-font-size:28px;
-font-weight:600;
-color:#a78bfa;
+.stat-card h3 {
+  color: #a78bfa; 
+  margin-bottom: 8px;
+}
+
+.stat {
+  font-size: 28px;
+  font-weight: 600;
+  color: #a78bfa;
 }
 
 /* ---------- Buttons ---------- */
@@ -367,52 +377,38 @@ font-size:clamp(32px,6vw,52px);
 <div id="content">
 
   <!-- Dashboard Title -->
-  <div class="glass-card metric-card">
+  <div class="glass-card metric-card dashboard-title">
     <h3>My Dashboard</h3>
   </div>
 
   <!-- ======= Group 1: Top Metrics ======= -->
   <div class="metric-row">
-    <div class="glass-card metric-card">
+    <!-- Hero Card -->
+    <div class="glass-card hero-card">
       <h2>Total ACU Balance</h2>
       <div id="totalACU">0.00 ACU</div>
     </div>
 
-    <div class="glass-card">
+    <!-- Small Stat Cards -->
+    <div class="glass-card stat-card">
       <h3>Active Plans</h3>
       <div class="stat">3</div>
     </div>
 
-    <div class="glass-card">
+    <div class="glass-card stat-card">
       <h3>Cycle Duration</h3>
       <div class="stat">12h</div>
     </div>
   </div>
 
-  <!-- ======= Group 2: Action / Info Cards ======= -->
+  <!-- ======= Group 2: Secondary Cards ======= -->
   <div class="metric-row">
-    <div class="glass-card">
+    <!-- Only Cycle Progress remains -->
+    <div class="glass-card secondary-card">
       <h3>Cycle Progress</h3>
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
       </div>
-    </div>
-
-    <div class="glass-card">
-      <h3>Flow Engine</h3>
-      <a href="https://linkly.link/2WFYR" target="_blank" class="button">
-        Launch Engine
-      </a>
-    </div>
-
-    <div class="glass-card">
-      <h3>Your Path</h3>
-      <ol>
-        <li>Explore ecosystem</li>
-        <li>Understand plans</li>
-        <li>Choose alignment</li>
-        <li>Activate flow</li>
-      </ol>
     </div>
   </div>
 
