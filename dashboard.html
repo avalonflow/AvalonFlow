@@ -451,19 +451,9 @@ const menuBtn = document.getElementById('menuBtn');
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menuBtn');
-    const topbar = document.getElementById('topbar');
 
     sidebar.classList.toggle('open');
     menuBtn.classList.toggle('shift');
-
-    if (sidebar.classList.contains('open')) {
-        topbar.style.left = '300px';            // match sidebar width
-        topbar.style.width = 'calc(100% - 300px)';
-    } else {
-        topbar.style.left = '70px';             // default distance from menu button
-        topbar.style.width = 'calc(100% - 70px)';
-    }
-}
 
         function navigateTo(page){
             window.location.href = page;
