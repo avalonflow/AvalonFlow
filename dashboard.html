@@ -62,22 +62,15 @@ z-index:-1;
 /* ---------- Topbar ---------- */
 
 #topbar {
-    position: fixed;              /* stays fixed at the top */
-    top: 0;
-    left: 70px;                   /* starts right after menu button */
-    width: calc(100% - 70px);     /* fills the rest of the screen */
-    
-    display: flex;
-    align-items: center;          /* vertical centering */
-    gap: 15px;
-
-    padding: 0 20px;              /* horizontal padding inside topbar */
-    height: 60px;                 /* same height as before */
-    
+    position: relative;
+    width: 100%;
     background: rgba(10,10,18,0.7);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    z-index: 20;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 #topbar h2 {
