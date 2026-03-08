@@ -135,10 +135,13 @@ background:rgba(255,255,255,0.04);
 backdrop-filter:blur(14px);
 border-radius:18px;
 padding:28px;
-
 border:1px solid rgba(255,255,255,0.05);
+}
 
-        .panel h3 { color: #6b2cd8; margin-top: 0;
+.panel h3 {
+color:#6b2cd8;
+margin-top:0;
+}
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.6),
@@ -342,8 +345,6 @@ grid-column:span 1;
 #totalACU{
 font-size:38px;
 }
-
-}
     </style>
 </head>
 
@@ -357,7 +358,6 @@ font-size:38px;
         <!-- Topbar -->
 <div id="dashboard" class="panel">
     <h3>My Dashboard</h3>
-    </div>
 </div>
 
 <div id="sidebar">
@@ -454,10 +454,11 @@ function toggleSidebar() {
 
     sidebar.classList.toggle('open');
     menuBtn.classList.toggle('shift');
+}
 
-        function navigateTo(page){
-            window.location.href = page;
-        }
+function navigateTo(page){
+    window.location.href = page;
+}
         function logout(){
             localStorage.removeItem("avalon_logged_in");
             localStorage.removeItem("avalon_seen_dashboard");
