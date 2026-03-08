@@ -58,17 +58,12 @@ z-index:-1;
 /* ---------- Topbar ---------- */
 
 #topbar{
-position:fixed;
-top:0;
-left:0;
-right:0;
-height:70px;
-
 display:flex;
 align-items:center;
 gap:15px;
-
-padding:0 20px;
+padding-left:80px;
+padding-right:20px;
+}
 
 background:rgba(10,10,18,0.7);
 backdrop-filter:blur(14px);
@@ -76,10 +71,11 @@ border-bottom:1px solid rgba(255,255,255,0.06);
 z-index:20;
 }
 
-#topbar h1{
-font-size:18px;
+#topbar h2{
+font-size:20px;
 letter-spacing:1px;
 color:#a78bfa;
+font-weight:700;
 }
 
 
@@ -129,35 +125,30 @@ border-radius:10px;
 
 backdrop-filter:blur(10px);
 cursor:pointer;
-transition:0.3s;
+transition:0.35s;
 }
 
-#menuBtn:hover{
-background:#6b2cd8;
+/* move button when sidebar opens */
+#menuBtn.shift{
+left:300px;
 }
 
 /* ---------- Content Grid ---------- */
 
 
 
-        #content {
-            position: relative;
-            z-index: 1;
-            padding: 40px;
-            margin: auto;
-            padding-bottom: 80px;
-        }
+        #content{
+position:relative;
+z-index:1;
 
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 gap:28px;
 
 max-width:1400px;
-transition:0.35s;
-}
+margin:auto;
 
-#content.shift{
-margin-left:260px;
+padding:100px 40px 120px 40px;
 }
 
 /* ---------- Glass Cards ---------- */
@@ -450,9 +441,11 @@ Launch Engine
         const sidebar = document.getElementById('sidebar');
 const content = document.getElementById('content');
 
+const menuBtn = document.getElementById('menuBtn');
+
 function toggleSidebar(){
 sidebar.classList.toggle('open');
-content.classList.toggle('hide');
+menuBtn.classList.toggle('shift');
 }
 
         function navigateTo(page){
