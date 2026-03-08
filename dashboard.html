@@ -112,20 +112,16 @@ left:300px;
 
 /* ---------- Content Grid ---------- */
 
-#content {
-    position: relative;
-    z-index: 1;
+#content{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:24px;
 
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    align-items: stretch;
-    gap: 28px;
+max-width:1400px;
+margin:auto;
 
-    max-width: 1400px;
-    margin: auto;
-
-    padding: 100px 40px 120px 40px; /* extra bottom padding for footer */
-    min-height: 100vh; /* ensures content fills the screen even if short */
+padding:100px 24px 120px 24px;
+min-height:100vh;
 }
 
 /* ---------- Glass Cards ---------- */
@@ -146,15 +142,14 @@ position:relative;
 overflow:hidden;
 }
 
-.panel h3 {
-color:#6b2cd8;
-margin-top:0;
-}
-
 .glass-card:hover{
 transform:translateY(-6px);
-box-shadow:
-0 20px 60px rgba(107,44,216,0.45);
+box-shadow:0 20px 60px rgba(107,44,216,0.45);
+}
+
+.glass-card h3{
+color:#6b2cd8;
+margin-top:0;
 }
 
 /* ---------- Neon Border Effect ---------- */
@@ -333,6 +328,7 @@ font-weight:600;
 
 .metric-card{
 grid-column:span 2;
+text-align:center;
 }
 
 @media (max-width:900px){
@@ -342,7 +338,7 @@ grid-column:span 1;
 }
 
 #totalACU{
-font-size:38px;
+font-size:clamp(32px,6vw,52px);
 }
     </style>
 </head>
@@ -356,8 +352,7 @@ font-size:38px;
 
         <!-- Topbar -->
 <div id="content">
-
-<div class="panel">
+<div class="glass-card metric-card">
 <h3>My Dashboard</h3>
 </div>
 
