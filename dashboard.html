@@ -62,13 +62,18 @@ z-index:-1;
 /* ---------- Topbar ---------- */
 
 #topbar {
+    position: fixed;              /* stays fixed at the top */
+    top: 0;
+    left: 70px;                   /* starts right after menu button */
+    width: calc(100% - 70px);     /* fills the rest of the screen */
+    
     display: flex;
-    align-items: center;
+    align-items: center;          /* vertical centering */
     gap: 15px;
-    padding-left: 80px;
-    padding-right: 20px;
 
-    height: 60px; /* same vertical alignment reference */
+    padding: 0 20px;              /* horizontal padding inside topbar */
+    height: 60px;                 /* same height as before */
+    
     background: rgba(10,10,18,0.7);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -76,11 +81,12 @@ z-index:-1;
 }
 
 #topbar h2 {
-    font-size: 28px; /* slightly bigger */
+    font-size: 28px;
     letter-spacing: 1.5px;
     color: #a78bfa;
     font-weight: 800;
-    margin: 0;
+    margin: 0;                    /* remove default margin */
+    padding-left: 10px;           /* optional small gap from left edge */
 }
 
 
