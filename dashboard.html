@@ -320,12 +320,6 @@ font-weight:600;
             100% { left: 100%; }
         }
 
-@media (max-width:768px){
-    #content {
-        padding: 100px 18px 140px 18px; /* extra space for mobile */
-    }
-}
-
 .metric-card{
 grid-column:span 2;
 text-align:center;
@@ -350,12 +344,6 @@ font-size:clamp(32px,6vw,52px);
     <!-- Dashboard Notification -->
     <div id="dashboardNotification" class="notification-bar"></div>
 
-        <!-- Topbar -->
-<div id="content">
-<div class="glass-card metric-card">
-<h3>My Dashboard</h3>
-</div>
-
 <div id="sidebar">
 <h2>AvalonFlow</h2>
 <button onclick="navigateTo('/dashboard')">Dashboard</button>
@@ -368,6 +356,8 @@ font-size:clamp(32px,6vw,52px);
 
 <div id="content">
 
+<div class="glass-card metric-card">
+<h3>My Dashboard</h3>
 <div class="glass-card metric-card">
 <h2>Total ACU Balance</h2>
 <div id="totalACU">0.00 ACU</div>
