@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -18,7 +18,7 @@
       "logo": "https://avalonFlow.site/favicon.png"
     }
 </script>
-    
+
     <style>
         /* ---------- Base ---------- */
         body {
@@ -53,7 +53,7 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-        /* ---------- Sidebar ---------- */
+                /* ---------- Sidebar ---------- */
         #sidebar {
             position: fixed;
             top: 0;
@@ -68,7 +68,11 @@
             transition: transform 0.3s ease;
         }
         #sidebar.open { transform: translateX(0); }
-        #sidebar h2 { color: #6b2cd8; margin-top: 0; }
+        #sidebar h2{
+font-size:22px;
+margin-bottom:20px;
+color:#a78bfa;
+}
         #sidebar button {
             width: 100%;
             margin: 12px 0;
@@ -80,16 +84,6 @@
             font-size: 16px;
         }
 
-        /* ---------- Overlay ---------- */
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            z-index: 4;
-            display: none;
-        }
-        #overlay.active { display: block; }
 
         /* ---------- Content ---------- */
         #content {
@@ -124,7 +118,7 @@
             font-size: 16px;
         }
 
-        /* ---------- Menu Button ---------- */
+                /* ---------- Menu Button ---------- */
         #menuBtn {
             position: fixed;
             top: 20px;
@@ -135,7 +129,12 @@
             color: #fff;
             padding: 12px 14px;
             border-radius: 10px;
-        }
+}
+
+/* move button when sidebar opens */
+#menuBtn.shift{
+left:300px;
+}
 
         /* ---------- Footer ---------- */
         footer {
@@ -217,6 +216,78 @@
         .video-controls input[type=range] {
             width: 100px;
         }
+
+/* ---------- Card Interactivity & Tiered Web3 Styling ---------- */
+.interactive-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 15px 35px rgba(107,44,216,0.45);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+.interactive-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(107,44,216,0.6);
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.badge {
+    background: linear-gradient(90deg,#6b2cd8,#9b59b6);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(107,44,216,0.7);
+}
+.summary { margin-bottom: 6px; }
+.details { display: none; margin-bottom: 6px; }
+.toggle-btn {
+    background: #6b2cd8;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+.toggle-btn:hover { background: #9b59b6; }
+
+/* ---------- Scroll-trigger Fade-in ---------- */
+.interactive-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.interactive-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- Mini TV Overlay ---------- */
+.video-container { position: relative; border-radius: 16px; overflow: hidden; }
+.video-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(107,44,216,0.25);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(107,44,216,0.5);
+}
     </style>
 </head>
 
@@ -227,7 +298,7 @@
     <!-- Ecosystem Notification -->
     <div id="ecosystemNotification" class="notification-bar"></div>
 
-    <div id="sidebar">
+        <div id="sidebar">
         <h2>AvalonFlow</h2>
         <button onclick="navigateTo('/dashboard')">Dashboard</button>
         <button onclick="navigateTo('/ecosystem')">Ecosystem</button>
@@ -237,50 +308,71 @@
         <button onclick="logout()">Logout</button>
     </div>
 
-    <div id="overlay" onclick="toggleSidebar()"></div>
-
     <div id="content">
-        <!-- Ecosystem Panel -->
-        <div id="ecosystem" class="panel">
-            <h3>Ecosystem Overview</h3>
+        <!-- ---------- Ecosystem Panel (Futuristic Web3 Upgrade) ---------- -->
+<div id="ecosystem" class="panel">
+    <h3>Ecosystem Overview</h3>
 
-            <div class="glass-card">
-                <strong>🪽 The Logical Wing</strong><br>
-                <em>Where Structure Meets Intelligence</em>
-                <p>
-                    Represents the operational core — powered by a hybrid intelligence
-                    infrastructure that combines reliable systems with thoughtful human
-                    reasoning, enabling steady and sustainable progress.
-                </p>
-                <blockquote>“When logic finds balance, systems begin to think — and life begins to flow.”</blockquote>
-            </div>
-
-            <!-- Mini TV Walkthrough -->
-            <p style="text-align:center; font-weight:bold; margin-top:20px;">
-                View a walkthrough snapshot of the hybrid mechanisms in motion
-            </p>
-            <div class="video-container">
-                <video id="ecosystemVideo" controls controlsList="nodownload noplaybackrate">
-                    <source src="assets/videos/VID_20250912_055134.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-                <div class="video-controls">
-                    <label for="volumeControl" style="margin-right:6px;">Volume:</label>
-                    <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="1">
-                </div>
-            </div>
-
-            <div class="glass-card">
-                <strong>💫 The Emotional Wing</strong><br>
-                <em>The Living Core of AvalonFlow</em>
-                <p>
-                    Supports stability, rhythm, and long-term well-being — ensuring
-                    progress translates into calm, clarity, and meaningful rewards.
-                </p>
-                <blockquote>• Each wing contributes on how the branches impact stability across work, growth, and life.</blockquote>
-            </div>
-        </div>
+    <!-- Logical Wing Card -->
+<div class="glass-card interactive-card">
+    <div class="card-header">
+        <strong>🪽 Logical Wing</strong>
+        <span class="badge">Hybrid AI</span>
     </div>
+    <em>Where Structure Meets Intelligence</em>
+    <p class="summary">
+        Operational core powered by hybrid intelligence systems, combining reliable automation with human reasoning.
+    </p>
+    <p class="details">
+        Enables steady progress, risk management, and dynamic scalability. Metrics include uptime, processing load, and logical throughput. 
+    </p>
+    <blockquote style="display: none;">
+        “When logic finds balance, systems begin to think — and life begins to flow.”
+    </blockquote>
+    <button class="toggle-btn">Read More</button>
+</div>
+
+            <!-- Mini TV Walkthrough with Live Metrics -->
+<p style="text-align:center; font-weight:bold; margin-top:20px;">
+    Interactive walkthrough: hybrid mechanisms in motion
+</p>
+
+<div class="video-container">
+    <video id="ecosystemVideo" controls controlsList="nodownload noplaybackrate" loop muted autoplay>
+        <source src="assets/videos/VID_20250912_055134.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Live Metrics Overlay -->
+    <div class="video-overlay">
+        <span class="video-tag" id="liveMetrics">Live Metrics: 92% Uptime</span>
+    </div>
+
+    <div class="video-controls">
+        <label for="volumeControl" style="margin-right:6px;">Volume:</label>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="1">
+    </div>
+</div>
+
+            <!-- Emotional Wing Card -->
+<div class="glass-card interactive-card">
+    <div class="card-header">
+        <strong>💫 Emotional Wing</strong>
+        <span class="badge">Stability</span>
+    </div>
+    <em>The Living Core of AvalonFlow</em>
+    <p class="summary">
+        Supports long-term clarity, calm, and meaningful rewards for the ecosystem.
+    </p>
+    <p class="details">
+        Ensures work, growth, and life are balanced. Contributes to resilience, engagement, and systemic harmony.
+    </p>
+    <blockquote style="display: none;">
+        “Each wing contributes to stability across work, growth, and life.” 
+    </blockquote>
+    <button class="toggle-btn">Read More</button>
+</div>
+</div>
 
     <!-- Sticky Footer -->
     <footer>
@@ -305,22 +397,48 @@
         }
         setInterval(particle,800);
 
-        /* Sidebar toggle */
+                /* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        function toggleSidebar(){
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-        function navigateTo(page){
-            window.location.href = page;
-        }
+const content = document.getElementById('content');
 
-        function logout(){
-            localStorage.removeItem("avalon_logged_in");
-            localStorage.removeItem("avalon_seen_ecosystem");
-            window.location.href = 'https://profile-login.avalonflow.site';
+const menuBtn = document.getElementById('menuBtn');
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menuBtn');
+
+    sidebar.classList.toggle('open');
+    menuBtn.classList.toggle('shift');
+}
+
+function navigateTo(page){
+    window.location.href = page;
+}
+
+/* ---------- Toggle Card Details ---------- */
+document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const blockquote = btn.parentElement.querySelector('blockquote');
+        if (blockquote) {
+            if (blockquote.style.display === 'block') {
+                blockquote.style.display = 'none';
+                btn.textContent = 'Read More';
+            } else {
+                blockquote.style.display = 'block';
+                btn.textContent = 'Read Less';
+            }
         }
+    });
+});
+
+/* ---------- Scroll-trigger Fade-in ---------- */
+const cards = document.querySelectorAll('.interactive-card');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.2 });
+cards.forEach(card => observer.observe(card));
 
         /* Ecosystem Notification (Dashboard style with shimmer) */
         window.addEventListener("load", () => {
@@ -341,31 +459,28 @@
             setTimeout(()=>notification.classList.remove("show"), 3300);
         });
 
-        /* Video Volume Control */
-        const video = document.getElementById("ecosystemVideo");
-        const volumeControl = document.getElementById("volumeControl");
-        volumeControl.addEventListener("input", e => {
-            video.volume = e.target.value;
-        });
+        // Video Volume Control
+    const video = document.getElementById("ecosystemVideo");
+    const volumeControl = document.getElementById("volumeControl");
+    volumeControl.addEventListener("input", e => {
+        video.volume = e.target.value;
+    });
 
-        /* Auto Logout After 8 Hours of Inactivity */
-        let logoutTimer;
-        const logoutTime = 8 * 60 * 60 * 1000; // 8 hours
+    // Live Metrics Update
+    const metricsEl = document.getElementById('liveMetrics');
 
-        function resetLogoutTimer() {
-            clearTimeout(logoutTimer);
-            logoutTimer = setTimeout(()=> {
-                alert("No activity detected for 8 hours. Logging out.");
-                logout();
-            }, logoutTime);
-        }
+    function updateMetrics() {
+        // Simulate uptime 90–100%
+        const uptime = (90 + Math.random() * 10).toFixed(1);
 
-        ['click','mousemove','keydown','scroll','touchstart'].forEach(evt => {
-            document.addEventListener(evt, resetLogoutTimer);
-        });
+        // Simulate processing load 40–80%
+        const load = (40 + Math.random() * 40).toFixed(0);
 
-        resetLogoutTimer(); // initialize
+        metricsEl.textContent = `Live Metrics: ${uptime}% Uptime • Load: ${load}%`;
+    }
+
+    // Update every 1 second
+    setInterval(updateMetrics, 1000);
     </script>
 </body>
-    </html>
-
+  </html>
