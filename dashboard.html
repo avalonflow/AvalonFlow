@@ -497,10 +497,15 @@ const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
 function updateDashboardProgress() {
     const now = Date.now();
 
-    // Use "premium" as reference plan for dashboard progress
+    // Use "premium" as reference plan
     const planKey = "premium";
-    const startTime = unlockTimes[planKey] || (trialActive ? trialStart : now);
-    const elapsed = now - startTime;
+    let startTime = unlockTimes[planKey] || (trialActive ? trialStart : now);
+    let elapsed = now - startTime;
+
+    // Stop progress bar if trial expired (like ACU)
+    if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
+        elapsed = TRIAL_MS; // clamp to trial duration
+    }
 
     const cycleElapsed = elapsed % fillDuration;
     const timeProgress = (cycleElapsed / fillDuration) * 100;
@@ -515,16 +520,15 @@ updateDashboardProgress(); // run once immediately
 // ---------- Read Activated Credits (with 12-hour cycle growth) ----------
 function readActivatedCredits() {
     const now = Date.now();
-    const cycleMs = 12 * 60 * 60 * 1000; // 12 hours
+    const cycleMs = 12 * 60 * 60 * 1000;
 
     ALL_PLANS.forEach(plan => {
 
-        // Lock plan if trial expired, but keep existing ACU
+        // Lock plan if trial expired but keep accumulated ACU
         if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
             unlockedPlans[plan] = false;
         }
 
-        // Only calculate new ACU if plan is unlocked
         if (unlockedPlans[plan] || (trialStart && now - trialStart < TRIAL_MS)) {
             const key = plan + 'AC';
             const stored = parseFloat(localStorage.getItem(key)) || 0;
@@ -538,7 +542,6 @@ function readActivatedCredits() {
 
             // ---------- Machine-style ticking ----------
             if (displayedAC[plan] < targetAC) {
-                // Increment in small whole-ish steps for a mechanical feel
                 let step = Math.max(0.01, Math.floor((targetAC - displayedAC[plan]) * 0.01));
                 displayedAC[plan] += step;
                 if (displayedAC[plan] > targetAC) displayedAC[plan] = targetAC;
@@ -549,12 +552,11 @@ function readActivatedCredits() {
                 const newValue = displayedAC[plan].toFixed(2) + ' ACU';
                 if (el.textContent !== newValue) {
                     el.textContent = newValue;
-                    el.classList.add('value-pulse'); // subtle machine pulse
+                    el.classList.add('value-pulse'); // subtle heartbeat 💓
                     setTimeout(() => el.classList.remove('value-pulse'), 150);
                 }
             }
 
-            // Save accumulated AC
             localStorage.setItem(key, displayedAC[plan].toFixed(2));
         }
     });
@@ -562,26 +564,20 @@ function readActivatedCredits() {
 
 // ---------- Update Total ACU (instant from localStorage) ----------
 function updateTotalACU() {
-    const total = ALL_PLANS.reduce((sum, plan) => {
-        const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
-        const startTime = unlockTimes[plan] || (trialActive ? trialStart : Date.now());
-        const elapsed = Date.now() - startTime;
-        const cycleMs = 12 * 60 * 60 * 1000;
-        const cycles = Math.floor(elapsed / cycleMs);
-        const cycleProgress = (elapsed % cycleMs) / cycleMs;
-        const growthAC = cycles * plans[plan].per12h + cycleProgress * plans[plan].per12h;
-
-        const value = Math.max(stored, growthAC);
-        return (unlockedPlans[plan] || trialActive) ? sum + value : sum;
-    }, 0);
-
+    const total = ALL_PLANS.reduce((sum, plan) => sum + displayedAC[plan], 0);
     const el = document.getElementById('totalACU');
-    const prevValue = parseFloat(el.textContent) || 0;
 
-    if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();
+    if (displayedTotalAC < total) {
+        let step = Math.max(0.01, Math.floor((total - displayedTotalAC) * 0.01));
+        displayedTotalAC += step;
+        if (displayedTotalAC > total) displayedTotalAC = total;
 
-    el.textContent = total.toFixed(2) + ' ACU';
-    localStorage.setItem('totalACU', total.toFixed(2));
+        el.textContent = displayedTotalAC.toFixed(2) + ' ACU';
+        el.classList.add('value-pulse'); // 💓 pulse like elder twin
+        setTimeout(() => el.classList.remove('value-pulse'), 150);
+    }
+
+    localStorage.setItem('totalACU', displayedTotalAC.toFixed(2));
 }
 
 // ---------- Main Update ----------
