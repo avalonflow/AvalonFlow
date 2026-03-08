@@ -21,15 +21,186 @@
     
     <style>
         /* ---------- Base ---------- */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #0d0d0d;
-            color: #fff;
-            overflow-x: hidden;
-        }
-        button { cursor: pointer; }
-        a { color: inherit; text-decoration: none; }
+
+body{
+font-family: Inter, system-ui, sans-serif;
+margin:0;
+background:#06070c;
+color:white;
+overflow-x:hidden;
+}
+
+/* ---------- Cyber Grid Background ---------- */
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+background-size:40px 40px;
+z-index:-1;
+}
+
+/* Aurora Glow */
+
+body::after{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 20% 20%, rgba(107,44,216,0.25), transparent 40%),
+radial-gradient(circle at 80% 60%, rgba(0,255,255,0.15), transparent 40%);
+z-index:-1;
+}
+
+/* ---------- Topbar ---------- */
+
+#topbar{
+position:fixed;
+top:0;
+left:0;
+right:0;
+height:70px;
+display:flex;
+align-items:center;
+padding:0 30px;
+background:rgba(10,10,18,0.7);
+backdrop-filter:blur(14px);
+border-bottom:1px solid rgba(255,255,255,0.06);
+z-index:20;
+}
+
+#topbar h1{
+font-size:18px;
+letter-spacing:1px;
+color:#a78bfa;
+}
+
+/* ---------- Sidebar ---------- */
+
+#sidebar{
+position:fixed;
+top:70px;
+left:0;
+width:240px;
+bottom:0;
+background:rgba(12,12,20,0.85);
+backdrop-filter:blur(16px);
+border-right:1px solid rgba(255,255,255,0.05);
+padding:25px;
+}
+
+#sidebar button{
+width:100%;
+margin:10px 0;
+padding:12px;
+border-radius:10px;
+border:none;
+background:rgba(255,255,255,0.05);
+color:white;
+transition:0.3s;
+}
+
+#sidebar button:hover{
+background:#6b2cd8;
+transform:translateX(6px);
+}
+
+/* ---------- Content Grid ---------- */
+
+#content{
+margin-left:260px;
+margin-top:90px;
+padding:30px;
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:28px;
+
+max-width:1400px;
+}
+
+/* ---------- Glass Cards ---------- */
+
+.glass-card{
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(14px);
+border-radius:18px;
+padding:28px;
+
+border:1px solid rgba(255,255,255,0.05);
+
+box-shadow:
+0 10px 30px rgba(0,0,0,0.6),
+inset 0 0 30px rgba(255,255,255,0.03);
+
+transition:0.35s;
+position:relative;
+overflow:hidden;
+}
+
+.glass-card:hover{
+transform:translateY(-6px);
+box-shadow:
+0 20px 60px rgba(107,44,216,0.45);
+}
+
+/* ---------- Neon Border Effect ---------- */
+
+.glass-card::before{
+content:"";
+position:absolute;
+inset:0;
+border-radius:18px;
+padding:1px;
+background:linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
+-webkit-mask:
+linear-gradient(#000 0 0) content-box,
+linear-gradient(#000 0 0);
+-webkit-mask-composite:xor;
+opacity:0.25;
+}
+
+/* ---------- Hero Metric ---------- */
+
+.metric-card{
+grid-column:span 2;
+text-align:center;
+}
+
+.metric-card h2{
+font-size:16px;
+color:#aaa;
+}
+
+#totalACU{
+font-size:52px;
+font-weight:700;
+color:#00f2fe;
+text-shadow:0 0 25px rgba(0,242,254,0.8);
+}
+
+/* ---------- Small Stat Cards ---------- */
+
+.stat{
+font-size:28px;
+font-weight:600;
+color:#a78bfa;
+}
+
+/* ---------- Buttons ---------- */
+
+.button{
+display:inline-block;
+background:linear-gradient(90deg,#6b2cd8,#00f2fe);
+border:none;
+border-radius:10px;
+padding:12px 20px;
+color:white;
+font-weight:600;
+}
 
         /* ---------- Floating Background ---------- */
         #floating-bg {
@@ -52,112 +223,7 @@
             50% { opacity: 1; }
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
-
-        /* ---------- Sidebar ---------- */
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100%;
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(14px);
-            z-index: 5;
-            padding: 25px;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-        }
-        #sidebar.open { transform: translateX(0); }
-        #sidebar h2 { color: #6b2cd8; margin-top: 0; margin-bottom: 30px; letter-spacing: 1px; }
-
-        #sidebar button {
-            width: 100%;
-            margin: 12px 0;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 16px;
-        }
-
-/* Shift content when sidebar is open */
-#content.shift {
-    margin-left: 280px;
-    transition: margin 0.3s ease;
-}
-
-        /* ---------- Overlay ---------- */
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            z-index: 4;
-            display: none;
-        }
-        #overlay.active { display: block; }
-
-        /* ---------- Content ---------- */
-        #content {
-    position: relative;      /* keep your original */
-    z-index: 1;              /* keep your original */
-    padding: 40px;
-    padding-bottom: 80px;    /* preserve bottom padding */
-    max-width: 1200px;       /* slightly wider than original 1100px */
-    margin: auto;
-
-    /* Grid layout for panels/cards */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-}
-
-        /* ---------- Panels & Glass Cards ---------- */
-        .panel, .glass-card {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 28px;
-    margin-bottom: 28px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.panel:hover, .glass-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(107,44,216,0.5);
-}
-.panel h3, .glass-card h4, .glass-card h2 {
-    color: #6b2cd8;
-    margin-top: 0;
-}
-
-        /* ---------- Buttons ---------- */
-        .button {
-            background: #6b2cd8;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            margin: 10px 0;
-            width: 100%;
-            font-size: 16px;
-        }
-
-        /* ---------- Menu Button ---------- */
-        #menuBtn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 6;
-            background: #6b2cd8;
-            border: none;
-            color: #fff;
-            padding: 12px 14px;
-            border-radius: 10px;
-        }
-
+
         /* ---------------- PROGRESS BAR ---------------- */
 .progress-bar {
     width: 100%;
@@ -191,26 +257,6 @@
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
 }
-
-#totalACU {
-    font-size: 2rem;
-    font-weight: 700;
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-.value-pulse {
-    animation: pulse 0.4s ease;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); color: #fff; }
-    50% { transform: scale(1.1); color: #00ffea; }
-    100% { transform: scale(1); color: #fff; }
-}
-
-        /* ---------- Fade ---------- */
-        .fade-out { opacity: 0; transition: opacity 0.8s; }
 
         /* ---------- Footer ---------- */
         footer {
@@ -260,55 +306,67 @@
     <!-- Dashboard Notification -->
     <div id="dashboardNotification" class="notification-bar"></div>
 
-    <div id="sidebar">
-        <h2>AvalonFlow</h2>
-        <button onclick="navigateTo('/dashboard')">Dashboard</button>
-        <button onclick="navigateTo('/ecosystem')">Ecosystem</button>
-        <button onclick="navigateTo('/plans')">Plans</button>
-        <button onclick="navigateTo('/rewards')">Rewards</button>
-        <button onclick="navigateTo('/support')">Support</button>
-        <button onclick="logout()">Logout</button>
-    </div>
+    <div id="topbar">
+<h1>AVALONFLOW CONTROL PANEL</h1>
+</div>
 
-    <div id="overlay" onclick="toggleSidebar()"></div>
+<div id="sidebar">
+<button onclick="navigateTo('/dashboard')">Dashboard</button>
+<button onclick="navigateTo('/ecosystem')">Ecosystem</button>
+<button onclick="navigateTo('/plans')">Plans</button>
+<button onclick="navigateTo('/rewards')">Rewards</button>
+<button onclick="navigateTo('/support')">Support</button>
+<button onclick="logout()">Logout</button>
+</div>
 
-    <div id="content">
-        <!-- Dashboard Panel -->
-        <div class="panel">
-            <h3>Welcome</h3>
+<div id="content">
 
-            <div class="glass-card">
-                <h4>Your Path Inside AvalonFlow</h4>
-                <ol style="line-height: 1.8; padding-left: 18px;">
-                    <li>Visit the Ecosystem</li>
-                    <li>Understand how the plans work</li>
-                    <li>Choose what aligns with you</li>
-                    <li>Explore when ready</li>
-                </ol>
-            </div>
+<div class="glass-card metric-card">
+<h2>Total ACU Balance</h2>
+<div id="totalACU">0.00 ACU</div>
+</div>
 
-<div id="acuDisplay" class="glass-card">
-    <h2>Total ACU Balance</h2>
-    <span id="totalACU">0.00 ACU</span>
-</div>
-  
-          <!-- Progress Bar -->
-            <div id="progressContainer">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-</div>
+<div class="glass-card">
+<h3>Cycle Progress</h3>
 
-            <div class="glass-card">
-                <a href="https://linkly.link/2WFYR" target="_blank" style="font-size: 18px; font-weight: bold;">
-                    ➡️ View Flow Engine
-                </a>
-                <p style="margin-top: 10px; font-size: 14px; opacity: 0.75;">
-                    <em>Optional reference</em>
-                </p>
-            </div>
-        </div>
-    </div>
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+</div>
+
+<div class="glass-card">
+<h3>Flow Engine</h3>
+
+<a href="https://linkly.link/2WFYR" target="_blank" class="button">
+Launch Engine
+</a>
+
+</div>
+
+<div class="glass-card">
+<h3>Your Path</h3>
+
+<ol>
+<li>Explore ecosystem</li>
+<li>Understand plans</li>
+<li>Choose alignment</li>
+<li>Activate flow</li>
+</ol>
+
+</div>
+
+<div class="glass-card">
+<h3>Active Plans</h3>
+<div class="stat">3</div>
+</div>
+
+<div class="glass-card">
+<h3>Cycle Duration</h3>
+<div class="stat">12h</div>
+</div>
+
+</div>
 
     <!-- Sticky Footer -->
     <footer>
