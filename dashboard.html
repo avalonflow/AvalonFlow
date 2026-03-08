@@ -130,18 +130,12 @@ left:300px;
 
 /* ---------- Glass Cards ---------- */
 
-.panel .glass-card{
+.glass-card{
 background:rgba(255,255,255,0.04);
 backdrop-filter:blur(14px);
 border-radius:18px;
 padding:28px;
 border:1px solid rgba(255,255,255,0.05);
-}
-
-.panel h3 {
-color:#6b2cd8;
-margin-top:0;
-}
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.6),
@@ -150,6 +144,11 @@ inset 0 0 30px rgba(255,255,255,0.03);
 transition:0.35s;
 position:relative;
 overflow:hidden;
+}
+
+.panel h3 {
+color:#6b2cd8;
+margin-top:0;
 }
 
 .glass-card:hover{
@@ -356,8 +355,10 @@ font-size:38px;
     <div id="dashboardNotification" class="notification-bar"></div>
 
         <!-- Topbar -->
-<div id="dashboard" class="panel">
-    <h3>My Dashboard</h3>
+<div id="content">
+
+<div class="panel">
+<h3>My Dashboard</h3>
 </div>
 
 <div id="sidebar">
