@@ -180,15 +180,17 @@ opacity:0.25;
 }
 
 /* ---------- Hero Card (Total ACU) ---------- */
-.metric-card{
-  text-align:center;
+.hero-card {
+  flex: 2 1 400px; /* larger than stat cards */
+  min-width: 260px;
+  text-align: center;
 }
 
 /* Total ACU title purple */
-.metric-card h2 {
+.hero-card h2 {
   color: #a78bfa; /* purple */
   font-size: 16px;
-  margin: 0 0 8px 0; /* optional spacing below title */
+  margin: 0 0 8px 0;
 }
 
 /* ---------- Small Stat Cards ---------- */
@@ -348,16 +350,11 @@ grid-column:span 1;
 }
 }
 
-#totalACU{
-  font-size:52px;
-  font-weight:700;
-  color:#00f2fe;
-  text-shadow:0 0 25px rgba(0,242,254,0.8);
-}
-
-/* Total ACU title purple override */
-.metric-card h2:first-of-type {
-  color: #a78bfa !important; /* purple */
+#totalACU {
+  font-size: 52px;
+  font-weight: 700;
+  color: #00f2fe; /* cyan digits */
+  text-shadow: 0 0 25px rgba(0,242,254,0.8);
 }
     </style>
 </head>
