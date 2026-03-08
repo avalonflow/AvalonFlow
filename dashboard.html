@@ -59,31 +59,6 @@ radial-gradient(circle at 80% 60%, rgba(0,255,255,0.15), transparent 40%);
 z-index:-1;
 }
 
-#topbar {
-    position: relative;              /* scrolls with content naturally */
-    top: 0;
-    left: 70px;                      /* default distance from menu button */
-    width: calc(100% - 70px);
-    height: 60px;
-
-    background: rgba(10,10,18,0.7);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    z-index: 0;
-
-    pointer-events: auto;            /* allow clicks */
-    transition: left 0.3s ease, width 0.3s ease; /* smooth shift when sidebar opens */
-}
-
-#topbarTitle h2 {
-    font-size: 28px;
-    letter-spacing: 1.5px;
-    color: #a78bfa;
-    font-weight: 800;
-    margin: 0;
-}
-
-
         /* ---------- Sidebar ---------- */
         #sidebar {
             position: fixed;
@@ -117,24 +92,17 @@ color:#a78bfa;
 
 /* ---------- Menu Button ---------- */
 
-#menuBtn{
-position:fixed;
-top:18px;
-left:20px;
-z-index:30;
-
-background:rgba(255,255,255,0.06);
-border:1px solid rgba(255,255,255,0.1);
-color:white;
-font-size:22px;
-
-width:42px;
-height:42px;
-border-radius:10px;
-
-backdrop-filter:blur(10px);
-cursor:pointer;
-transition:0.35s;
+        /* ---------- Menu Button ---------- */
+        #menuBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 6;
+            background: #6b2cd8;
+            border: none;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
 }
 
 /* move button when sidebar opens */
@@ -162,13 +130,15 @@ left:300px;
 
 /* ---------- Glass Cards ---------- */
 
-.glass-card{
+.panel .glass-card{
 background:rgba(255,255,255,0.04);
 backdrop-filter:blur(14px);
 border-radius:18px;
 padding:28px;
 
 border:1px solid rgba(255,255,255,0.05);
+
+        .panel h3 { color: #6b2cd8; margin-top: 0;
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.6),
@@ -312,7 +282,7 @@ font-weight:600;
             z-index: 6;
         }
 
-        /* ---------- Notification Bar (Bluish Glass) ---------- */
+                /* ---------- Notification Bar (Dashboard style) ---------- */
         .notification-bar {
             position: fixed;
             top: -80px;
@@ -329,10 +299,28 @@ font-weight:600;
             transition: top 0.5s ease, opacity 0.5s ease;
             z-index: 9999;
             opacity: 0;
+            max-width: 350px;
+            white-space: normal;
+            overflow: hidden;
         }
         .notification-bar.show {
             top: 20px;
             opacity: 1;
+        }
+        .notification-bar::before {
+            content: '';
+            position: absolute;
+            left: -50%;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            transform: skewX(-25deg);
+            animation: liquidWave 2s linear infinite;
+        }
+        @keyframes liquidWave {
+            0% { left: -50%; }
+            100% { left: 100%; }
         }
 
 @media (max-width:768px){
@@ -367,9 +355,8 @@ font-size:38px;
     <div id="dashboardNotification" class="notification-bar"></div>
 
         <!-- Topbar -->
-<div id="topbar">
-    <div id="topbarTitle">
-        <h2>AvalonFlow</h2>
+<div id="dashboard" class="panel">
+    <h3>My Dashboard</h3>
     </div>
 </div>
 
