@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,7 +7,7 @@
     <title>AvalonFlow Plans</title>
 
         <!-- Favicon -->
-    <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="48x48">
 
         <!-- Structured Data for Logo -->
     <script type="application/ld+json">
@@ -22,23 +22,15 @@
 
     <style>
         /* ---------- Base ---------- */
-        body {
-            font-family: Arial, sans-serif;
+                body {
+            font-family: Georgia, serif;
             margin: 0;
             background: #0d0d0d;
             color: #fff;
             overflow-x: hidden;
         }
-
-        button {
-            cursor: pointer;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-            font-weight: bold;
-        }
+        button { cursor: pointer; }
+        a { color: inherit; text-decoration: none; font-weight: bold; }
 
         /* ---------- Floating Background ---------- */
         #floating-bg {
@@ -64,7 +56,58 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-                /* ---------- Sidebar ---------- */
+        /* ---------- Content ---------- */
+        #content {
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+            max-width: 1100px;
+            margin: auto;
+            padding-bottom: 40px;
+        }
+
+        /* ---------- Glass Cards ---------- */
+
+.glass-card{
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(14px);
+border-radius:18px;
+padding:28px;
+border:1px solid rgba(255,255,255,0.05);
+
+box-shadow:
+0 10px 30px rgba(0,0,0,0.6),
+inset 0 0 30px rgba(255,255,255,0.03);
+
+transition:0.35s;
+position:relative;
+overflow:hidden;
+}
+
+.glass-card:hover{
+transform:translateY(-6px);
+box-shadow:0 20px 60px rgba(107,44,216,0.45);
+}
+
+
+
+/* ---------- Neon Border Effect ---------- */
+
+.glass-card::before{
+content:"";
+position:absolute;
+inset:0;
+border-radius:18px;
+padding:1px;
+background:linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
+-webkit-mask:
+linear-gradient(#000 0 0) content-box,
+linear-gradient(#000 0 0);
+-webkit-mask-composite:xor;
+opacity:0.25;
+}
+
+ /* ---------- Sidebar ---------- */
         #sidebar {
             position: fixed;
             top: 0;
@@ -95,73 +138,30 @@ color:#a78bfa;
             font-size: 16px;
         }
 
-
-        /* ---------- Content ---------- */
-        #content {
-            position: relative;
-            z-index: 1;
-            padding: 40px;
-            max-width: 1100px;
-            margin: auto;
-            padding-bottom: 80px;
-        }
-
-        /* ---------- Glass Cards ---------- */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        }
-
-                /* ---------- Menu Button ---------- */
-        #menuBtn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 6;
-            background: #6b2cd8;
-            border: none;
-            color: #fff;
-            padding: 12px 14px;
-            border-radius: 10px;
-}
-
-/* move button when sidebar opens */
-#menuBtn.shift{
-left:300px;
-}
-
-        /* ---------- Footer ---------- */
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 18px 0;
-            font-size: 14px;
-            color: #aaa;
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
-            z-index: 6;
-        }
-
         .plan-logo {
             width: 40px;
             height: 40px;
             border-radius: 50%;
         }
 
-        .plan-pay {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
+        .plan-pay a {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 18px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #7b2ff7, #9b59b6);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(155, 89, 182, 0.4);
+}
+
+.plan-pay a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px rgba(155, 89, 182, 0.7);
+}
 
         /* ---------- Notification Bar ---------- */
         .notification-bar {
@@ -218,14 +218,51 @@ left:300px;
 
         .video-controls input[type=range] { width: 100px; }
 
+        /* ---------- Footer ---------- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 14px;
+            color: #aaa;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 6;
+        }
     </style>
 </head>
 
 <body>
-
     <div id="floating-bg"></div>
 
-    <button id="menuBtn" onclick="toggleSidebar()">☰</button>
+<header style="text-align: center; padding: 40px 0;">
+  <div style="
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 350px;                /* slightly bigger frame */
+      height: 180px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.12);  /* a little more visible */
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3); /* stronger border */
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);  /* deeper shadow */
+      margin: 0 auto;
+    ">
+    <img src="assets/pictures/imagitool-export (26).jpg" 
+         alt="AvalonFlow Logo" 
+         style="max-width: 90%; max-height: 90%; height: auto;">
+  </div>
+</header>
+
+    <!-- Notification Bar -->
+    <div id="planNotification" class="notification-bar"></div>
+
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
 
     <div id="sidebar">
         <h2>AvalonFlow</h2>
@@ -237,74 +274,103 @@ left:300px;
         <button onclick="logout()">Logout</button>
     </div>
 
-    <div id="overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Notification Bar -->
-    <div id="planNotification" class="notification-bar"></div>
-
     <div id="content">
 
-        <!-- Plan Header -->
-        <h3>Plans</h3>
-        <p style="margin-bottom:20px; font-size:14px; opacity:0.85;">
-            About the AvalonFlow Plans
-        </p>
+        <!-- Page Header -->
+<h3 style="margin:0;">Plans</h3>
+<p style="margin:0; font-size:14px; opacity:0.85;">About the AvalonFlow Plans</p>
 
-        <!-- AvalonCare Glass Card -->
-        <div class="glass-card">
-            <div>
-                <strong>🪽 AvalonCare Premium</strong><br>
-                <span style="font-size:14px; opacity:0.85;">
-                    Supports progress, alignment, and financial growth.
-                </span>
-            </div>
-            <div class="plan-pay">
-                <img class="plan-logo"
-                     src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                     alt="AvalonCare Premium Logo">
-                <a href="https://app.paymento.io/payment-link/5e887f901356404788e989c5e2c4cb47" target="_blank">
-                    Activate access with Tether USDT
-                </a>
-            </div>
-        </div>
+<!-- AvalonCare Premium Glass Card -->
+<div class="glass-card">
+    <div>
+        <strong>🪽 AvalonCare Premium</strong><br>
+        <span style="font-size:14px; opacity:0.85;">
+            Supports progress, alignment, and financial growth.
+        </span>
+    </div>
 
-        <!-- AvalonGrow Glass Card -->
-        <div class="glass-card">
-            <div>
-                <strong>🪽 AvalonCare Basic</STRONG><BR>
-                <span style="font-size:14px; opacity:0.85;">
-                    Enables sustainable systems with minimal friction.
-                </span>
-            </div>
-            <div class="plan-pay">
-                <img class="plan-logo"
-                     src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                     alt="AvalonCare Basic Logo">
-                <a href="https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79" target="_blank">
-                    Activate access with Tether USDT
-                </a>
-            </div>
-        </div>
+    <div style="margin-top:12px; font-size:14px;">
+        <strong>Reference rate:</strong> 1 USD = 1 ACU<br>
+        <strong>Cycle style:</strong> Complete 24-hour ACU cycles<br>
+        <strong>Cycle rate (per 24 hours):</strong> 596.58<br>
+        ~ Built for full continuity, stability, and system depth.
+    </div>
 
-        <!-- AvalonEase Glass Card -->
-        <div class="glass-card">
-            <div>
-                <strong>🪽 AvalonCare Lite<br>
-                <span style="font-size:14px; opacity:0.85;">
-                    Focuses on stability, clarity, and easing daily pressure.
-                </span>
-            </div>
-            <div class="plan-pay">
-                <img class="plan-logo"
-                     src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
-                     alt="AvalonCare Lite Logo">
-                <a href="https://app.paymento.io/payment-link/a860137ccb2743df9135b45f5c5c3334" target="_blank">
-                    Activate access with Tether USDT
-                </a>
-            </div>
-        </div>
+    <div style="height:14px;"></div>
 
-        <!-- Mini TV: Member Reflection -->
+    <div class="plan-pay">
+        <img class="plan-logo"
+             src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+             alt="AvalonCare Premium Logo">
+        <a href="https://app.paymento.io/payment-link/5e887f901356404788e989c5e2c4cb47" target="_blank">
+            Activate access with Tether USDT
+        </a>
+    </div>
+</div>
+
+<!-- AvalonCare Basic Glass Card -->
+<div class="glass-card">
+    <div>
+        <strong>🪽 AvalonCare Basic</strong><br>
+        <span style="font-size:14px; opacity:0.85;">
+            Enables sustainable systems with minimal friction.
+        </span>
+    </div>
+
+    <div style="margin-top:12px; font-size:14px;">
+        <strong>Reference rate:</strong> 1 USD = 1 ACU<br>
+        <strong>Cycle style:</strong> Structured ACU cycles<br>
+        <strong>Cycle rate (per 24 hours):</strong> 366.58<br>
+        ~ Offers more consistency and deeper engagement than Lite.
+    </div>
+
+    <div style="height:14px;"></div>
+
+    <div class="plan-pay">
+        <img class="plan-logo"
+             src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+             alt="AvalonCare Basic Logo">
+        <a href="https://app.paymento.io/payment-link/aaf970b845624de0b5eea78726134e79" target="_blank">
+            Activate access with Tether USDT
+        </a>
+    </div>
+</div>
+
+<!-- AvalonCare Lite Glass Card -->
+<div class="glass-card">
+    <div>
+        <strong>🪽 AvalonCare Lite</strong><br>
+        <span style="font-size:14px; opacity:0.85;">
+            Focuses on stability, clarity, and easing daily pressure.
+        </span>
+    </div>
+
+    <div style="margin-top:12px; font-size:14px;">
+        <strong>Reference rate:</strong> 1 USD = 1 ACU<br>
+        <strong>Cycle style:</strong> Limited exposure cycles<br>
+        <strong>Cycle rate (per 24 hours):</strong> 236.58<br>
+        ~ Designed for light entry and observation-level participation.
+    </div>
+
+    <div style="height:14px;"></div>
+
+    <div class="plan-pay">
+        <img class="plan-logo"
+             src="https://i.postimg.cc/W3nB6L7j/6bf751e011e8ae86963744c079ec2a9b.jpg"
+             alt="AvalonCare Lite Logo">
+        <a href="https://app.paymento.io/payment-link/a860137ccb2743df9135b45f5c5c3334" target="_blank">
+            Activate access with Tether USDT
+        </a>
+    </div>
+</div>
+
+<!-- ACU Mechanics Summary -->
+<p>
+    <strong>| Higher tiers prioritize structure, control, and continuity, while lower tiers offer broader unit exposure with reduced cycle depth within a 7-Day Duration.</strong>
+    <div style="height:14px;"></div>
+</p>
+
+                <!-- Mini TV: Member Reflection -->
         <p style="text-align:center; font-weight:bold; margin-top:20px;">View a Member Reflection</p>
         <div class="video-container">
             <video id="planVideo" controls controlsList="nodownload">
@@ -319,12 +385,13 @@ left:300px;
 
     </div>
 
-    <!-- Sticky Footer -->
+    <!-- Footer -->
     <footer>
         © 2026 AvalonFlow • Powered by Centrical™
     </footer>
 
     <script>
+        // Floating particles
         const bg = document.getElementById('floating-bg');
         const colors = ['#6b2cd8', '#9b59b6', '#8e44ad'];
 
@@ -340,9 +407,9 @@ left:300px;
             bg.appendChild(p);
             setTimeout(() => p.remove(), 30000);
         }
-
         setInterval(particle, 800);
-        /* Sidebar toggle */
+
+/* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
 const content = document.getElementById('content');
 
@@ -377,7 +444,7 @@ function navigateTo(page){
         const volumeControl = document.getElementById("volumeControl");
         volumeControl.addEventListener("input", e => { video.volume = e.target.value; });
 
-        // Auto logout
+// Auto logout
         let logoutTimer;
         const logoutTime = 8*60*60*1000;
         function resetLogoutTimer(){
@@ -390,10 +457,5 @@ function navigateTo(page){
         ['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>document.addEventListener(evt,resetLogoutTimer));
         resetLogoutTimer();
     </script>
-
 </body>
-
-    </html>
-
-
-
+</html>
