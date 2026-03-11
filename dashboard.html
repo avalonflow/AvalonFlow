@@ -350,6 +350,16 @@ grid-column:span 1;
 }
 }
 
+@keyframes valuePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+.value-pulse {
+    animation: valuePulse 0.4s ease;
+}
+
 #totalACU {
   font-size: 52px;
   font-weight: 700;
