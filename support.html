@@ -622,6 +622,10 @@ if (storedDate !== today) {
     localStorage.setItem("analyticsDate", today);
 }
 
+function logout() {
+            window.location.href = "https://profile-login.avalonflow.site";
+        }
+
 // ---------- LOAD OR CREATE ANALYTICS ----------
 let issueCounts = JSON.parse(localStorage.getItem("issueCounts")) || {
     "Login Issues": Math.floor(Math.random() * 10) + 5,
