@@ -216,16 +216,160 @@ input:focus {
     outline: none;
 }
 
-    button { 
-        background-color: #6b2cd8; 
-        color: white; 
-        padding: 10px; 
-        border: none; 
-        border-radius: 6px; 
-        cursor: pointer; 
-        width: 100%; 
-        margin-top: 8px;
+    /* =========================
+   GLOBAL BUTTON STYLE RESET
+========================= */
+button {
+    font-family: inherit;
+    font-size: 14px;
+
+    width: 100%;
+    max-width: 320px;
+
+    padding: 10px 14px;
+
+    border-radius: 10px;
+    border: none;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin-top: 8px;
+
+    transition: all 0.2s ease-in-out;
+
+    position: relative;
+    overflow: hidden;
+}
+
+/* =========================
+   🔐 LOGIN BUTTON
+========================= */
+button:not([onclick*="biometricLogin"]) {
+
+    background: linear-gradient(135deg, #6b2cd8, #8e44ad);
+    color: white;
+
+    font-weight: 600;
+    letter-spacing: 0.3px;
+
+    box-shadow: 0 6px 15px rgba(107, 44, 216, 0.25);
+}
+
+/* login icon */
+button:not([onclick*="biometricLogin"])::before {
+    content: "🔐";
+    font-size: 14px;
+}
+
+/* hover */
+button:not([onclick*="biometricLogin"]):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(107, 44, 216, 0.35);
+}
+
+/* click */
+button:not([onclick*="biometricLogin"]):active {
+    transform: scale(0.98);
+}
+
+/* =========================
+   🧬 BIOMETRIC BUTTON
+========================= */
+button[onclick*="biometricLogin"] {
+
+    background: rgba(255,255,255,0.08);
+    color: white;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    font-weight: 500;
+
+    backdrop-filter: blur(12px);
+
+    text-shadow: 0 0 8px rgba(155,89,182,0.4);
+}
+
+/* Face ID ripple pulse */
+button[onclick*="biometricLogin"]::before,
+button[onclick*="biometricLogin"]::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 20px;
+    height: 20px;
+
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+
+    z-index: 0;
+}
+
+/* inner pulse */
+button[onclick*="biometricLogin"]::before {
+    background: rgba(155, 89, 182, 0.35);
+    animation: rippleCore 2s infinite;
+}
+
+/* outer ring */
+button[onclick*="biometricLogin"]::after {
+    border: 1px solid rgba(155, 89, 182, 0.5);
+    animation: rippleRing 2s infinite;
+}
+
+/* hover */
+button[onclick*="biometricLogin"]:hover {
+    transform: translateY(-1px);
+    border-color: rgba(155,89,182,0.4);
+}
+
+/* =========================
+   ⚠️ SHAKE ANIMATION (ERROR)
+========================= */
+.error-shake {
+    animation: shake 0.45s ease-in-out;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+@keyframes rippleCore {
+    0% {
+        transform: translate(-50%, -50%) scale(0.6);
+        opacity: 0.6;
     }
+    100% {
+        transform: translate(-50%, -50%) scale(2.8);
+        opacity: 0;
+    }
+}
+
+@keyframes rippleRing {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(3.2);
+        opacity: 0;
+    }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(6px); }
+    45% { transform: translateX(-5px); }
+    60% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+}
 
     /* ---------- Floating Background ---------- */
     #floating-bg {
