@@ -314,10 +314,10 @@ input:focus {
     color: #ffffff;
     letter-spacing: 0.6px;
 
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid rgba(155, 89, 182, 0.7);
     position: relative;
+    display: inline-block;
+
+    white-space: nowrap;
 }
 
 /* ---------- GUIDANCE TEXT ---------- */
@@ -357,18 +357,22 @@ input:focus {
     left: 0;
     top: 0;
     width: 100%;
+
     color: #9b59b6;
-    opacity: 0.5;
+    opacity: 0.35;
+
+    pointer-events: none;
 }
 
+/* small offset only (no full overlap break) */
 #credentialsDisplay.glitch::before {
     transform: translate(1px, 0);
-    animation: glitchShift 0.3s infinite linear alternate-reverse;
+    animation: glitchShift 0.25s infinite linear alternate-reverse;
 }
 
 #credentialsDisplay.glitch::after {
     transform: translate(-1px, 0);
-    animation: glitchShift2 0.3s infinite linear alternate-reverse;
+    animation: glitchShift2 0.25s infinite linear alternate-reverse;
 }
 
 /* ---------- ANIMATIONS ---------- */
@@ -489,10 +493,10 @@ const idEl = document.getElementById("credentialsDisplay");
 
 function revealID(text) {
 
-    idEl.setAttribute("data-text", "🆔: " + text);
     idEl.classList.add("glitch");
+    idEl.setAttribute("data-text", "🆔: " + text);
 
-    idEl.textContent = "🆔: ";
+    idEl.textContent = "🆔: "; // start clean
 
     let i = 0;
 
@@ -500,19 +504,12 @@ function revealID(text) {
 
         if (i < text.length) {
 
-            idEl.textContent = "🆔: " + text.substring(0, i + 1);
-
-            if (Math.random() > 0.7) {
-                idEl.style.transform = `translate(${Math.random()*2-1}px, 0px)`;
-            } else {
-                idEl.style.transform = "translate(0px, 0px)";
-            }
+            idEl.textContent = "🆔: " + text.slice(0, i + 1);
 
             i++;
             setTimeout(type, 70);
 
         } else {
-            idEl.style.transform = "none";
             idEl.classList.remove("glitch");
         }
     }
