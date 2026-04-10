@@ -581,6 +581,10 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.2 });
 cards.forEach(card => observer.observe(card));
 
+function logout() {
+            window.location.href = "https://profile-login.avalonflow.site";
+        }
+
         /* Ecosystem Notification (Dashboard style with shimmer) */
         window.addEventListener("load", () => {
             const notification = document.getElementById("ecosystemNotification");
