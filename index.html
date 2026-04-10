@@ -470,23 +470,48 @@ input:focus {
             container.appendChild(p);
         }
 
-const idEl = document.getElementById("credentialsDisplay");
+window.addEventListener("DOMContentLoaded", () => {
 
-// ONLY handles ID — nothing else
-function revealID(text) {
+    const identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
+    if (!identity) return;
 
-    if (!idEl) return;
+    const idEl = document.getElementById("credentialsDisplay");
+    const guideEl = document.getElementById("guidanceMessage");
+
+    /* ---------- ROTATING MESSAGES (SAFE) ---------- */
+    const messages = [
+        "Keep your access credentials safe.",
+        "Your session is unique per login.",
+        "Do not share your AvalonFlow ID.",
+        "Contact support with your session reference."
+    ];
+
+    let msgIndex = 0;
+
+    function rotateMessages() {
+        guideEl.style.opacity = 1;
+        guideEl.textContent = messages[msgIndex];
+        msgIndex = (msgIndex + 1) % messages.length;
+    }
+
+    rotateMessages();
+    setInterval(rotateMessages, 4000);
+
+    /* ---------- SAFE ID REVEAL (NO BREAK UI) ---------- */
+    const idText = identity.id;
 
     idEl.classList.add("glitch");
+    idEl.setAttribute("data-text", "🆔: " + idText);
 
-    let i = 0;
     idEl.textContent = "🆔: ";
 
-    function type() {
-        if (i < text.length) {
-            idEl.textContent = "🆔: " + text.slice(0, i + 1);
+    let i = 0;
+
+    function revealID() {
+        if (i <= idText.length) {
+            idEl.textContent = "🆔: " + idText.substring(0, i);
             i++;
-            setTimeout(type, 70);
+            setTimeout(revealID, 70);
         } else {
             setTimeout(() => {
                 idEl.classList.remove("glitch");
@@ -494,51 +519,52 @@ function revealID(text) {
         }
     }
 
-    type();
-}
+    revealID();
 
-// call this after identity loads
-revealID(identity.id);
+    /* ---------- SAFE SCAN SOUND (NO DRIFT SYNC) ---------- */
+    let scanSound;
 
-let scanSound;
+    function createScanSound() {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
 
-function createScanSound() {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioContext();
+        return function play() {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
 
-    return function play() {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(520, ctx.currentTime);
 
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(520, ctx.currentTime);
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.04, ctx.currentTime + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
 
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.05, ctx.currentTime + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
 
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.18);
+        };
+    }
 
-        osc.start();
-        osc.stop(ctx.currentTime + 0.18);
-    };
-}
+    document.addEventListener("click", () => {
+        if (!scanSound) scanSound = createScanSound();
+    }, { once: true });
 
-document.addEventListener("click", () => {
-    if (!scanSound) scanSound = createScanSound();
-}, { once: true });
+    const SCAN_INTERVAL = 3800;
 
-const SCAN_DURATION = 3800;
+    document.addEventListener("click", () => {
 
-function loopScanSound() {
-    if (scanSound) scanSound();
-    setTimeout(loopScanSound, SCAN_DURATION);
-}
+        function loopScan() {
+            if (scanSound) scanSound();
+            setTimeout(loopScan, SCAN_INTERVAL);
+        }
 
-document.addEventListener("click", () => {
-    setTimeout(loopScanSound, SCAN_DURATION);
-}, { once: true });
+        setTimeout(loopScan, SCAN_INTERVAL);
+
+    }, { once: true });
+
+});
         /* ---------- Identity Generator ---------- */
         function generateID() {
             return "AF-" + Math.random().toString(36).substring(2, 6).toUpperCase()
@@ -585,31 +611,7 @@ document.addEventListener("click", () => {
     localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
 }
 
-        /* ---------- Mini TV Display ---------- */
-        document.getElementById("credentialsDisplay").textContent =
-            `🆔: ${identity.id}`;
-
-        const tvMessages = [
-            "Keep your access credentials safe.",
-            "Your session is unique per login.",
-            "Do not share your AvalonFlow ID.",
-            "Contact support with your session reference."
-        ];
-
-        let tvIndex = 0;
-        const guidanceDiv = document.getElementById("guidanceMessage");
-
-        function fadeMessage() {
-            guidanceDiv.style.opacity = 0;
-            setTimeout(() => {
-                guidanceDiv.textContent = tvMessages[tvIndex];
-                guidanceDiv.style.opacity = 1;
-                tvIndex = (tvIndex + 1) % tvMessages.length;
-            }, 1000);
-        }
-
-        fadeMessage();
-        setInterval(fadeMessage, 4000);
+        
 
 /* ---------- Login ---------- */    
 function login() {
