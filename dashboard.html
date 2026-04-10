@@ -663,6 +663,29 @@ function updateDashboardProgress() {
     progressFill.style.width = timeProgress + "%";
 }
 
+function updateActivePlans() {
+    const now = Date.now();
+
+    const activeCount = ALL_PLANS.reduce((count, plan) => {
+        let startTime = unlockTimes[plan] || (trialActive ? trialStart : now);
+        let elapsed = now - startTime;
+
+        // Stop counting if trial expired
+        if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
+            return count;
+        }
+
+        const isActive = unlockedPlans[plan] || (trialActive && elapsed < TRIAL_MS);
+
+        return isActive ? count + 1 : count;
+    }, 0);
+
+    const el = document.getElementById('activePlans');
+    if (el) {
+        el.textContent = activeCount;
+    }
+}
+
 // Update progress every second
 setInterval(updateDashboardProgress, 1000);
 updateDashboardProgress(); // run once immediately
@@ -750,6 +773,7 @@ function updateTotalACU() {
 function updateACU() {
     readActivatedCredits();
     updateTotalACU();
+    updateActivePlans(); // 👈 ADD THIS
 }
 
 // ---------- Animation Loop ----------
