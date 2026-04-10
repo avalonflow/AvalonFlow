@@ -596,6 +596,7 @@ button[onclick*="biometricLogin"]:hover {
 </footer>
 
 <script>
+window.addEventListener("DOMContentLoaded", () => {
     /* ---------- Floating Particles ---------- */
         const container = document.getElementById('floating-bg');
         for (let i = 0; i < 60; i++) {
@@ -609,7 +610,7 @@ button[onclick*="biometricLogin"]:hover {
             container.appendChild(p);
         }
 
-window.addEventListener("DOMContentLoaded", () => {
+
 
     const identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
     if (!identity) return;
