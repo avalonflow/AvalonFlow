@@ -966,16 +966,18 @@ function logout() {
             window.location.href = "https://profile-login.avalonflow.site";
         }
 
-// ---------- Auto Logout ----------
-let logoutTimer;
-const logoutTime = 8 * 60 * 60 * 1000;
-function resetLogoutTimer() {
-    clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(() => { alert("No activity detected for 8 hours."); }, logoutTime);
-}
-document.onmousemove = resetLogoutTimer;
-document.onkeydown = resetLogoutTimer;
-resetLogoutTimer();
+/* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
+        const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
+        let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+
+        function resetLogoutTimer(){
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+        }
+
+        ["mousemove","keydown","scroll","click"].forEach(event => {
+            window.addEventListener(event, resetLogoutTimer);
+        });
 </script>
 </body>
 </html>
