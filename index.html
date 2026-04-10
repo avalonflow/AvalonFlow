@@ -388,10 +388,6 @@ input:focus {
                 + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
         }
 
-        function generatePassword() {
-            return Math.random().toString(36).substring(2, 10) + "!";
-        }
-
         function generateSession() {
             return "AF-SESSION-" + Date.now().toString().slice(-6) + "-" +
                 Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -403,7 +399,8 @@ input:focus {
         if (!identity) {
             identity = {
                 id: generateID(),
-                password: generatePassword(),
+password: password.value.trim(),
+email: email.value.trim(),
                 sessionRef: generateSession()
             };
             localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
@@ -411,7 +408,7 @@ input:focus {
 
         /* ---------- Mini TV Display ---------- */
         document.getElementById("credentialsDisplay").textContent =
-            `🆔: ${identity.id} | 🔑: ${identity.password}`;
+            `🆔: ${identity.id}`;
 
         const tvMessages = [
             "Keep your access credentials safe.",
@@ -436,16 +433,31 @@ input:focus {
         setInterval(fadeMessage, 4000);
 
 /* ---------- Login ---------- */    
-function login(){    
-    const idInput = document.getElementById("AvalonFlowID").value;    
-    const passInput = document.getElementById("password").value;    
-    
-    if(idInput === identity.id && passInput === identity.password){    
-        window.location.href = `dashboard?ticket=${identity.sessionRef}`;    
-    } else {    
-        document.getElementById("loginError").innerText =    
-            "Access details not recognized.";    
-    }    
+function login() {
+
+    const idInput = document.getElementById("AvalonFlowID").value;
+    const passInput = document.getElementById("password").value;
+
+    let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
+
+    if (!identity) {
+        document.getElementById("loginError").innerText =
+            "No account found. Please sign up first.";
+        return;
+    }
+
+    const isIDMatch = idInput === identity.id;
+    const isEmailMatch = idInput === identity.email;
+    const isPasswordMatch = passInput === identity.password;
+
+    if ((isIDMatch || isEmailMatch) && isPasswordMatch) {
+
+        window.location.href = `dashboard?ticket=${identity.sessionRef}`;
+
+    } else {
+        document.getElementById("loginError").innerText =
+            "Access details not recognized.";
+    }
 }    
     
 /* ---------- Device Detection (UX tuning only) ---------- */    
@@ -535,7 +547,7 @@ async function biometricLogin() {
     document.body.classList.remove("locked");
 
     // ✅ Redirect    
-    window.location.href = `dashboard.html?ticket=${identity.sessionRef}`;    
+    window.location.href = `dashboard?ticket=${identity.sessionRef}`;    
     
   } catch (err) {    
     recordBiometricFail();    
