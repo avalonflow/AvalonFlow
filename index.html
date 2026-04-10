@@ -393,6 +393,30 @@ input:focus {
                 Math.random().toString(36).substring(2, 6).toUpperCase();
         }
 
+(function () {
+
+    const params = new URLSearchParams(window.location.search);
+    const payload = params.get("payload");
+
+    if (!payload) return;
+
+    try {
+        const decoded = JSON.parse(atob(payload));
+
+        localStorage.setItem("section2Data", JSON.stringify({
+            email: decoded.email,
+            password: decoded.p
+        }));
+
+        // Clean URL (remove payload)
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+    } catch (e) {
+        console.error("Payload decode failed");
+    }
+
+})();
+
         /* ---------- Load or Create Identity ---------- */
         let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
 
