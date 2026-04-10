@@ -734,6 +734,19 @@ setInterval(()=>{
     setTimeout(()=>ambientDiv.remove(), 11000); // remove after fade out
 }, 10000);
 
+/* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
+        const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
+        let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+
+        function resetLogoutTimer(){
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+        }
+
+        ["mousemove","keydown","scroll","click"].forEach(event => {
+            window.addEventListener(event, resetLogoutTimer);
+        });
+
 </script>
 </body>
 </html>
