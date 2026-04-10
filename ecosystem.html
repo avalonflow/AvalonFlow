@@ -622,6 +622,19 @@ cards.forEach(card => observer.observe(card));
 
     // Update every 1 second
     setInterval(updateMetrics, 1000);
+
+/* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
+        const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
+        let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+
+        function resetLogoutTimer(){
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+        }
+
+        ["mousemove","keydown","scroll","click"].forEach(event => {
+            window.addEventListener(event, resetLogoutTimer);
+        });
     </script>
 </body>
   </html>
