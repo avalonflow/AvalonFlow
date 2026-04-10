@@ -784,7 +784,7 @@ setInterval(updateACU, 30000); // every 30 seconds
         });
 
         /* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
-        const AUTO_LOGOUT_TIME = 8 * 60 * 60 * 1000; // 8 hours in ms
+        const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
         let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
 
         function resetLogoutTimer(){
