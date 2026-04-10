@@ -217,15 +217,14 @@ input:focus {
 }
 
     /* =========================
-   GLOBAL BUTTON STYLE RESET
+GLOBAL BUTTON STYLE RESET
 ========================= */
 button {
     font-family: inherit;
     font-size: 14px;
 
-    width: fit-content;
-    min-width: 180px;
-    max-width: 260px;
+    width: 100%;
+    max-width: 320px;
 
     padding: 10px 14px;
 
@@ -241,9 +240,6 @@ button {
 
     margin-top: 8px;
 
-    margin-left: auto;
-    margin-right: auto;
-
     transition: all 0.2s ease-in-out;
 
     position: relative;
@@ -251,7 +247,7 @@ button {
 }
 
 /* =========================
-   🔐 LOGIN BUTTON
+🔐 LOGIN BUTTON
 ========================= */
 button:not([onclick*="biometricLogin"]) {
 
@@ -282,7 +278,7 @@ button:not([onclick*="biometricLogin"]):active {
 }
 
 /* =========================
-   🧬 BIOMETRIC BUTTON
+🧬 BIOMETRIC BUTTON
 ========================= */
 button[onclick*="biometricLogin"] {
 
@@ -334,14 +330,57 @@ button[onclick*="biometricLogin"]:hover {
 }
 
 /* =========================
-   ⚠️ SHAKE ANIMATION (ERROR)
+⚠️ SHAKE ANIMATION (ERROR)
 ========================= */
 .error-shake {
     animation: shake 0.45s ease-in-out;
 }
 
 /* =========================
-   ANIMATIONS
+🚀 BUTTON ROW (SIDE BY SIDE)
+========================= */
+.button-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+/* override global width inside row */
+.button-row button {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+    width: auto;
+}
+
+/* small screens */
+@media (max-width: 360px) {
+    .button-row {
+        gap: 6px;
+    }
+
+    .button-row button {
+        min-width: 0;
+        max-width: 50%;
+        font-size: 13px;
+        padding: 9px 10px;
+    }
+}
+
+/* ultra small */
+@media (max-width: 300px) {
+    .button-row button {
+        font-size: 12px;
+        padding: 8px 8px;
+    }
+}
+
+/* =========================
+ANIMATIONS
 ========================= */
 @keyframes rippleCore {
     0% {
@@ -373,183 +412,6 @@ button[onclick*="biometricLogin"]:hover {
     60% { transform: translateX(5px); }
     75% { transform: translateX(-3px); }
     100% { transform: translateX(0); }
-}
-
-    /* ---------- Floating Background ---------- */
-    #floating-bg {
-        position: fixed;
-        top:0; left:0;
-        width: 100%;
-        height: 100%;
-        z-index:1;
-        overflow: hidden;
-        pointer-events: none;
-        background: radial-gradient(circle at bottom, #1a0d3a, #0d0d0d);
-    }
-
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        background: radial-gradient(circle, #6b2cd8, transparent);
-        animation: floatParticles linear infinite;
-        box-shadow: 0 0 10px #6b2cd8, 0 0 20px #6b2cd8;
-    }
-
-    @keyframes floatParticles {
-        0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
-
-    /* ---------- Mini TV / Session Ticket (FINAL CYBER UPGRADE) ---------- */
-#ticketRef {
-    margin-top: 15px;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-radius: 12px;
-    padding: 14px;
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,0.25),
-        inset 0 0 0 1px rgba(155, 89, 182, 0.15);
-
-    min-height: 70px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    position: relative;
-    overflow: hidden;
-
-    text-shadow:
-        0 0 6px rgba(107,44,216,0.35),
-        0 0 14px rgba(107,44,216,0.25);
-
-    animation: pulseGlow 4.5s ease-in-out infinite;
-}
-
-/* ---------- SCANNING SECURITY LINE ---------- */
-#ticketRef::after {
-    content: "";
-    position: absolute;
-    top: -80%;
-    left: 0;
-    width: 100%;
-    height: 60%;
-
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(155, 89, 182, 0.18),
-        transparent
-    );
-
-    animation: scanMove 3.8s linear infinite;
-    pointer-events: none;
-    mix-blend-mode: screen;
-    filter: blur(0.3px);
-    opacity: 0.9;
-}
-
-/* ---------- TEXT DISPLAY ---------- */
-#credentialsDisplay {
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: #ffffff;
-    letter-spacing: 0.6px;
-
-    position: relative;
-    display: inline-block;
-
-    white-space: nowrap;
-}
-
-/* ---------- GUIDANCE TEXT ---------- */
-#guidanceMessage {
-    font-size: 14px;
-    color: rgba(255,255,255,0.88);
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-    height: 20px;
-}
-
-/* ---------- OPTIONAL STATUS INDICATOR ---------- */
-#sessionStatus {
-    margin-top: 6px;
-    font-size: 12px;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.8);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #9b59b6;
-    box-shadow: 0 0 10px #9b59b6;
-    animation: pulseDot 1.5s infinite;
-}
-
-/* ONLY VISUAL EFFECT — DOES NOT BLOCK TEXT */
-#credentialsDisplay.glitch {
-    text-shadow:
-        1px 0 rgba(155,89,182,0.6),
-        -1px 0 rgba(155,89,182,0.4);
-}
-
-/* ---------- ANIMATIONS ---------- */
-@keyframes scanMove {
-    0% { top: -60%; }
-    100% { top: 120%; }
-}
-
-@keyframes pulseGlow {
-    0% {
-        text-shadow: 0 0 5px rgba(107,44,216,0.25), 0 0 10px rgba(107,44,216,0.15);
-    }
-    50% {
-        text-shadow: 0 0 12px rgba(107,44,216,0.45), 0 0 22px rgba(107,44,216,0.25);
-    }
-    100% {
-        text-shadow: 0 0 5px rgba(107,44,216,0.25), 0 0 10px rgba(107,44,216,0.15);
-    }
-}
-
-@keyframes pulseDot {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.5; }
-}
-
-@keyframes glitchShift {
-    0% { transform: translate(1px, 0); opacity: 0.6; }
-    100% { transform: translate(-1px, 0); opacity: 0.3; }
-}
-
-@keyframes glitchShift2 {
-    0% { transform: translate(-1px, 0); opacity: 0.4; }
-    100% { transform: translate(1px, 0); opacity: 0.2; }
-}
-
-/* Only the animated gradient effect */
-.gradient-animation {
-    background: linear-gradient(90deg,#6b2cd8,#b393ff,#6b2cd8);
-    background-size: 200% auto;
-    animation: gradientShift 6s linear infinite;
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
 }
 
     /* ---------- Sticky Footer ---------- */
