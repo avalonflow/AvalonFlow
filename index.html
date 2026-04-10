@@ -349,30 +349,11 @@ input:focus {
     animation: pulseDot 1.5s infinite;
 }
 
-/* ---------- GLITCH EFFECT ---------- */
-#credentialsDisplay.glitch::before,
-#credentialsDisplay.glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-
-    color: #9b59b6;
-    opacity: 0.35;
-
-    pointer-events: none;
-}
-
-/* small offset only (no full overlap break) */
-#credentialsDisplay.glitch::before {
-    transform: translate(1px, 0);
-    animation: glitchShift 0.25s infinite linear alternate-reverse;
-}
-
-#credentialsDisplay.glitch::after {
-    transform: translate(-1px, 0);
-    animation: glitchShift2 0.25s infinite linear alternate-reverse;
+/* ONLY VISUAL EFFECT — DOES NOT BLOCK TEXT */
+#credentialsDisplay.glitch {
+    text-shadow:
+        1px 0 rgba(155,89,182,0.6),
+        -1px 0 rgba(155,89,182,0.4);
 }
 
 /* ---------- ANIMATIONS ---------- */
@@ -491,26 +472,25 @@ input:focus {
 
 const idEl = document.getElementById("credentialsDisplay");
 
+// ONLY handles ID — nothing else
 function revealID(text) {
 
-    idEl.classList.add("glitch");
-    idEl.setAttribute("data-text", "🆔: " + text);
+    if (!idEl) return;
 
-    idEl.textContent = "🆔: "; // start clean
+    idEl.classList.add("glitch");
 
     let i = 0;
+    idEl.textContent = "🆔: ";
 
     function type() {
-
         if (i < text.length) {
-
             idEl.textContent = "🆔: " + text.slice(0, i + 1);
-
             i++;
             setTimeout(type, 70);
-
         } else {
-            idEl.classList.remove("glitch");
+            setTimeout(() => {
+                idEl.classList.remove("glitch");
+            }, 500);
         }
     }
 
