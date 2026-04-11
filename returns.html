@@ -209,7 +209,6 @@ overflow: visible;
 
 /* ---------------- HOVER ---------------- */
 .glass-card:hover {
-    transform: translateY(-6px);
     box-shadow: 0 0 20px rgba(107,44,216,0.3);
 overflow: visible;
 }
@@ -1059,10 +1058,10 @@ function navigateTo(page){
             const rotateY = (cardCenter < center ? 1 : -1) * ratio * 15;
 
             card.style.transform = `
-                scale(${scale})
-                perspective(1000px)
-                rotateY(${rotateY}deg)
-            `;
+    perspective(1000px)
+    rotateY(${rotateY}deg)
+    scale(${scale})
+`;
             card.style.opacity = opacity;
         });
     }
