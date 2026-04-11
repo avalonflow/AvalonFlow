@@ -150,7 +150,7 @@ left:300px;
     backdrop-filter: blur(20px);
     border-radius: 20px;
     padding: 28px;
-    margin-bottom: 28px;
+    
     border: 1px solid rgba(255,255,255,0.06);
     box-shadow:
         0 0 0 1px rgba(255,255,255,0.02) inset,
@@ -161,7 +161,8 @@ left:300px;
     scroll-snap-align: center;
 
     /* 🔥 IMPORTANT: prevents shrinking in flex layout */
-    flex: 0 0 auto;
+    flex: 0 0 320px;
+    margin-bottom: 0;
 }
 
 /* Neon subtle border */
@@ -205,7 +206,7 @@ left:300px;
 /* ---------------- PLANS WRAPPER (FIXED CONTAINER SPACE) ---------------- */
 .plans-wrapper {
     display: flex;
-    gap: 20px;
+    gap: 24px;
     position: relative;
 
     overflow-x: auto;
@@ -218,9 +219,10 @@ left:300px;
 
     box-sizing: border-box;
     width: 100%;
+padding-block: 40px;
 
     justify-content: flex-start;
-    align-items: flex-start; /* ✅ IMPORTANT FIX */
+    align-items: center; /* ✅ IMPORTANT FIX */
 
     /* ❌ REMOVE min-height */
 }
