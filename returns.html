@@ -153,6 +153,8 @@ margin: 20px 0px;
     backdrop-filter: blur(20px);
     border-radius: 25px;
     padding: 28px;
+transform-style: preserve-3d;
+    transition: transform 0.35s ease, opacity 0.35s ease;
 
     border: 1px solid rgba(255,255,255,0.06);
     box-shadow:
@@ -194,7 +196,7 @@ overflow: visible;
 
 /* ---------------- ACTIVE CARD ---------------- */
 .glass-card.active {
-    transform: scale(1);
+    transform: rotateY(0deg) scale(1.05);
     opacity: 1;
     filter: brightness(1);
     z-index: 2;
@@ -207,8 +209,14 @@ overflow: visible;
     border: 1px solid rgba(107,44,216,0.3);
 }
 
+.glass-card.inactive {
+    transform: rotateY(15deg) scale(0.95);
+    opacity: 0.6;
+}
+
 /* ---------------- HOVER ---------------- */
 .glass-card:hover {
+transform: translateY(-6px);
     box-shadow: 0 0 20px rgba(107,44,216,0.3);
 overflow: visible;
 }
@@ -219,7 +227,7 @@ overflow: visible;
     gap: 20px;
 padding: 28px;
     width: 100%;
-
+perspective: 1000px;
     overflow-x: auto;     /* horizontal swipe */
     overflow-y: hidden;
 
@@ -1044,37 +1052,33 @@ function navigateTo(page){
 
     // ---- 3D DEPTH EFFECT 💎 ----
     function update3D() {
-        const center = container.scrollLeft + container.clientWidth / 2;
+    const center = container.scrollLeft + container.clientWidth / 2;
 
-        cards.forEach(card => {
-            const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-            const dist = Math.abs(center - cardCenter);
+    let closest = null;
+    let min = Infinity;
 
-            const maxDist = container.clientWidth;
-            const ratio = Math.min(dist / maxDist, 1);
+    cards.forEach(card => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(center - cardCenter);
 
-            const scale = 1 - (ratio * 0.15); // shrink sides
-            const opacity = 1 - (ratio * 0.5);
-            const rotateY = (cardCenter < center ? 1 : -1) * ratio * 15;
+        if (dist < min) {
+            min = dist;
+            closest = card;
+        }
+    });
 
-            card.style.transform = `
-    perspective(1000px)
-    rotateY(${rotateY}deg)
-    scale(${scale})
-`;
-            card.style.opacity = opacity;
-        });
-    }
+    setActiveCard(closest);
+}
 
     // ---- Active Card ----
     function setActiveCard(target) {
-        if (!target) return;
+    cards.forEach(c => {
+        c.classList.remove('active', 'inactive');
+        if (c !== target) c.classList.add('inactive');
+    });
 
-        cards.forEach(c => {
-            c.classList.remove('active', 'inactive', 'fade-in');
-        });
-
-        target.classList.add('active', 'fade-in');
+    target.classList.add('active');
+}
 
         cards.forEach(c => {
             if (c !== target) c.classList.add('inactive');
