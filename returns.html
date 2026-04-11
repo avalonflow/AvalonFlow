@@ -1050,7 +1050,7 @@ function navigateTo(page){
         return Math.max(0, Math.min(left, max));
     }
 
-    // ---- 3D DEPTH EFFECT 💎 ----
+    // ---- 3D DEPTH EFFECT ----
 function update3D() {
     const center = container.scrollLeft + container.clientWidth / 2;
 
@@ -1070,47 +1070,22 @@ function update3D() {
     setActiveCard(closest);
 }
 
-// ---- Active Card ----
+// ---- STATE ONLY ----
 function setActiveCard(target) {
     if (!target) return;
 
     cards.forEach(card => {
-        card.classList.remove('active', 'inactive', 'fade-in');
-
-        if (card !== target) {
-            card.classList.add('inactive');
-        }
+        card.classList.toggle('active', card === target);
+        card.classList.toggle('inactive', card !== target);
     });
 
-    // activate target
-    target.classList.add('active');
-
-    // trigger fade-in (restart animation trick)
-    target.classList.remove('fade-in');
-    void target.offsetWidth; // forces reflow so animation restarts
-    target.classList.add('fade-in');
-
-    // dots sync (safe)
     const dots = dotsWrapper?.querySelectorAll('span') || [];
-
-    dots.forEach(d => d.classList.remove('active'));
-
     const idx = cards.indexOf(target);
-    if (dots[idx]) dots[idx].classList.add('active');
+
+    dots.forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+    });
 }
-
-// ---- OPTIONAL: throttle scroll for performance (prevents freeze) ----
-let ticking = false;
-
-container.addEventListener('scroll', () => {
-    if (!ticking) {
-        window.requestAnimationFrame(() => {
-            update3D();
-            ticking = false;
-        });
-        ticking = true;
-    }
-});
 
     // ---- Easing ----
     function easeOutExpo(t) {
