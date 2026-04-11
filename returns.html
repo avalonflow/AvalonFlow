@@ -1030,15 +1030,15 @@ let velocity = 0;
 
 let currentIndex = 0;
 
-// ---- Haptics (optional behavior) ----
+// ---- Haptics ----
 function snapFeedback() {
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// ---- Dots (optional UI sync only, no card styling changes) ----
+// ---- Dots ----
 function generateDots() {
     dotsWrapper.innerHTML = '';
-    cards.forEach((_, i) => {
+    cards.forEach(() => {
         const d = document.createElement('span');
         dotsWrapper.appendChild(d);
     });
@@ -1048,8 +1048,7 @@ generateDots();
 function updateDots(index) {
     const dots = dotsWrapper.querySelectorAll('span');
     dots.forEach((d, i) => {
-        if (i === index) d.classList.add('active');
-        else d.classList.remove('active');
+        d.classList.toggle('active', i === index);
     });
 }
 
@@ -1059,7 +1058,7 @@ function clampScroll(left) {
     return Math.max(0, Math.min(left, max));
 }
 
-// ---- Core 3D tracker (NO class edits) ----
+// ---- Closest card ----
 function getClosestIndex() {
     const center = container.scrollLeft + container.clientWidth / 2;
 
@@ -1077,6 +1076,28 @@ function getClosestIndex() {
     });
 
     return closestIndex;
+}
+
+// ---- Netflix Spotlight Effect ----
+function updateSpotlight() {
+    const center = container.scrollLeft + container.clientWidth / 2;
+
+    cards.forEach(card => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(center - cardCenter);
+
+        const maxDist = container.clientWidth;
+        const ratio = Math.min(dist / maxDist, 1);
+
+        const scale = 1 - ratio * 0.18;
+        const opacity = 1 - ratio * 0.55;
+        const blur = ratio * 10;
+
+        card.style.transform = `scale(${scale}) translateZ(0)`;
+        card.style.opacity = opacity;
+        card.style.filter = `blur(${blur}px)`;
+        card.style.zIndex = Math.floor(100 - ratio * 50);
+    });
 }
 
 // ---- Easing ----
@@ -1111,11 +1132,14 @@ function scrollToCard(index, duration = 280) {
 
         container.scrollLeft = start + dist * eased;
 
+        updateSpotlight();
+
         if (p < 1) {
             requestAnimationFrame(anim);
         } else {
             isScrolling = false;
             currentIndex = index;
+
             updateDots(index);
             snapFeedback();
         }
@@ -1124,13 +1148,13 @@ function scrollToCard(index, duration = 280) {
     requestAnimationFrame(anim);
 }
 
-// ---- Predictive Snap (behavior only) ----
+// ---- Predictive Snap ----
 function predictIndex() {
     const velocityBoost = velocity * 0.25;
     const dragDistance = (dragStartX - lastX) * 0.15;
     const intent = velocityBoost + dragDistance;
 
-    let activeIdx = getClosestIndex();
+    const activeIdx = getClosestIndex();
 
     if (Math.abs(intent) > 5) {
         return intent > 0 ? activeIdx + 1 : activeIdx - 1;
@@ -1169,6 +1193,8 @@ container.addEventListener('pointermove', e => {
 
     velocity = lastX - e.clientX;
     lastX = e.clientX;
+
+    updateSpotlight();
 });
 
 container.addEventListener('pointerup', e => {
@@ -1192,6 +1218,7 @@ if (cards.length) {
     );
 
     updateDots(0);
+    updateSpotlight();
 }
 
 // ---- Resize ----
