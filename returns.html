@@ -27,6 +27,8 @@
         background: #0d0d0d;
         color: #fff;
         overflow-x: hidden;
+overflow-y: auto; 
+height: 100%;
     }
     button { cursor: pointer; }
     a { color: inherit; text-decoration: none; }
@@ -157,18 +159,16 @@ margin: 20px 0px;
         0 0 0 1px rgba(255,255,255,0.02) inset,
         0 20px 60px rgba(0,0,0,0.6);
 
+    flex: 0 0 auto;
+
+    width: 85vw;        /* 🔥 KEY: makes only one card visible */
+    max-width: 420px;
+
+    scroll-snap-align: center;
+    scroll-snap-stop: always;  /* 🔥 LOCKS swipe to one card */
+
     transition: 0.4s ease;
     position: relative;
-    overflow: visible;
-
-    scroll-snap-align: center; /* ❌ kill slideshow behavior */
-
-    /* prevents shrinking */
-    width: 200px;
-flex: 0 0 auto;;
-
-    margin-bottom: 0;
-    
 }
 
 /* ---------------- BACKGROUND GLOW LAYER ---------------- */
@@ -218,30 +218,27 @@ overflow: visible;
 .plans-wrapper {
     display: flex;
     gap: 20px;
-padding-top: 28px;
-    overflow-x: auto;
-    overflow-y: auto;
 
     width: 100%;
 
-    /* ✅ restore original snap behavior */
+    overflow-x: auto;     /* horizontal swipe */
+    overflow-y: hidden;
+
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
 
-    /* ✅ restore spacing like reference */
-
     align-items: center;
- 
-    
-    box-sizing: border-box;
 
-    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch; /* smooth mobile swipe */
+
+    scroll-snap-stop: always; /* ✅ ADDED HERE */
 }
 
 /* hide scrollbar */
 .plans-wrapper::-webkit-scrollbar {
     display: none;
 }
+
 .plans-wrapper {
     scrollbar-width: none;
 }
