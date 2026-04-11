@@ -159,9 +159,170 @@ left:300px;
     position: relative;
 }
 
-.glass-card:hover {
-    transform: translateY(-6px);
+/* Neon subtle border */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
+  opacity: 0.15;
+  z-index: -1;
 }
+
+/* Active flowing border */
+.glass-card.active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 2px; /* border thickness */
+  background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
+  background-size: 300% 300%; /* larger than element for smooth flow */
+  z-index: -1;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: destination-out;
+  animation: flowBorder 3s linear infinite;
+}
+
+/* Animate the gradient to flow */
+@keyframes flowBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+  /* Fade-in / scale */
+  transform: scale(0.92);
+  opacity: 0.5;
+  transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(255,255,255,0.03);
+  filter: brightness(0.85);
+}
+
+/* Hover effect */
+.glass-card:hover {
+  transform: scale(0.95) translateY(-6px);
+  box-shadow: 0 0 20px rgba(107,44,216,0.3); /* subtle equal purple glow */
+}
+
+/* Active card */
+.glass-card.active {
+  transform: scale(1);
+  opacity: 1;
+  filter: brightness(1);
+  z-index: 2;
+  box-shadow:
+    0 0 15px rgba(107,44,216,0.35),
+    0 0 30px rgba(107,44,216,0.2);
+  border: 1px solid rgba(107,44,216,0.3);
+}
+
+.glass-card.fade-in {
+    animation: fadeInCard 0.4s ease-in-out;
+}
+@keyframes fadeInCard {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Premium purple gradient (default) */
+.plan-premium .gradient-animation {
+    background: linear-gradient(90deg,#6b2cd8,#b393ff,#6b2cd8);
+    background-size: 200% auto;
+    animation: gradientShift 6s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Basic blue gradient */
+.plan-basic .gradient-animation {
+    background: linear-gradient(90deg,#3498db,#5dade2,#3498db);
+    background-size: 200% auto;
+    animation: gradientShift 6s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Lite green gradient */
+.plan-lite .gradient-animation {
+    background: linear-gradient(90deg,#28a745,#58d68d,#28a745);
+    background-size: 200% auto;
+    animation: gradientShift 6s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Custom red gradient with visible animation */
+.plan-custom .gradient-animation {
+    background: linear-gradient(90deg, #FF0000, #FF6666, #990000, #FF0000);
+    background-size: 200% auto;
+    animation: gradientShift 6s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Animation keyframes (same for all) */
+@keyframes gradientShift {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.dots span {
+  width: 6px;
+  height: 6px;
+  background: #555;
+  border-radius: 50%;
+}
+
+.dots span.active {
+  background: #6b2cd8;
+}
+
+.plans-section {
+  position: relative;
+}
+
+/* ---------- Navigation Buttons ---------- */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(107,44,216,0.4);
+}
+
+.nav-btn:hover {
+  background: rgba(107,44,216,0.8);
+  box-shadow:
+    0 0 20px rgba(107,44,216,0.8),
+    0 0 40px rgba(107,44,216,0.5);
+}
+
+.nav-btn.left { left: 10px; }
+.nav-btn.right { right: 10px; }
 
 /* Premium emphasis */
 .premium {
