@@ -207,6 +207,7 @@ left:300px;
 .plans-wrapper {
     display: flex;
     gap: 24px;
+
     position: relative;
 
     overflow-x: auto;
@@ -215,16 +216,19 @@ left:300px;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
 
-    padding: 28px;
+    /* ✅ FIX: use inline padding instead of full padding */
+    padding-inline: 28px;
+    padding-block: 40px;
 
     box-sizing: border-box;
+
     width: 100%;
-padding-block: 40px;
 
     justify-content: flex-start;
-    align-items: center; /* ✅ IMPORTANT FIX */
+    align-items: flex-start; /* 🔥 important fix */
 
-    /* ❌ REMOVE min-height */
+    /* 🔥 prevents “boxed container feel” */
+    min-width: 0;
 }
 
 /* ---------------- HOVER ---------------- */
