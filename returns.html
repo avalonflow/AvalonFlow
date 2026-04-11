@@ -157,95 +157,100 @@ left:300px;
         0 20px 60px rgba(0,0,0,0.6);
     transition: 0.4s ease;
     position: relative;
-overflow: visible;
-  scroll-snap-align: center;
+    overflow: visible;
+    scroll-snap-align: center;
+
+    /* 🔥 IMPORTANT: prevents shrinking in flex layout */
+    flex-shrink: 0;
 }
 
 /* Neon subtle border */
 .glass-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  background: linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
-  opacity: 0.15;
-  z-index: -1;
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
+    opacity: 0.15;
+    z-index: -1;
 }
 
 /* Active flowing border */
 .glass-card.active::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 2px; /* border thickness */
-  background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
-  background-size: 300% 300%; /* larger than element for smooth flow */
-  z-index: -1;
-  mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask-composite: destination-out;
-  animation: flowBorder 3s linear infinite;
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
+    background-size: 300% 300%;
+    z-index: -1;
+
+    mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: destination-out;
+
+    animation: flowBorder 3s linear infinite;
 }
 
-/* Animate the gradient to flow */
+/* Animate border flow */
 @keyframes flowBorder {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-/* ---------- Plans Wrapper ---------- */
+/* ---------------- PLANS WRAPPER ---------------- */
 .plans-wrapper {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding: 28px;
-box-sizing: border-box;
-  width: 100%;
-  justify-content: flex-start; /* natural scroll */
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 28px;
+    box-sizing: border-box;
+    width: 100%;
+    justify-content: flex-start;
 }
 
 .plans-wrapper::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
-  /* Fade-in / scale */
-  
-  opacity: 0.5;
-  transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(255,255,255,0.03);
-  filter: brightness(0.85);
-}
-
-/* Hover effect */
+/* ---------------- HOVER ---------------- */
 .glass-card:hover {
-   translateY(-6px);
-  box-shadow: 0 0 20px rgba(107,44,216,0.3); /* subtle equal purple glow */
+    transform: translateY(-6px);
+    box-shadow: 0 0 20px rgba(107,44,216,0.3);
 }
 
-/* Active card */
+/* ---------------- ACTIVE CARD ---------------- */
 .glass-card.active {
-  transform: scale(1);
-  opacity: 1;
-  filter: brightness(1);
-  z-index: 2;
-  box-shadow:
-    0 0 15px rgba(107,44,216,0.35),
-    0 0 30px rgba(107,44,216,0.2);
-  border: 1px solid rgba(107,44,216,0.3);
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1);
+    z-index: 2;
+    box-shadow:
+        0 0 15px rgba(107,44,216,0.35),
+        0 0 30px rgba(107,44,216,0.2);
+    border: 1px solid rgba(107,44,216,0.3);
 }
 
+/* ---------------- FADE IN ---------------- */
 .glass-card.fade-in {
     animation: fadeInCard 0.4s ease-in-out;
 }
+
 @keyframes fadeInCard {
-    0% { opacity: 0; transform: scale(1); }
-    100% { opacity: 1; transform: scale(1); }
+    0% {
+        opacity: 0;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Premium purple gradient (default) */
