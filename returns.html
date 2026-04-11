@@ -1028,9 +1028,6 @@ let scrollStart = 0;
 let lastX = 0;
 let velocity = 0;
 
-let momentum = 0;
-let rafMomentum = null;
-
 let currentIndex = 0;
 
 // ---- Haptics ----
@@ -1052,20 +1049,6 @@ function updateDots(index) {
     const dots = dotsWrapper.querySelectorAll('span');
     dots.forEach((d, i) => {
         d.classList.toggle('active', i === index);
-    });
-}
-
-// ---- 🔥 ACTIVE FIX (NO BLUR DELAY) ----
-function updateActiveCard() {
-    const index = getClosestIndex();
-
-    if (index !== currentIndex) {
-        currentIndex = index;
-        updateDots(index);
-    }
-
-    cards.forEach((card, i) => {
-        card.classList.toggle('active', i === index);
     });
 }
 
@@ -1095,40 +1078,24 @@ function getClosestIndex() {
     return closestIndex;
 }
 
-// ---- PERFECT CENTER CALC ----
-function getCenteredScroll(target) {
-    const containerRect = container.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-
-    const containerCenter =
-        containerRect.left + container.scrollLeft + containerRect.width / 2;
-
-    const targetCenter =
-        targetRect.left + container.scrollLeft + targetRect.width / 2;
-
-    return clampScroll(container.scrollLeft + (targetCenter - containerCenter));
-}
-
 // ---- Easing ----
 function easeOutExpo(t) {
     return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-}
-
-// ---- Magnetic Snap ----
-function snapToClosest() {
-    const index = getClosestIndex();
-    scrollToCard(index, 220);
 }
 
 // ---- Scroll To Card ----
 function scrollToCard(index, duration = 280) {
     if (index < 0 || index >= cards.length) return;
 
-    cancelMomentum();
-
     const target = cards[index];
     const start = container.scrollLeft;
-    const dest = getCenteredScroll(target);
+
+    let dest =
+        target.offsetLeft -
+        container.offsetWidth / 2 +
+        target.offsetWidth / 2;
+
+    dest = clampScroll(dest);
 
     const dist = dest - start;
     let startTime = null;
@@ -1141,16 +1108,14 @@ function scrollToCard(index, duration = 280) {
         const p = Math.min((t - startTime) / duration, 1);
         const eased = easeOutExpo(p);
 
-        container.scrollLeft = Math.round(start + dist * eased);
-
-        // 🔥 FIX: update active DURING scroll
-        updateActiveCard();
+        container.scrollLeft = start + dist * eased;
 
         if (p < 1) {
             requestAnimationFrame(anim);
         } else {
             isScrolling = false;
             currentIndex = index;
+
             updateDots(index);
             snapFeedback();
         }
@@ -1159,54 +1124,19 @@ function scrollToCard(index, duration = 280) {
     requestAnimationFrame(anim);
 }
 
-// ---- Momentum Engine (INERTIA) ----
-function startMomentum() {
-    cancelMomentum();
-
-    momentum = velocity * 1.2;
-
-    function step() {
-        if (Math.abs(momentum) < 0.2) {
-            snapToClosest();
-            return;
-        }
-
-        container.scrollLeft += momentum;
-        container.scrollLeft = clampScroll(container.scrollLeft);
-
-        momentum *= 0.92;
-
-        // 🔥 FIX: update active DURING momentum
-        updateActiveCard();
-
-        rafMomentum = requestAnimationFrame(step);
-    }
-
-    rafMomentum = requestAnimationFrame(step);
-}
-
-function cancelMomentum() {
-    if (rafMomentum) {
-        cancelAnimationFrame(rafMomentum);
-        rafMomentum = null;
-    }
-}
-
-// ---- Predictive Snap (SMART FLICK) ----
+// ---- Predictive Snap ----
 function predictIndex() {
-    const base = getClosestIndex();
+    const velocityBoost = velocity * 0.25;
+    const dragDistance = (dragStartX - lastX) * 0.15;
+    const intent = velocityBoost + dragDistance;
 
-    const velocityFactor = Math.abs(velocity);
+    const activeIdx = getClosestIndex();
 
-    if (velocityFactor > 12) {
-        return velocity < 0 ? base + 2 : base - 2;
+    if (Math.abs(intent) > 5) {
+        return intent > 0 ? activeIdx + 1 : activeIdx - 1;
     }
 
-    if (velocityFactor > 6) {
-        return velocity < 0 ? base + 1 : base - 1;
-    }
-
-    return base;
+    return activeIdx;
 }
 
 // ---- NAV ----
@@ -1221,8 +1151,6 @@ document.querySelector('.nav-btn.right').onclick = () => {
 // ---- POINTER ----
 container.addEventListener('pointerdown', e => {
     if (isScrolling) return;
-
-    cancelMomentum();
 
     isDragging = true;
     dragStartX = e.clientX;
@@ -1241,9 +1169,6 @@ container.addEventListener('pointermove', e => {
 
     velocity = lastX - e.clientX;
     lastX = e.clientX;
-
-    // 🔥 FIX: update active DURING drag
-    updateActiveCard();
 });
 
 container.addEventListener('pointerup', e => {
@@ -1253,21 +1178,20 @@ container.addEventListener('pointerup', e => {
     container.releasePointerCapture(e.pointerId);
 
     const predicted = predictIndex();
-
-    if (Math.abs(velocity) > 6) {
-        scrollToCard(predicted);
-    } else {
-        startMomentum();
-    }
+    scrollToCard(predicted);
 });
 
 // ---- INIT ----
 if (cards.length) {
     currentIndex = 0;
 
-    container.scrollLeft = getCenteredScroll(cards[0]);
+    container.scrollLeft = clampScroll(
+        cards[0].offsetLeft -
+        container.offsetWidth / 2 +
+        cards[0].offsetWidth / 2
+    );
+
     updateDots(0);
-    updateActiveCard(); // 🔥 ensure no initial blur
 }
 
 // ---- Resize ----
