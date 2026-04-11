@@ -202,21 +202,26 @@ left:300px;
     100% { background-position: 0% 50%; }
 }
 
-/* ---------------- PLANS WRAPPER ---------------- */
+/* ---------------- PLANS WRAPPER (FIXED CONTAINER SPACE) ---------------- */
 .plans-wrapper {
     display: flex;
     gap: 20px;
+position: relative;
     overflow-x: auto;
+    overflow-y: visible; /* 🔥 allow full card height */
+
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
+
     padding: 28px;
+
     box-sizing: border-box;
     width: 100%;
-    justify-content: flex-start;
-}
 
-.plans-wrapper::-webkit-scrollbar {
-    display: none;
+    justify-content: flex-start;
+    align-items: stretch; /* 🔥 ensures full card height is respected */
+
+    min-height: 100%; /* 🔥 prevents “tight box” feeling */
 }
 
 /* ---------------- HOVER ---------------- */
@@ -922,7 +927,6 @@ header .logo-card img {
             <span>≈ 1$ = 1 ACU</span>
         </div>
     </details>
-</div>
 </div>
 </div>
 
