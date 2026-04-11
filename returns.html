@@ -1050,46 +1050,46 @@ function navigateTo(page){
         return Math.max(0, Math.min(left, max));
     }
 
-    // ---- 3D DEPTH EFFECT 💎 ----  
-function update3D() {  
-    const center = container.scrollLeft + container.clientWidth / 2;  
+    // ---- 3D DEPTH EFFECT 💎 ----
+function update3D() {
+    const center = container.scrollLeft + container.clientWidth / 2;
 
-    let closest = null;  
-    let min = Infinity;  
+    let closest = null;
+    let min = Infinity;
 
-    cards.forEach(card => {  
-        const cardCenter = card.offsetLeft + card.offsetWidth / 2;  
-        const dist = Math.abs(center - cardCenter);  
+    cards.forEach(card => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(center - cardCenter);
 
-        if (dist < min) {  
-            min = dist;  
-            closest = card;  
-        }  
-    });  
+        if (dist < min) {
+            min = dist;
+            closest = card;
+        }
+    });
 
-    setActiveCard(closest);
+    if (closest) setActiveCard(closest);
 }
 
-// ---- Active Card ----  
-function setActiveCard(target) {  
-    if (!target) return; // 🔥 prevents crash/freeze
 
-    cards.forEach(c => {  
-        c.classList.remove('active', 'inactive');  
-        if (c !== target) c.classList.add('inactive');  
-    });  
+// ---- Active Card ----
+function setActiveCard(target) {
+    if (!target) return;
+
+    cards.forEach(c => {
+        c.classList.remove('active', 'inactive');
+        if (c !== target) c.classList.add('inactive');
+    });
 
     target.classList.add('active');
 
-    // ---- dots sync (safe + fast) ----  
+    // dots logic
     if (!dotsWrapper) return;
 
-    const dots = dotsWrapper.querySelectorAll('span');  
+    const dots = dotsWrapper.querySelectorAll('span');
+    dots.forEach(d => d.classList.remove('active'));
 
-    dots.forEach(d => d.classList.remove('active'));  
-
-    const idx = cards.indexOf(target);  
-    if (dots[idx]) dots[idx].classList.add('active');  
+    const idx = Array.from(cards).indexOf(target);
+    if (dots[idx]) dots[idx].classList.add('active');
 }
 
     // ---- Easing ----
