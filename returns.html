@@ -219,21 +219,33 @@ left:300px;
 
     width: 100%;
 
-    /* 🔥 IMPORTANT: REMOVE SNAP COMPLETELY */
+    /* 🚫 removes slideshow behavior */
     scroll-snap-type: none;
-
     scroll-behavior: auto;
 
-    /* REMOVE “container feel” */
+    /* 🚫 removes “boxed track” feeling */
     padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 
     box-sizing: border-box;
 
     justify-content: flex-start;
-    align-items: stretch;
+    align-items: flex-start;
 
-    /* optional smooth touch scrolling */
+    /* smooth mobile swipe */
     -webkit-overflow-scrolling: touch;
+}
+
+/* 🚫 hide scrollbar (removes visual “rail line”) */
+.plans-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.plans-wrapper {
+    scrollbar-width: none;
 }
 
 /* ---------------- ACTIVE FLOW BORDER (FIXED) ---------------- */
