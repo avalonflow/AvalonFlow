@@ -160,15 +160,13 @@ left:300px;
     position: relative;
     overflow: visible;
 
-    scroll-snap-align: center;
+    scroll-snap-align: none; /* ❌ kill slideshow behavior */
 
     /* prevents shrinking */
     flex: 0 0 320px;
 
     margin-bottom: 0;
-
-    /* 🔥 CRITICAL FIX */
-    isolation: isolate;
+    
 }
 
 /* ---------------- BACKGROUND GLOW LAYER ---------------- */
@@ -216,31 +214,26 @@ left:300px;
     display: flex;
     gap: 24px;
 
-    position: relative;
-
     overflow-x: auto;
-    overflow-y: visible;
-
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-
-    padding-inline: 28px;
-    padding-block: 40px;
-
-    box-sizing: border-box;
+    overflow-y: hidden;
 
     width: 100%;
 
+    /* 🔥 IMPORTANT: REMOVE SNAP COMPLETELY */
+    scroll-snap-type: none;
+
+    scroll-behavior: auto;
+
+    /* REMOVE “container feel” */
+    padding: 0;
+
+    box-sizing: border-box;
+
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: stretch;
 
-    min-width: 0;
-
-    /* 🔥 IMPORTANT FIX */
-    isolation: isolate;
-
-    /* prevents edge clipping */
-    scroll-padding-inline: 28px;
+    /* optional smooth touch scrolling */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ---------------- ACTIVE FLOW BORDER (FIXED) ---------------- */
