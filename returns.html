@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AvalonFlow Rewards</title>
+<title>ACU Returns</title>
 
         <!-- Favicon -->
     <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48">
@@ -118,6 +118,7 @@ padding-bottom: 80px;
     margin: -30px 0px 7px 0;
     padding-left: 20px;
 overflow: visible;
+position: relative;
 
     /* Animated gradient effect */
     background: linear-gradient(90deg,#6b2cd8,#b393ff,#6b2cd8);
@@ -128,12 +129,60 @@ overflow: visible;
     -webkit-text-fill-color: transparent;
 }
 
+#titleContainer::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    bottom: -6px;
+
+    width: 60%;
+    height: 2px;
+
+    background: #6b2cd8;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 0 8px #6b2cd8,
+        0 0 16px #6b2cd8,
+        0 0 24px #6b2cd8;
+
+    animation: neonPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+    0% {
+        opacity: 0.6;
+        transform: scaleX(0.98);
+        box-shadow:
+            0 0 6px #6b2cd8,
+            0 0 12px #6b2cd8;
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleX(1);
+        box-shadow:
+            0 0 10px #6b2cd8,
+            0 0 20px #6b2cd8,
+            0 0 30px #6b2cd8;
+    }
+
+    100% {
+        opacity: 0.6;
+        transform: scaleX(0.98);
+        box-shadow:
+            0 0 6px #6b2cd8,
+            0 0 12px #6b2cd8;
+    }
+}
+
 /* Subtext animated gradient */
 #titleContainer + p {
     font-size: 14px;
     opacity: 0.85;
 margin: 20px 0px;
-    background: linear-gradient(90deg,#6b2cd8,#b393ff,#6b2cd8);
+    background: linear-gradient(90deg,#3498db,#5dade2,#85c1e9);
     background-size: 200% auto;
     animation: gradientShift 6s linear infinite;
 
@@ -1408,7 +1457,7 @@ acEl.textContent = newValue;
         const now = Date.now();
 
         // Welcome message first
-        notification.textContent = "Welcome — Returns / Progress";
+        notification.textContent = "Welcome To Returns Tab";
         notification.classList.add("show");
 
         setTimeout(() => {
