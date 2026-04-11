@@ -150,60 +150,68 @@ left:300px;
     backdrop-filter: blur(20px);
     border-radius: 20px;
     padding: 28px;
-    
+
     border: 1px solid rgba(255,255,255,0.06);
     box-shadow:
         0 0 0 1px rgba(255,255,255,0.02) inset,
         0 20px 60px rgba(0,0,0,0.6);
+
     transition: 0.4s ease;
     position: relative;
     overflow: visible;
+
     scroll-snap-align: center;
 
-    /* 🔥 IMPORTANT: prevents shrinking in flex layout */
+    /* prevents shrinking */
     flex: 0 0 320px;
+
     margin-bottom: 0;
+
+    /* 🔥 CRITICAL FIX */
+    isolation: isolate;
 }
 
-/* Neon subtle border */
+/* ---------------- BACKGROUND GLOW LAYER ---------------- */
 .glass-card::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: 20px;
+
     background: linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
     opacity: 0.15;
-    z-index: -1;
+
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* Active flowing border */
-.glass-card.active::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    padding: 2px;
-    background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
-    background-size: 300% 300%;
-    z-index: -1;
-
-    mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    -webkit-mask-composite: destination-out;
-
-    animation: flowBorder 3s linear infinite;
+/* Ensure content stays above glow */
+.glass-card > * {
+    position: relative;
+    z-index: 1;
 }
 
-/* Animate border flow */
-@keyframes flowBorder {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* ---------------- ACTIVE CARD ---------------- */
+.glass-card.active {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1);
+    z-index: 2;
+
+    box-shadow:
+        0 0 15px rgba(107,44,216,0.35),
+        0 0 30px rgba(107,44,216,0.2);
+
+    border: 1px solid rgba(107,44,216,0.3);
 }
 
-/* ---------------- PLANS WRAPPER (FIXED CONTAINER SPACE) ---------------- */
+/* ---------------- HOVER ---------------- */
+.glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 20px rgba(107,44,216,0.3);
+}
+
+/* ---------------- PLANS WRAPPER ---------------- */
 .plans-wrapper {
     display: flex;
     gap: 24px;
@@ -216,7 +224,6 @@ left:300px;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
 
-    /* ✅ FIX: use inline padding instead of full padding */
     padding-inline: 28px;
     padding-block: 40px;
 
@@ -225,28 +232,47 @@ left:300px;
     width: 100%;
 
     justify-content: flex-start;
-    align-items: flex-start; /* 🔥 important fix */
+    align-items: flex-start;
 
-    /* 🔥 prevents “boxed container feel” */
     min-width: 0;
+
+    /* 🔥 IMPORTANT FIX */
+    isolation: isolate;
+
+    /* prevents edge clipping */
+    scroll-padding-inline: 28px;
 }
 
-/* ---------------- HOVER ---------------- */
-.glass-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 0 20px rgba(107,44,216,0.3);
+/* ---------------- ACTIVE FLOW BORDER (FIXED) ---------------- */
+.glass-card.active::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+
+    padding: 2px;
+
+    background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
+    background-size: 300% 300%;
+
+    z-index: 0;
+    pointer-events: none;
+
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+
+    mask-composite: exclude;
+    -webkit-mask-composite: destination-out;
+
+    animation: flowBorder 3s linear infinite;
 }
 
-/* ---------------- ACTIVE CARD ---------------- */
-.glass-card.active {
-    transform: scale(1);
-    opacity: 1;
-    filter: brightness(1);
-    z-index: 2;
-    box-shadow:
-        0 0 15px rgba(107,44,216,0.35),
-        0 0 30px rgba(107,44,216,0.2);
-    border: 1px solid rgba(107,44,216,0.3);
+/* ---------------- ANIMATIONS ---------------- */
+@keyframes flowBorder {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* ---------------- FADE IN ---------------- */
@@ -255,62 +281,50 @@ left:300px;
 }
 
 @keyframes fadeInCard {
-    0% {
-        opacity: 0;
-        transform: scale(1);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    0% { opacity: 0; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
-/* Premium purple gradient (default) */
+/* ---------------- GRADIENT TEXTS ---------------- */
 .plan-premium .gradient-animation {
     background: linear-gradient(90deg,#6b2cd8,#b393ff,#6b2cd8);
     background-size: 200% auto;
     animation: gradientShift 6s linear infinite;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: inline-block;
 }
 
-/* Basic blue gradient */
 .plan-basic .gradient-animation {
     background: linear-gradient(90deg,#3498db,#5dade2,#3498db);
     background-size: 200% auto;
     animation: gradientShift 6s linear infinite;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: inline-block;
 }
 
-/* Lite green gradient */
 .plan-lite .gradient-animation {
     background: linear-gradient(90deg,#28a745,#58d68d,#28a745);
     background-size: 200% auto;
     animation: gradientShift 6s linear infinite;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: inline-block;
 }
 
-/* Custom red gradient with visible animation */
 .plan-custom .gradient-animation {
     background: linear-gradient(90deg, #FF0000, #FF6666, #990000, #FF0000);
     background-size: 200% auto;
     animation: gradientShift 6s linear infinite;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: inline-block;
 }
 
-/* Animation keyframes (same for all) */
+/* ---------------- TEXT ANIMATION ---------------- */
 @keyframes gradientShift {
     0% { background-position: 0% center; }
     100% { background-position: 200% center; }
 }
 
+/* ---------------- DOTS ---------------- */
 .dots {
   display: flex;
   justify-content: center;
@@ -329,24 +343,30 @@ left:300px;
   background: #6b2cd8;
 }
 
+/* ---------------- SECTION ---------------- */
 .plans-section {
   position: relative;
 }
 
-/* ---------- Navigation Buttons ---------- */
+/* ---------------- NAV BUTTONS ---------------- */
 .nav-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
+
   width: 40px;
   height: 40px;
   border-radius: 50%;
+
   background: rgba(0,0,0,0.5);
   border: 1px solid rgba(255,255,255,0.1);
+
   color: white;
   cursor: pointer;
+
   backdrop-filter: blur(10px);
+
   box-shadow: 0 0 15px rgba(107,44,216,0.4);
 }
 
