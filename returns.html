@@ -1020,9 +1020,6 @@ function navigateTo(page){
 const dotsWrapper = document.querySelector('.dots');
 const container = cards[0].parentElement;
 
-// 🔥 slight left bias (tweak this)
-const CENTER_OFFSET = -20;
-
 let isScrolling = false;
 let isDragging = false;
 
@@ -1058,6 +1055,20 @@ function updateDots(index) {
     });
 }
 
+// ---- 🔥 ACTIVE FIX (NO BLUR DELAY) ----
+function updateActiveCard() {
+    const index = getClosestIndex();
+
+    if (index !== currentIndex) {
+        currentIndex = index;
+        updateDots(index);
+    }
+
+    cards.forEach((card, i) => {
+        card.classList.toggle('active', i === index);
+    });
+}
+
 // ---- Clamp ----
 function clampScroll(left) {
     const max = container.scrollWidth - container.clientWidth;
@@ -1084,21 +1095,7 @@ function getClosestIndex() {
     return closestIndex;
 }
 
-// ---- 🔥 REAL-TIME ACTIVE FIX ----
-function updateActiveCard() {
-    const index = getClosestIndex();
-
-    if (index !== currentIndex) {
-        currentIndex = index;
-        updateDots(index);
-    }
-
-    cards.forEach((card, i) => {
-        card.classList.toggle('active', i === index);
-    });
-}
-
-// ---- PERFECT CENTER + LEFT SHIFT ----
+// ---- PERFECT CENTER CALC ----
 function getCenteredScroll(target) {
     const containerRect = container.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
@@ -1109,9 +1106,7 @@ function getCenteredScroll(target) {
     const targetCenter =
         targetRect.left + container.scrollLeft + targetRect.width / 2;
 
-    return clampScroll(
-        container.scrollLeft + (targetCenter - containerCenter) + CENTER_OFFSET
-    );
+    return clampScroll(container.scrollLeft + (targetCenter - containerCenter));
 }
 
 // ---- Easing ----
@@ -1148,7 +1143,7 @@ function scrollToCard(index, duration = 280) {
 
         container.scrollLeft = Math.round(start + dist * eased);
 
-        // 🔥 FIX: update active DURING animation
+        // 🔥 FIX: update active DURING scroll
         updateActiveCard();
 
         if (p < 1) {
@@ -1164,7 +1159,7 @@ function scrollToCard(index, duration = 280) {
     requestAnimationFrame(anim);
 }
 
-// ---- Momentum Engine ----
+// ---- Momentum Engine (INERTIA) ----
 function startMomentum() {
     cancelMomentum();
 
@@ -1197,9 +1192,10 @@ function cancelMomentum() {
     }
 }
 
-// ---- Predictive Snap ----
+// ---- Predictive Snap (SMART FLICK) ----
 function predictIndex() {
     const base = getClosestIndex();
+
     const velocityFactor = Math.abs(velocity);
 
     if (velocityFactor > 12) {
@@ -1271,7 +1267,7 @@ if (cards.length) {
 
     container.scrollLeft = getCenteredScroll(cards[0]);
     updateDots(0);
-    updateActiveCard(); // 🔥 ensure correct initial state
+    updateActiveCard(); // 🔥 ensure no initial blur
 }
 
 // ---- Resize ----
