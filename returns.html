@@ -166,7 +166,7 @@ overflow: visible;
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 24px;
+  border-radius: 20px;
   background: linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
   opacity: 0.15;
   z-index: -1;
@@ -177,7 +177,7 @@ overflow: visible;
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 2px; /* border thickness */
   background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
   background-size: 300% 300%; /* larger than element for smooth flow */
@@ -204,9 +204,8 @@ overflow: visible;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  padding: 20px;
+  padding: 28px;
   width: 100%;
-  box-sizing: border-box;
   justify-content: flex-start; /* natural scroll */
 }
 
@@ -755,9 +754,9 @@ header .logo-card img {
 
     <div class="plans-wrapper">
 
-    <div class="glass-card premium locked" id="premiumCard">
+    <div class="glass-card premium locked plan-premium" id="premiumCard">
     <div class="card-header">
-        <h4>🪽 AvalonCare Premium</h4>
+        <h4 class="gradient-animation">🪽 AvalonCare Premium</h4>
         <span class="tier-badge status-locked" id="premiumStatus">🔴 Locked</span>
     </div>
 
@@ -796,9 +795,9 @@ header .logo-card img {
     </details>
 </div>
 
-    <div class="glass-card basic locked" id="basicCard">
+    <div class="glass-card basic locked plan-basic" id="basicCard">
     <div class="card-header">
-        <h4>🪽 AvalonCare Basic</h4>
+        <h4 class="gradient-animation">🪽 AvalonCare Basic</h4>
         <span class="tier-badge status-locked" id="basicStatus">🔴 Locked</span>
     </div>
 
@@ -837,9 +836,9 @@ header .logo-card img {
     </details>
 </div>
 
-    <div class="glass-card lite locked" id="liteCard">
+    <div class="glass-card lite locked plan-lite" id="liteCard">
     <div class="card-header">
-        <h4>🪽 AvalonCare Lite</h4>
+        <h4 class="gradient-animation">🪽 AvalonCare Lite</h4>
         <span class="tier-badge status-locked" id="liteStatus">🔴 Locked</span>
     </div>
 
