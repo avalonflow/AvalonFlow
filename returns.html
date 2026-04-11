@@ -161,7 +161,7 @@ left:300px;
     scroll-snap-align: center;
 
     /* 🔥 IMPORTANT: prevents shrinking in flex layout */
-    flex-shrink: 0;
+    flex: 0 0 auto;
 }
 
 /* Neon subtle border */
@@ -206,9 +206,10 @@ left:300px;
 .plans-wrapper {
     display: flex;
     gap: 20px;
-position: relative;
+    position: relative;
+
     overflow-x: auto;
-    overflow-y: visible; /* 🔥 allow full card height */
+    overflow-y: visible;
 
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
@@ -219,9 +220,9 @@ position: relative;
     width: 100%;
 
     justify-content: flex-start;
-    align-items: stretch; /* 🔥 ensures full card height is respected */
+    align-items: flex-start; /* ✅ IMPORTANT FIX */
 
-    min-height: 100%; /* 🔥 prevents “tight box” feeling */
+    /* ❌ REMOVE min-height */
 }
 
 /* ---------------- HOVER ---------------- */
