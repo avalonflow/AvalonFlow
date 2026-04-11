@@ -160,7 +160,7 @@ left:300px;
     position: relative;
     overflow: visible;
 
-    scroll-snap-align: none; /* ❌ kill slideshow behavior */
+    scroll-snap-align: center; /* ❌ kill slideshow behavior */
 
     /* prevents shrinking */
     flex: 0 0 320px;
@@ -209,41 +209,31 @@ left:300px;
     box-shadow: 0 0 20px rgba(107,44,216,0.3);
 }
 
-/* ---------------- PLANS WRAPPER ---------------- */
+/* ---------------- PLANS WRAPPER (REFERENCE STYLE) ---------------- */
 .plans-wrapper {
     display: flex;
-    gap: 24px;
+    gap: 20px;
 
     overflow-x: auto;
     overflow-y: hidden;
 
     width: 100%;
 
-    /* 🚫 removes slideshow behavior */
-    scroll-snap-type: none;
-    scroll-behavior: auto;
+    /* ✅ restore original snap behavior */
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
 
-    /* 🚫 removes “boxed track” feeling */
-    padding: 0;
-    margin: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-
+    /* ✅ restore spacing like reference */
+    padding: 20px;
     box-sizing: border-box;
 
     justify-content: flex-start;
-    align-items: flex-start;
-
-    /* smooth mobile swipe */
-    -webkit-overflow-scrolling: touch;
 }
 
-/* 🚫 hide scrollbar (removes visual “rail line”) */
+/* hide scrollbar */
 .plans-wrapper::-webkit-scrollbar {
     display: none;
 }
-
 .plans-wrapper {
     scrollbar-width: none;
 }
