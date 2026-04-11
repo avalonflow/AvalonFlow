@@ -1017,236 +1017,189 @@ function navigateTo(page){
 }
 
     const cards = Array.from(document.querySelectorAll('.glass-card'));
-    const dotsWrapper = document.querySelector('.dots');
-    const container = cards[0].parentElement;
+const dotsWrapper = document.querySelector('.dots');
+const container = cards[0].parentElement;
 
-    let isScrolling = false;
-    let isDragging = false;
+let isScrolling = false;
+let isDragging = false;
 
-    let dragStartX = 0;
-    let scrollStart = 0;
-    let lastX = 0;
-    let velocity = 0;
+let dragStartX = 0;
+let scrollStart = 0;
+let lastX = 0;
+let velocity = 0;
 
-    // ---- Snap Feedback ----
-    function snapFeedback() {
-        if (navigator.vibrate) navigator.vibrate(10);
-    }
+let currentIndex = 0;
 
-    // ---- Generate Dots ----
-    function generateDots() {
-        dotsWrapper.innerHTML = '';
-        cards.forEach((_, i) => {
-            const d = document.createElement('span');
-            if (i === 0) d.classList.add('active');
-            dotsWrapper.appendChild(d);
-        });
-    }
-    generateDots();
+// ---- Haptics (optional behavior) ----
+function snapFeedback() {
+    if (navigator.vibrate) navigator.vibrate(10);
+}
 
-    // ---- Clamp ----
-    function clampScroll(left) {
-        const max = container.scrollWidth - container.clientWidth;
-        return Math.max(0, Math.min(left, max));
-    }
+// ---- Dots (optional UI sync only, no card styling changes) ----
+function generateDots() {
+    dotsWrapper.innerHTML = '';
+    cards.forEach((_, i) => {
+        const d = document.createElement('span');
+        dotsWrapper.appendChild(d);
+    });
+}
+generateDots();
 
-    // ---- 3D DEPTH EFFECT 💎 ----
-// ---- 3D DEPTH EFFECT 💎 ----
-let currentActive = null;
+function updateDots(index) {
+    const dots = dotsWrapper.querySelectorAll('span');
+    dots.forEach((d, i) => {
+        if (i === index) d.classList.add('active');
+        else d.classList.remove('active');
+    });
+}
 
-function update3D() {
+// ---- Clamp ----
+function clampScroll(left) {
+    const max = container.scrollWidth - container.clientWidth;
+    return Math.max(0, Math.min(left, max));
+}
+
+// ---- Core 3D tracker (NO class edits) ----
+function getClosestIndex() {
     const center = container.scrollLeft + container.clientWidth / 2;
 
-    let closest = null;
+    let closestIndex = 0;
     let min = Infinity;
 
-    cards.forEach(card => {
+    cards.forEach((card, i) => {
         const cardCenter = card.offsetLeft + card.offsetWidth / 2;
         const dist = Math.abs(center - cardCenter);
 
         if (dist < min) {
             min = dist;
-            closest = card;
+            closestIndex = i;
         }
     });
 
-    // 🔥 prevent repeated DOM/class updates
-    if (closest !== currentActive) {
-        currentActive = closest;
-        setActiveCard(closest);
-    }
+    return closestIndex;
 }
 
-
-// ---- Active Card ----
-function setActiveCard(target) {
-    if (!target) return;
-
-    cards.forEach(c => {
-        c.classList.remove('active', 'inactive');
-        if (c !== target) c.classList.add('inactive');
-    });
-
-    target.classList.add('active');
-
-    const dots = dotsWrapper.querySelectorAll('span');
-    dots.forEach(d => d.classList.remove('active'));
-
-    const idx = Array.from(cards).indexOf(target);
-    if (dots[idx]) dots[idx].classList.add('active');
+// ---- Easing ----
+function easeOutExpo(t) {
+    return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 }
 
-    // ---- Easing ----
-    function easeOutExpo(t) {
-        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-    }
+// ---- Scroll To Card ----
+function scrollToCard(index, duration = 280) {
+    if (index < 0 || index >= cards.length) return;
 
-    // ---- Scroll To ----
-    function scrollToCard(index, duration = 280) {
-        if (index < 0 || index >= cards.length) return;
+    const target = cards[index];
+    const start = container.scrollLeft;
 
-        const target = cards[index];
-        const start = container.scrollLeft;
+    let dest =
+        target.offsetLeft -
+        container.offsetWidth / 2 +
+        target.offsetWidth / 2;
 
-        let dest = target.offsetLeft - container.offsetWidth/2 + target.offsetWidth/2;
-        dest = clampScroll(dest);
+    dest = clampScroll(dest);
 
-        const dist = dest - start;
-        let startTime = null;
+    const dist = dest - start;
+    let startTime = null;
 
-        isScrolling = true;
+    isScrolling = true;
 
-        function anim(t) {
-            if (!startTime) startTime = t;
-            const p = Math.min((t - startTime)/duration, 1);
-            const eased = easeOutExpo(p);
+    function anim(t) {
+        if (!startTime) startTime = t;
 
-            container.scrollLeft = start + dist * eased;
+        const p = Math.min((t - startTime) / duration, 1);
+        const eased = easeOutExpo(p);
 
-            update3D();
+        container.scrollLeft = start + dist * eased;
 
-            if (p < 1) {
-                requestAnimationFrame(anim);
-            } else {
-                isScrolling = false;
-                setActiveCard(target);
-                snapFeedback();
-            }
+        if (p < 1) {
+            requestAnimationFrame(anim);
+        } else {
+            isScrolling = false;
+            currentIndex = index;
+            updateDots(index);
+            snapFeedback();
         }
-
-        requestAnimationFrame(anim);
     }
 
-    // ---- Predictive Snap 🧠 ----
-    function predictIndex() {
-        const activeIdx = cards.findIndex(c => c.classList.contains('active'));
+    requestAnimationFrame(anim);
+}
 
-        const velocityBoost = velocity * 0.25;
-        const dragDistance = (dragStartX - lastX) * 0.15;
+// ---- Predictive Snap (behavior only) ----
+function predictIndex() {
+    const velocityBoost = velocity * 0.25;
+    const dragDistance = (dragStartX - lastX) * 0.15;
+    const intent = velocityBoost + dragDistance;
 
-        const intent = velocityBoost + dragDistance;
+    let activeIdx = getClosestIndex();
 
-        if (Math.abs(intent) > 5) {
-            if (intent > 0) return activeIdx + 1;
-            else return activeIdx - 1;
-        }
-
-        // fallback to closest
-        let closest = null, min = Infinity;
-        const center = container.scrollLeft + container.clientWidth / 2;
-
-        cards.forEach(c => {
-            const cc = c.offsetLeft + c.offsetWidth / 2;
-            const d = Math.abs(center - cc);
-            if (d < min) {
-                min = d;
-                closest = c;
-            }
-        });
-
-        return cards.indexOf(closest);
+    if (Math.abs(intent) > 5) {
+        return intent > 0 ? activeIdx + 1 : activeIdx - 1;
     }
 
-    // ---- NAV ----
-    document.querySelector('.nav-btn.left').onclick = () => {
-        const i = cards.findIndex(c => c.classList.contains('active'));
-        scrollToCard(i - 1);
-    };
+    return activeIdx;
+}
 
-    document.querySelector('.nav-btn.right').onclick = () => {
-        const i = cards.findIndex(c => c.classList.contains('active'));
-        scrollToCard(i + 1);
-    };
+// ---- NAV ----
+document.querySelector('.nav-btn.left').onclick = () => {
+    scrollToCard(currentIndex - 1);
+};
 
-    // ---- POINTER ----
-    container.addEventListener('pointerdown', e => {
-        if (isScrolling) return;
+document.querySelector('.nav-btn.right').onclick = () => {
+    scrollToCard(currentIndex + 1);
+};
 
-        isDragging = true;
-        dragStartX = e.clientX;
-        scrollStart = container.scrollLeft;
-        lastX = e.clientX;
-        velocity = 0;
+// ---- POINTER ----
+container.addEventListener('pointerdown', e => {
+    if (isScrolling) return;
 
-        container.setPointerCapture(e.pointerId);
-    });
+    isDragging = true;
+    dragStartX = e.clientX;
+    scrollStart = container.scrollLeft;
+    lastX = e.clientX;
+    velocity = 0;
 
-    container.addEventListener('pointermove', e => {
-        if (!isDragging) return;
+    container.setPointerCapture(e.pointerId);
+});
 
-        const dx = dragStartX - e.clientX;
-        container.scrollLeft = scrollStart + dx;
+container.addEventListener('pointermove', e => {
+    if (!isDragging) return;
 
-        velocity = lastX - e.clientX;
-        lastX = e.clientX;
+    const dx = dragStartX - e.clientX;
+    container.scrollLeft = scrollStart + dx;
 
-        update3D();
+    velocity = lastX - e.clientX;
+    lastX = e.clientX;
+});
 
-        // live active update
-        let closest = null, min = Infinity;
-        const center = container.scrollLeft + container.clientWidth / 2;
+container.addEventListener('pointerup', e => {
+    if (!isDragging) return;
+    isDragging = false;
 
-        cards.forEach(c => {
-            const cc = c.offsetLeft + c.offsetWidth / 2;
-            const d = Math.abs(center - cc);
-            if (d < min) {
-                min = d;
-                closest = c;
-            }
-        });
+    container.releasePointerCapture(e.pointerId);
 
-        if (closest) setActiveCard(closest);
-    });
+    const predicted = predictIndex();
+    scrollToCard(predicted);
+});
 
-    container.addEventListener('pointerup', e => {
-        if (!isDragging) return;
-        isDragging = false;
+// ---- INIT ----
+if (cards.length) {
+    currentIndex = 0;
 
-        container.releasePointerCapture(e.pointerId);
+    container.scrollLeft = clampScroll(
+        cards[0].offsetLeft -
+        container.offsetWidth / 2 +
+        cards[0].offsetWidth / 2
+    );
 
-        const predicted = predictIndex();
-        scrollToCard(predicted);
-    });
+    updateDots(0);
+}
 
-    // ---- INIT ----
-    if (cards.length) {
-        const first = cards[0];
-        setActiveCard(first);
-
-        container.scrollLeft = clampScroll(
-            first.offsetLeft - container.offsetWidth/2 + first.offsetWidth/2
-        );
-
-        update3D();
+// ---- Resize ----
+window.addEventListener('resize', () => {
+    if (!isScrolling) {
+        scrollToCard(currentIndex, 200);
     }
-
-    // ---- Resize ----
-    window.addEventListener('resize', () => {
-        if (!isScrolling) {
-            const active = cards.find(c => c.classList.contains('active'));
-            if (active) scrollToCard(cards.indexOf(active), 200);
-        }
-    });
+});
 
     // Branch data - must be before any logic
     const plans = {
