@@ -1051,6 +1051,9 @@ function navigateTo(page){
     }
 
     // ---- 3D DEPTH EFFECT 💎 ----
+// ---- 3D DEPTH EFFECT 💎 ----
+let currentActive = null;
+
 function update3D() {
     const center = container.scrollLeft + container.clientWidth / 2;
 
@@ -1067,7 +1070,11 @@ function update3D() {
         }
     });
 
-    if (closest) setActiveCard(closest);
+    // 🔥 prevent repeated DOM/class updates
+    if (closest !== currentActive) {
+        currentActive = closest;
+        setActiveCard(closest);
+    }
 }
 
 
@@ -1081,9 +1088,6 @@ function setActiveCard(target) {
     });
 
     target.classList.add('active');
-
-    // dots logic
-    if (!dotsWrapper) return;
 
     const dots = dotsWrapper.querySelectorAll('span');
     dots.forEach(d => d.classList.remove('active'));
