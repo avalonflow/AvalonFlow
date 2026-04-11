@@ -215,7 +215,7 @@ box-sizing: border-box;
 }
 
   /* Fade-in / scale */
-  transform: scale(0.92);
+  
   opacity: 0.5;
   transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.3s ease, filter 0.3s ease;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(255,255,255,0.03);
@@ -224,7 +224,7 @@ box-sizing: border-box;
 
 /* Hover effect */
 .glass-card:hover {
-  transform: scale(0.95) translateY(-6px);
+   translateY(-6px);
   box-shadow: 0 0 20px rgba(107,44,216,0.3); /* subtle equal purple glow */
 }
 
@@ -244,7 +244,7 @@ box-sizing: border-box;
     animation: fadeInCard 0.4s ease-in-out;
 }
 @keyframes fadeInCard {
-    0% { opacity: 0; transform: scale(0.95); }
+    0% { opacity: 0; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
 }
 
