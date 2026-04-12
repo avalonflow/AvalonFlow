@@ -1601,49 +1601,54 @@ function animate() {
 }
 
 window.addEventListener("load", () => {
-// ================================
-// 🔔 NOTIFICATION LOGIC (UPDATED)
-// ================================
 
-// Welcome message first
-notification.textContent = "Welcome To Returns Tab";
-notification.classList.add("show");
+    // ================================
+    // 🔔 NOTIFICATION LOGIC (FIXED)
+    // ================================
 
-setTimeout(() => {
+    const notification = document.getElementById("rewardNotification");
 
-    const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
-    const now = Date.now();
+    if (!notification) return; // safety check
 
-    const planEntries = Object.values(paidPlans);
+    // Welcome message first
+    notification.textContent = "Welcome To Returns Tab";
+    notification.classList.add("show");
 
-    const hasAnyPlan = planEntries.length > 0;
+    setTimeout(() => {
 
-    const hasActivePlan = planEntries.some(p =>
-        p.active && now < p.expiresAt
-    );
+        const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
+        const now = Date.now();
 
-    const allExpired = hasAnyPlan &&
-        planEntries.every(p => now >= p.expiresAt);
+        const planEntries = Object.values(paidPlans);
 
-    if (hasActivePlan) {
-        notification.textContent = "Access activated";
-        notification.classList.add("show");
+        const hasAnyPlan = planEntries.length > 0;
 
-    } else if (allExpired) {
-        notification.textContent = "Plan's locked";
-        notification.classList.add("show");
-    }
+        const hasActivePlan = planEntries.some(p =>
+            p.active && now < p.expiresAt
+        );
 
-}, 2500);
+        const allExpired = hasAnyPlan &&
+            planEntries.every(p => now >= p.expiresAt);
 
-// Hide notification
-setTimeout(() => {
-    notification.classList.remove("show");
-}, 5500);
+        if (hasActivePlan) {
+            notification.textContent = "Access activated";
+            notification.classList.add("show");
+
+        } else if (allExpired) {
+            notification.textContent = "Plan's locked";
+            notification.classList.add("show");
+        }
+
+    }, 2500);
+
+    // Hide notification
+    setTimeout(() => {
+        notification.classList.remove("show");
+    }, 5500);
 
     animate();
     window.history.replaceState({}, document.title, window.location.pathname);
-});
+});
 
 function logout() {
             window.location.href = "https://profile-login.avalonflow.site";
