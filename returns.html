@@ -1239,25 +1239,29 @@ container.addEventListener('pointermove', e => {
 });
 
 container.addEventListener('pointerup', e => {
-    if (!isDragging) return;
-    isDragging = false;
+if (!isDragging) return;
+isDragging = false;
 
-    container.releasePointerCapture(e.pointerId);
+container.releasePointerCapture(e.pointerId);  
 
-    const predicted = predictIndex();
-    scrollToCard(predicted);
+const predicted = predictIndex();  
+scrollToCard(predicted);
+
 });
 
 // ---- INIT ----
-window.addEventListener("load", () => {
-    if (!cards.length) return;
+if (cards.length) {
+currentIndex = 0;
 
-    currentIndex = 0;
+container.scrollLeft = clampScroll(  
+    cards[0].offsetLeft -  
+    container.offsetWidth / 2 +  
+    cards[0].offsetWidth / 2  
+);  
 
-    scrollToCard(0, 0);
-    setActiveCard(cards[0]);
-    updateDots(0);
-});
+updateDots(0);
+
+}
 
 // ---- Resize ----
 window.addEventListener('resize', () => {
