@@ -610,202 +610,178 @@ function navigateTo(page){
             window.location.href = 'https://profile-login.avalonflow.site';
         }
 
-        // Branch data - must be before any logic
+        // ================================
+// 🔐 PLAN CONFIG (SYNCED WITH RETURNS)
+// ================================
 const plans = {
-    premium: { per12h: 298.29 },
-    basic:   { per12h: 183.29 },
-    lite:    { per12h: 118.29 }
+    premium: { per12h: 298.29, ac: "premiumAC" },
+    basic:   { per12h: 183.29, ac: "basicAC" },
+    lite:    { per12h: 118.29, ac: "liteAC" },
+    custom:  { per12h: 0, ac: "customAC" }
 };
 
-const ALL_PLANS = ['premium','basic','lite'];
+const ALL_PLANS = ["premium", "basic", "lite", "custom"];
 
-// ---------- Load State ----------
-let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
-let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+// ================================
+// 📦 PAID PLANS
+// ================================
+const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
 
-// Track displayed AC for smooth per-plan animation
-let displayedAC = { premium: 0, basic: 0, lite: 0 };
+// ================================
+// 🎯 DISPLAY STATE
+// ================================
+let displayedAC = {
+    premium: 0,
+    basic: 0,
+    lite: 0,
+    custom: 0
+};
 
-// ---------- Trial Setup ----------
-const userId = localStorage.getItem("userId");
-const TRIAL_KEY = 'trialStart_' + userId;
-const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
-const trialActive = trialStart && (Date.now() - trialStart < TRIAL_MS);
+let lastCycleCount = {
+    premium: 0,
+    basic: 0,
+    lite: 0,
+    custom: 0
+};
 
-// ---------- Pulse Animation ----------
-function animateTotalChange() {
-    const el = document.getElementById('totalACU');
-    el.classList.add('value-pulse');
-    setTimeout(() => el.classList.remove('value-pulse'), 400);
+// ================================
+// 🔁 HELPERS
+// ================================
+const CYCLE_MS = 12 * 60 * 60 * 1000;
+
+function getPlan(planKey) {
+    return paidPlans[planKey];
 }
 
-// ---------- Dashboard Progress Bar ----------
-const progressFill = document.getElementById("progressFill");
-const fillDuration = 12 * 60 * 60 * 1000; // 12 hours
-
-function updateDashboardProgress() {
-    const now = Date.now();
-
-    // Use "premium" as reference plan for dashboard progress  
-    const planKey = "premium";  
-    const startTime = unlockTimes[planKey] || (trialActive ? trialStart : now);  
-    let elapsed = now - startTime;
-
-    // Stop progress bar if trial expired
-    if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-        elapsed = TRIAL_MS; // freeze at trial end
-    }
-
-    const cycleElapsed = elapsed % fillDuration;  
-    const timeProgress = (cycleElapsed / fillDuration) * 100;  
-
-    progressFill.style.width = timeProgress + "%";
+function isLocked(planData, now) {
+    return !planData?.active || now >= planData.expiresAt;
 }
 
-// ---------- Update Active Plans ----------
+// ================================
+// 📊 ACTIVE PLANS COUNT
+// ================================
 function updateActivePlans() {
     const now = Date.now();
-    const cycleMs = 12 * 60 * 60 * 1000;
+    const currentDeviceId = localStorage.getItem("avalonflow_deviceId");
 
     const activeCount = ALL_PLANS.reduce((count, plan) => {
+        const planData = paidPlans[plan];
 
-        const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
+        if (!planData) return count;
 
-        let startTime = unlockTimes[plan] || (trialActive ? trialStart : now);
-        let elapsed = now - startTime;
+        // Device binding check (same as your engine)
+        if (planData.deviceId && planData.deviceId !== currentDeviceId) return count;
 
-        if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-            elapsed = TRIAL_MS;
-        }
-
-        const cycles = Math.floor(elapsed / cycleMs);
-        const cycleProgress = (elapsed % cycleMs) / cycleMs;
-
-        const growthAC =
-            cycles * plans[plan].per12h +
-            cycleProgress * plans[plan].per12h;
-
-        const value = Math.max(stored, growthAC);
-
-        const isActive = value > 0;
+        const isActive = planData.active && now < planData.expiresAt;
 
         return isActive ? count + 1 : count;
     }, 0);
 
     const el = document.getElementById('activePlans');
-    if (el) el.textContent = activeCount;
+    if (el && el.textContent != activeCount) {
+        el.textContent = activeCount;
+    }
 }
 
-
-// Update progress every second
-setInterval(updateDashboardProgress, 1000);
-updateDashboardProgress(); // run once immediately
-
-// ---------- Read Activated Credits (with 12-hour cycle growth) ----------
-function readActivatedCredits() {
+// ================================
+// 💰 TOTAL ACU (FIXED - NO RESET ON LOCK)
+// ================================
+function updateTotalACU() {
     const now = Date.now();
-    const cycleMs = 12 * 60 * 60 * 1000; // 12 hours
 
-    ALL_PLANS.forEach(plan => {  
-        // Stop growth if trial expired but keep accumulated ACU
-        let planUnlocked = unlockedPlans[plan] || trialActive;
-        if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-            planUnlocked = false; // stop further growth
+    const total = ALL_PLANS.reduce((sum, plan) => {
+        const data = getPlan(plan);
+        if (!data) return sum;
+
+        const per12h = plan === "custom"
+            ? ((data.amount || 0) * 1.5) / 2
+            : plans[plan].per12h;
+
+        const elapsed = now - data.activatedAt;
+        const cycles = Math.floor(elapsed / CYCLE_MS);
+        const cycleProgress = (elapsed % CYCLE_MS) / CYCLE_MS;
+
+        const liveValue = (cycles * per12h) + (cycleProgress * per12h);
+
+        // 🔥 KEY FIX: freeze value instead of removing it
+        const finalValue = isLocked(data, now)
+            ? displayedAC[plan]
+            : liveValue;
+
+        return sum + finalValue;
+    }, 0);
+
+    const el = document.getElementById("totalACU");
+    if (el) el.textContent = total.toFixed(2) + " ACU";
+
+    localStorage.setItem("totalACU", total.toFixed(2));
+}
+
+// ================================
+// 📈 PER PLAN ACU (FIXED)
+// ================================
+function updatePlanACU() {
+    const now = Date.now();
+
+    ALL_PLANS.forEach(plan => {
+        const data = getPlan(plan);
+        const el = document.getElementById(plans[plan].ac);
+        if (!el || !data) return;
+
+        const per12h = plan === "custom"
+            ? ((data.amount || 0) * 1.5) / 2
+            : plans[plan].per12h;
+
+        const elapsed = now - data.activatedAt;
+        const cycles = Math.floor(elapsed / CYCLE_MS);
+        const cycleProgress = (elapsed % CYCLE_MS) / CYCLE_MS;
+
+        const targetAC = (cycles * per12h) + (cycleProgress * per12h);
+
+        // 🔥 KEY FIX: freeze when locked instead of resetting
+        const finalTarget = isLocked(data, now)
+            ? displayedAC[plan]
+            : targetAC;
+
+        const diff = finalTarget - displayedAC[plan];
+        displayedAC[plan] += diff * 0.08;
+
+        el.textContent = displayedAC[plan].toFixed(2) + " ACU";
+
+        // cycle animation
+        if (cycles > lastCycleCount[plan]) {
+            const card = document.getElementById(plan + "Card");
+            card?.classList.add("cycle-burst");
+
+            setTimeout(() => {
+                card?.classList.remove("cycle-burst");
+            }, 1200);
+
+            lastCycleCount[plan] = cycles;
         }
-
-        if (planUnlocked) {  
-            const key = plan + 'AC';  
-            const stored = parseFloat(localStorage.getItem(key)) || 0;  
-
-            // Determine start time: use unlockTimes or trial start for trial users  
-            const startTime = unlockTimes[plan] || (trialActive ? trialStart : now);  
-            let elapsed = now - startTime;
-
-            // Clamp elapsed if trial expired
-            if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-                elapsed = TRIAL_MS;
-            }
-
-            // 12-hour cycle growth  
-            const cycles = Math.floor(elapsed / cycleMs);  
-            const cycleProgress = (elapsed % cycleMs) / cycleMs;  
-            const targetAC = cycles * plans[plan].per12h + cycleProgress * plans[plan].per12h;  
-
-            // Smoothly animate displayedAC toward either stored value or calculated growth  
-            const target = Math.max(stored, targetAC);  
-            const diff = target - displayedAC[plan];  
-            displayedAC[plan] += diff * 0.08;  
-
-            // Update per-plan element if exists  
-            const el = document.getElementById(key);  
-            if (el) {  
-                const newValue = displayedAC[plan].toFixed(2) + ' ACU';  
-                if (el.textContent !== newValue) {  
-                    el.classList.add('value-pulse');  
-                    setTimeout(() => el.classList.remove('value-pulse'), 400);  
-                    el.textContent = newValue;  
-                }  
-            }  
-        }  
     });
 }
 
-// ---------- Update Total ACU (instant from localStorage) ----------
-function updateTotalACU() {
-    const total = ALL_PLANS.reduce((sum, plan) => {
-
-        const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
-
-        let startTime = unlockTimes[plan] || (trialActive ? trialStart : Date.now());
-        let elapsed = Date.now() - startTime;
-
-        if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-            elapsed = TRIAL_MS;
-        }
-
-        const cycleMs = 12 * 60 * 60 * 1000;
-        const cycles = Math.floor(elapsed / cycleMs);
-        const cycleProgress = (elapsed % cycleMs) / cycleMs;
-
-        const growthAC =
-            cycles * plans[plan].per12h +
-            cycleProgress * plans[plan].per12h;
-
-        const value = Math.max(stored, growthAC);
-
-        return (unlockedPlans[plan] || trialActive)
-            ? sum + value
-            : sum;
-
-    }, 0);
-
-    const el = document.getElementById('totalACU');
-    const prevValue = parseFloat(el.textContent) || 0;
-
-    if (total.toFixed(2) !== prevValue.toFixed(2)) {
-        animateTotalChange();
-    }
-
-    el.textContent = total.toFixed(2) + ' ACU';
-    localStorage.setItem('totalACU', total.toFixed(2));
-}
-
-// ---------- Main Update ----------
+// ================================
+// 🔄 MAIN UPDATE
+// ================================
 function updateACU() {
-    readActivatedCredits();
+    updatePlanACU();
     updateTotalACU();
-    updateActivePlans(); // 👈 ADD THIS
+    updateActivePlans();
 }
 
-// ---------- Animation Loop ----------
+// ================================
+// 🚀 LOOP
+// ================================
 function animate() {
     updateACU();
     requestAnimationFrame(animate);
 }
 
-// ---------- Start Animation ----------
-animate();
+window.addEventListener("load", () => {
+    animate();
+});
 
 // ---------- Auto-refresh in case localStorage changes externally ----------
 setInterval(updateACU, 30000); // every 30 seconds
@@ -821,7 +797,7 @@ setInterval(updateACU, 30000); // every 30 seconds
                 message = "Hi there — signed in successfully.";
                 localStorage.setItem("avalon_seen_dashboard","true");
             } else {
-                message = "Hi there — welcome back.";
+                message = "Welcome back.";
             }
 
             notification.textContent = message;
