@@ -795,10 +795,10 @@ setInterval(updateACU, 30000); // every 30 seconds
 
             let message;
             if(!localStorage.getItem("avalon_seen_dashboard")){
-                message = "Hi there — signed in successfully.";
+                message = "Hi there — signed in successfully";
                 localStorage.setItem("avalon_seen_dashboard","true");
             } else {
-                message = "Welcome back.";
+                message = "Welcome back";
             }
 
             notification.textContent = message;
