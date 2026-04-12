@@ -245,7 +245,6 @@ overflow: visible;
 .glass-card:hover {
 transform: translateY(-6px);
     box-shadow: 0 0 20px rgba(107,44,216,0.3);
-overflow: visible;
 }
 
 /* ---------------- PLANS WRAPPER (REFERENCE STYLE) ---------------- */
@@ -278,6 +277,53 @@ padding: 28px;
 }
 
 
+/* ---------------- ACTIVE FLOW BORDER (STRONG NEON) ---------------- */
+.glass-card.active::before {
+    content: "";
+    position: absolute;
+    inset: -2px; /* makes border slightly outside (more visible) */
+    border-radius: 20px;
+
+    padding: 28px;
+
+    background: linear-gradient(
+        90deg,
+        #7a2cff,
+        #00f2fe,
+        #ff2bd6,
+        #7a2cff,
+        #00f2fe
+    );
+
+    background-size: 400% 400%;
+
+    z-index: 0;
+    pointer-events: none;
+
+    /* stronger visibility */
+    opacity: 1;
+
+    /* neon glow */
+    filter: drop-shadow(0 0 8px #7a2cff)
+            drop-shadow(0 0 14px #00f2fe)
+            drop-shadow(0 0 20px #ff2bd6);
+
+    /* keep only border visible */
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: destination-out;
+
+    animation: flowBorder 2s linear infinite;
+}
+
+/* ---------------- STRONGER ANIMATION ---------------- */
+@keyframes flowBorder {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
 /* ---------------- FADE IN ---------------- */
 .glass-card.fade-in {
