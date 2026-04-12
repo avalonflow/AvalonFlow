@@ -1270,230 +1270,380 @@ window.addEventListener('resize', () => {
     }
 });
 
-    // Branch data - must be before any logic
-    const plans = {
-        premium: { days: 30, totalAC: 17897, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 298.29 },
-        basic: { days: 30, totalAC: 10997, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 183.29 },
-        lite: { days: 30, totalAC: 7097, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 118.29 }
-    };
+    // ================================
+// 🔐 PLANS
+// ================================
+const plans = {
+    premium: { days: 30, totalAC: 17897, fill: 'premiumFill', lock: 'premiumLock', ac: 'premiumAC', cycles: 'premiumCycles', reset: 'premiumReset', per12h: 298.29 },
+    basic:   { days: 30, totalAC: 10997, fill: 'basicFill', lock: 'basicLock', ac: 'basicAC', cycles: 'basicCycles', reset: 'basicReset', per12h: 183.29 },
+    custom:  { days: 30, totalAC: 0, fill: 'customFill', lock: 'customLock', ac: 'customAC', cycles: 'customCycles', reset: 'customReset', per12h: 0 },
+    lite:    { days: 30, totalAC: 7097, fill: 'liteFill', lock: 'liteLock', ac: 'liteAC', cycles: 'liteCycles', reset: 'liteReset', per12h: 118.29 }
+};
 
-    const ALL_PLANS = ['premium', 'basic', 'lite'];
-    const now = Date.now();
+const ALL_PLANS = ["premium", "basic", "lite", "custom"];
+const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
 
-    /* ---------- Identity & State Init ---------- */
-    const userId = localStorage.getItem("userId"); // NO fallback
-    const FULL_ACCESS_ID = "AF-F0QD-O5MO";
 
-    // Persistent reward state
-    let unlockedPlans = JSON.parse(localStorage.getItem('unlockedPlans')) || {};
-    let unlockTimes = JSON.parse(localStorage.getItem('unlockTimes')) || {};
+// ================================
+// 📱 DEVICE BINDING INIT
+// ================================
+(function initDevice() {
+    let deviceId = localStorage.getItem("avalonflow_deviceId");
 
-    // ---------- Trial Setup ----------
-    const TRIAL_KEY = 'trialStart_' + userId;
-    let trialStart = parseInt(localStorage.getItem(TRIAL_KEY)) || 0;
-    const TRIAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+    if (!deviceId) {
+        deviceId = crypto.randomUUID
+            ? crypto.randomUUID()
+            : "dev_" + Math.random().toString(36).substring(2) + Date.now();
 
-    // Start trial only if no previous record and not full-access ID
-    if (!trialStart && userId !== FULL_ACCESS_ID) {
-        trialStart = now;
-        localStorage.setItem(TRIAL_KEY, trialStart);
-        ALL_PLANS.forEach(plan => {
-            unlockedPlans[plan] = true;
-            unlockTimes[plan] = now;
-        });
-        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
+        localStorage.setItem("avalonflow_deviceId", deviceId);
     }
+})();
 
-    // ---------- Minimal Anti-Tamper Protection ----------
-    if (userId !== FULL_ACCESS_ID) {
-        const cleanUnlocks = {};
-        const cleanTimes = {};
-        ALL_PLANS.forEach(plan => {
-            if (unlockedPlans[plan] === true && unlockTimes[plan]) {
-                cleanUnlocks[plan] = true;
-                cleanTimes[plan] = unlockTimes[plan];
-            }
-        });
-        unlockedPlans = cleanUnlocks;
-        unlockTimes = cleanTimes;
-        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-    }
 
-    // ---------- Full Access Initialization ----------
-    if (userId === FULL_ACCESS_ID && !localStorage.getItem('fullAccessInit')) {
-        ALL_PLANS.forEach(plan => {
-            unlockedPlans[plan] = true;
-            unlockTimes[plan] = now;
-        });
-        localStorage.setItem('unlockedPlans', JSON.stringify(unlockedPlans));
-        localStorage.setItem('unlockTimes', JSON.stringify(unlockTimes));
-        localStorage.setItem('fullAccessInit', 'true');
-    }
+// ================================
+// 🪤 DECOY SYSTEM
+// ================================
+const DECoy_PLANS = ["admin", "debug", "test", "superuser"];
 
-    // ---------- Rewards Animation ----------
-    let displayedAC = { premium: 0, basic: 0, lite: 0 };
-let lastCycleCount = { premium: 0, basic: 0, lite: 0 };
+function isDecoyPlan(plan) {
+    return DECoy_PLANS.includes(plan);
+}
 
-    function updateReturns() {
+
+// ================================
+// 🚨 SECURITY LOGGING
+// ================================
+function logSuspicious(data) {
+    const logs = JSON.parse(localStorage.getItem("suspiciousLogs") || "[]");
+    logs.push({ time: Date.now(), data });
+    localStorage.setItem("suspiciousLogs", JSON.stringify(logs));
+}
+
+
+// ================================
+// 🎲 NONCE SYSTEM
+// ================================
+const usedNonces = JSON.parse(localStorage.getItem("usedNonces") || "[]");
+
+function isNonceUsed(nonce) {
+    return usedNonces.includes(nonce);
+}
+
+function saveNonce(nonce) {
+    usedNonces.push(nonce);
+    localStorage.setItem("usedNonces", JSON.stringify(usedNonces));
+}
+
+
+// ================================
+// 🔐 SIGNATURE ENGINE (MATCH SENDER)
+// ================================
+const secrets = [
+    "AvalonFlow rules 2026",
+    "God Grace",
+    "Flow is power",
+    "Alpha cycle 9"
+];
+
+function getSecret() {
+    const hour = Math.floor(Date.now() / 3600000);
+    return secrets[hour % secrets.length];
+}
+
+async function sign(data) {
+    const secret = getSecret();
+    const msg = new TextEncoder().encode(data + secret);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", msg);
+
+    return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+
+// ================================
+// 📦 PAYLOAD HANDLER (SECURE + VERIFIED)
+// ================================
+(async function handlePayload() {
+
+    const params = new URLSearchParams(window.location.search);
+    const payload = params.get("payload");
+
+    if (!payload) return;
+
+    try {
+
+        const decoded = JSON.parse(atob(decodeURIComponent(payload)));
+        const { plan, nonce, signature } = decoded;
         const now = Date.now();
 
-        Object.keys(plans).forEach(key => {
-            const b = plans[key];
-            const fill = document.getElementById(b.fill);
-            const lock = document.getElementById(b.lock);
-            const cyclesEl = document.getElementById(b.cycles);
-            const acEl = document.getElementById(b.ac);
-            const resetEl = document.getElementById(b.reset);
+        if (!signature) {
+            logSuspicious({ reason: "MISSING_SIGNATURE", payload: decoded });
+            return;
+        }
 
-            let unlocked = unlockedPlans[key] || false;
+        const { signature: _, ...dataOnly } = decoded;
+        const payloadString = JSON.stringify(dataOnly);
 
-// -------- STATUS SYSTEM --------
-const card = document.getElementById(key + "Card");
-const badge = document.getElementById(key + "Status");
+        const expectedSignature = await sign(payloadString);
 
-let statusText = "🔴 Locked";
-let statusClass = "status-locked";
+        if (expectedSignature !== signature) {
+            logSuspicious({
+                reason: "INVALID_SIGNATURE",
+                expected: expectedSignature,
+                received: signature
+            });
+            return;
+        }
 
-// Trial expired lock
-if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-    unlocked = false;
-}
+        if (isDecoyPlan(plan)) {
+            logSuspicious({ reason: "DECOY_PLAN_ATTEMPT", payload: decoded });
+            return;
+        }
 
-// Determine status
-if (!unlocked) {
-    statusText = "🔴 Locked";
-    statusClass = "status-locked";
-    card.classList.add("locked");
-} else {
-    const cycleMs = 12 * 60 * 60 * 1000;
-    const elapsed = now - (unlockTimes[key] || now);
-    const cycleProgress = (elapsed % cycleMs) / cycleMs;
+        const allowedFields = [
+            "plan","status","amount","time",
+            "wallet","txHash","deviceId",
+            "nonce","signature"
+        ];
 
-    if (cycleProgress > 0.95) {
-        statusText = "🟡 Pending";
-        statusClass = "status-pending";
-    } else {
-        statusText = "🟣 Active";
-        statusClass = "status-active";
+        const injected = Object.keys(decoded)
+            .filter(k => !allowedFields.includes(k));
+
+        if (injected.length > 0) {
+            logSuspicious({ reason: "INJECTED_FIELDS", fields: injected });
+            return;
+        }
+
+        if (!nonce || isNonceUsed(nonce)) {
+            logSuspicious({ reason: "REPLAY_ATTEMPT", nonce });
+            return;
+        }
+
+        if (ALL_PLANS.includes(plan)) {
+
+            const existing = paidPlans[plan];
+
+            if (existing?.lastTx === decoded.txHash) return;
+            if (existing?.wallet && decoded.wallet !== existing.wallet) return;
+
+            paidPlans[plan] = {
+                active: true,
+                activatedAt: decoded.time || now,
+                expiresAt: (decoded.time || now) + (7 * 24 * 60 * 60 * 1000),
+
+                amount: decoded.amount || 0,
+                wallet: decoded.wallet || null,
+                lastTx: decoded.txHash || null,
+                deviceId: localStorage.getItem("avalonflow_deviceId")
+            };
+        }
+
+        saveNonce(nonce);
+
+        localStorage.setItem("paidPlans", JSON.stringify(paidPlans));
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+    } catch (e) {
+        console.error("Payment payload decode failed");
     }
 
-    card.classList.remove("locked");
-}
+})();
 
-// Apply badge
-badge.textContent = statusText;
-badge.className = "tier-badge " + statusClass;
 
-            // Lock trial after 7 days
-            if (trialStart && now - trialStart >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-                unlocked = false;
+// ================================
+// 🎯 ANIMATION STATE
+// ================================
+let displayedAC = { premium: 0, basic: 0, lite: 0, custom: 0 };
+let lastCycleCount = { premium: 0, basic: 0, lite: 0, custom: 0 };
+
+
+// ================================
+// 🔁 MAIN ENGINE
+// ================================
+function updateReturns() {
+
+    const now = Date.now();
+    const currentDeviceId = localStorage.getItem("avalonflow_deviceId");
+
+    Object.keys(plans).forEach(key => {
+
+        const b = plans[key];
+        const planData = paidPlans[key];
+
+        // ================================
+        // 💡 CUSTOM PER12H UI UPDATE (WORKS EVEN IF NOT ACTIVE)
+        // ================================
+        if (key === "custom") {
+            const per12hEl = document.getElementById("customPer12h");
+
+            if (!planData || !planData.active) {
+                if (per12hEl) per12hEl.textContent = "75% of deposit";
+            } else {
+                const amount = planData.amount || 0;
+                const per12h = (amount * 1.5) / 2;
+                if (per12hEl) per12hEl.textContent = per12h.toFixed(2) + " ACU";
             }
+        }
 
-            lock.style.display = unlocked ? 'none' : 'block';
+        if (!planData) return;
+        if (planData.deviceId && planData.deviceId !== currentDeviceId) return;
 
-            if (!unlocked) {
-                fill.style.width = '0%';
-                cyclesEl.textContent = 0;
-                acEl.textContent = displayedAC[key].toFixed(2) + ' ACU'; // keep accumulated
-                resetEl.textContent = '--:--:--';
-                return;
-            }
+        const fill = document.getElementById(b.fill);
+        const lock = document.getElementById(b.lock);
+        const cyclesEl = document.getElementById(b.cycles);
+        const acEl = document.getElementById(b.ac);
+        const resetEl = document.getElementById(b.reset);
 
+        const expiryWarningEl = document.getElementById(key + "ExpiryWarning");
+
+        const isActive = planData.active && now < planData.expiresAt;
+        const isExpired = planData.active && now >= planData.expiresAt;
+
+        let unlocked = isActive;
+
+        const badge = document.getElementById(key + "Status");
+
+        let statusText = "🔴 Locked";
+        let statusClass = "status-locked";
+
+        if (isExpired) {
+            statusText = "⚫ Expired";
+            statusClass = "status-expired";
+        } else if (isActive) {
             const cycleMs = 12 * 60 * 60 * 1000;
-            const elapsed = now - (unlockTimes[key] || now);
+            const elapsed = now - planData.activatedAt;
             const cycleProgress = (elapsed % cycleMs) / cycleMs;
 
-            fill.style.width = `${cycleProgress * 100}%`;
+            statusText = cycleProgress > 0.95 ? "🟡 Pending" : "🟣 Active";
+            statusClass = cycleProgress > 0.95 ? "status-pending" : "status-active";
+        }
 
-            const cycles = Math.floor(elapsed / cycleMs);
-            cyclesEl.textContent = cycles;
+        badge.textContent = statusText;
+        badge.className = "tier-badge " + statusClass;
 
-// Trigger glow burst when new cycle completes
-if (cycles > lastCycleCount[key]) {
-    const card = document.getElementById(key + "Card");
-    card.classList.add("cycle-burst");
+        lock.style.display = unlocked ? "none" : "block";
 
-    setTimeout(() => {
-        card.classList.remove("cycle-burst");
-    }, 1200);
+        if (!unlocked) {
+            fill.style.width = "0%";
+            cyclesEl.textContent = 0;
+            acEl.textContent = displayedAC[key].toFixed(2) + " ACU";
+            resetEl.textContent = "--:--:--";
+            return;
+        }
 
-    lastCycleCount[key] = cycles;
-}
+        const cycleMs = 12 * 60 * 60 * 1000;
+        const elapsed = now - planData.activatedAt;
+        const cycleProgress = (elapsed % cycleMs) / cycleMs;
 
-            const targetAC = cycles * b.per12h + cycleProgress * b.per12h;
-            const diff = targetAC - displayedAC[key];
-displayedAC[key] += diff * 0.08;
-            const newValue = displayedAC[key].toFixed(2) + ' ACU';
+        fill.style.width = `${cycleProgress * 100}%`;
 
-if (acEl.textContent !== newValue) {
-    acEl.classList.add("value-pulse");
+        const cycles = Math.floor(elapsed / cycleMs);
+        cyclesEl.textContent = cycles;
 
-    setTimeout(() => {
-        acEl.classList.remove("value-pulse");
-    }, 400);
-}
+        if (cycles > lastCycleCount[key]) {
+            document.getElementById(key + "Card")?.classList.add("cycle-burst");
+            setTimeout(() => {
+                document.getElementById(key + "Card")?.classList.remove("cycle-burst");
+            }, 1200);
 
-acEl.textContent = newValue;
+            lastCycleCount[key] = cycles;
+        }
 
-            // Remaining time for current 12h cycle
-            const remainingMs = cycleMs - (elapsed % cycleMs);
-            const h = Math.floor(remainingMs / 3600000);
-            const m = Math.floor((remainingMs % 3600000) / 60000);
-            const s = Math.floor((remainingMs % 60000) / 1000);
-            resetEl.textContent =
-                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        let per12h = b.per12h;
 
-            // Live trial countdown display (optional, per plan)
-            const trialCountdownEl = document.getElementById(b.trialCountdown);
-            if (trialCountdownEl && trialStart && userId !== FULL_ACCESS_ID) {
-                const remainingTrialMs = TRIAL_MS - (now - trialStart);
-                if (remainingTrialMs > 0) {
-                    const d = Math.floor(remainingTrialMs / (1000 * 60 * 60 * 24));
-                    const h = Math.floor((remainingTrialMs % (1000 * 60 * 60 * 24)) / 3600000);
-                    const m = Math.floor((remainingTrialMs % 3600000) / 60000);
-                    const s = Math.floor((remainingTrialMs % 60000) / 1000);
-                    trialCountdownEl.textContent = `Trial ends in ${d}d ${h}h ${m}m ${s}s`;
-                } else {
-                    trialCountdownEl.textContent = "Trial ended";
-                }
+        if (key === "custom") {
+            const amount = planData.amount || 0;
+            per12h = (amount * 1.5) / 2;
+        }
+
+        const targetAC = cycles * per12h + cycleProgress * per12h;
+
+        const diff = targetAC - displayedAC[key];
+        displayedAC[key] += diff * 0.08;
+
+        acEl.textContent = displayedAC[key].toFixed(2) + " ACU";
+
+        const timeLeft = planData.expiresAt - now;
+
+        if (expiryWarningEl) {
+            if (timeLeft > 0 && timeLeft <= 86400000) {
+                const h = Math.floor(timeLeft / 3600000);
+                const m = Math.floor((timeLeft % 3600000) / 60000);
+                const s = Math.floor((timeLeft % 60000) / 1000);
+
+                expiryWarningEl.style.display = "block";
+                expiryWarningEl.textContent =
+                    `⚠️ Expiring in ${h}:${m}:${s}`;
+            } else {
+                expiryWarningEl.style.display = "none";
             }
-        });
-    }  
+        }
 
-    // Call the update function every 30 seconds to refresh the rewards or ACU cycle
-    setInterval(updateReturns, 30000);
+        const remainingMs = cycleMs - (elapsed % cycleMs);
+        const h = Math.floor(remainingMs / 3600000);
+        const m = Math.floor((remainingMs % 3600000) / 60000);
+        const s = Math.floor((remainingMs % 60000) / 1000);
 
-    function animate() {
-        updateReturns();
-        requestAnimationFrame(animate);
-    }
+        resetEl.textContent = `${h}:${m}:${s}`;
+    });
+}
 
-    // ---------- Page Load Logic ----------
-    window.addEventListener("load", () => {
-        const notification = document.getElementById("rewardNotification");
-        const now = Date.now();
 
-        // Welcome message first
-        notification.textContent = "Welcome To Returns Tab";
+// ================================
+// 🔁 LOOP
+// ================================
+setInterval(updateReturns, 30000);
+
+function animate() {
+    updateReturns();
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener("load", () => {
+// ================================
+// 🔔 NOTIFICATION LOGIC (UPDATED)
+// ================================
+
+// Welcome message first
+notification.textContent = "Welcome To Returns Tab";
+notification.classList.add("show");
+
+setTimeout(() => {
+
+    const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
+    const now = Date.now();
+
+    const planEntries = Object.values(paidPlans);
+
+    const hasAnyPlan = planEntries.length > 0;
+
+    const hasActivePlan = planEntries.some(p =>
+        p.active && now < p.expiresAt
+    );
+
+    const allExpired = hasAnyPlan &&
+        planEntries.every(p => now >= p.expiresAt);
+
+    if (hasActivePlan) {
+        notification.textContent = "Access activated";
         notification.classList.add("show");
 
-        setTimeout(() => {
-            // Trial message if applicable
-            if (userId === FULL_ACCESS_ID) {
-    notification.textContent = "Access activated";
-}
-else if (trialStart && now - trialStart >= TRIAL_MS) {
-    notification.textContent = "Plans locked";
-        }
-    }, 2500);
+    } else if (allExpired) {
+        notification.textContent = "Plan's locked";
+        notification.classList.add("show");
+    }
 
-    setTimeout(() => notification.classList.remove("show"), 5500);
+}, 2500);
+
+// Hide notification
+setTimeout(() => {
+    notification.classList.remove("show");
+}, 5500);
 
     animate();
     window.history.replaceState({}, document.title, window.location.pathname);
-});
+});
 
 function logout() {
             window.location.href = "https://profile-login.avalonflow.site";
