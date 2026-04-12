@@ -544,7 +544,7 @@ header .logo-card img {
     <!-- Small Stat Cards -->
     <div class="glass-card stat-card">
       <h3>Active Plans</h3>
-      <div class="stat">3</div>
+      <div class="stat" id="activePlans">3</div>
     </div>
 
     <div class="glass-card stat-card">
@@ -658,7 +658,7 @@ function isLocked(planData, now) {
 }
 
 // ================================
-// 📊 ACTIVE PLANS COUNT
+// 📊 ACTIVE PLANS COUNT (RAW STATE)
 // ================================
 function updateActivePlans() {
     const now = Date.now();
@@ -669,18 +669,19 @@ function updateActivePlans() {
 
         if (!planData) return count;
 
-        // Device binding check (same as your engine)
+        // Device binding check
         if (planData.deviceId && planData.deviceId !== currentDeviceId) return count;
 
+        // Only real paid + not expired
         const isActive = planData.active && now < planData.expiresAt;
 
         return isActive ? count + 1 : count;
     }, 0);
 
     const el = document.getElementById('activePlans');
-    if (el && el.textContent != activeCount) {
-        el.textContent = activeCount;
-    }
+
+    // instant update (no animation)
+    if (el) el.textContent = activeCount;
 }
 
 // ================================
