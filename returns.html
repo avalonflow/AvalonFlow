@@ -243,27 +243,6 @@ overflow: visible;
     opacity: 0.6;
 }
 
-/* ---------------- BACKGROUND GLOW LAYER ---------------- */
-.glass-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-overflow: visible;
-
-    background: linear-gradient(120deg,#6b2cd8,#00f2fe,#6b2cd8);
-    opacity: 0.15;
-
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* Ensure content stays above glow */
-.glass-card > * {
-    position: relative;
-    z-index: 1;
-}
-
 /* ---------------- HOVER ---------------- */
 .glass-card:hover {
 transform: translateY(-6px);
@@ -300,35 +279,51 @@ padding: 28px;
     scrollbar-width: none;
 }
 
-/* ---------------- ACTIVE FLOW BORDER (FIXED) ---------------- */
+/* ---------------- ACTIVE FLOW BORDER (STRONG NEON) ---------------- */
 .glass-card.active::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -2px; /* makes border slightly outside (more visible) */
     border-radius: 20px;
 
     padding: 28px;
 
-    background: linear-gradient(90deg, #6b2cd8, #00f2fe, #6b2cd8, #00f2fe);
-    background-size: 300% 300%;
+    background: linear-gradient(
+        90deg,
+        #7a2cff,
+        #00f2fe,
+        #ff2bd6,
+        #7a2cff,
+        #00f2fe
+    );
+
+    background-size: 400% 400%;
 
     z-index: 0;
     pointer-events: none;
 
+    /* stronger visibility */
+    opacity: 1;
+
+    /* neon glow */
+    filter: drop-shadow(0 0 8px #7a2cff)
+            drop-shadow(0 0 14px #00f2fe)
+            drop-shadow(0 0 20px #ff2bd6);
+
+    /* keep only border visible */
     mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
-
     mask-composite: exclude;
     -webkit-mask-composite: destination-out;
 
-    animation: flowBorder 3s linear infinite;
+    animation: flowBorder 2s linear infinite;
 }
 
-/* ---------------- ANIMATIONS ---------------- */
+/* ---------------- STRONGER ANIMATION ---------------- */
 @keyframes flowBorder {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
