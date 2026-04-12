@@ -1171,9 +1171,9 @@ function scrollToCard(index, duration = 280) {
         } else {
             isScrolling = false;
             currentIndex = index;
-
-            updateDots(index);
-            snapFeedback();
+updateDots(index);
+setActiveCard(cards[index]);
+snapFeedback();
         }
     }
 
@@ -1249,17 +1249,15 @@ container.addEventListener('pointerup', e => {
 });
 
 // ---- INIT ----
-if (cards.length) {
+window.addEventListener("load", () => {
+    if (!cards.length) return;
+
     currentIndex = 0;
 
-    container.scrollLeft = clampScroll(
-        cards[0].offsetLeft -
-        container.offsetWidth / 2 +
-        cards[0].offsetWidth / 2
-    );
-
+    scrollToCard(0, 0);
+    setActiveCard(cards[0]);
     updateDots(0);
-}
+});
 
 // ---- Resize ----
 window.addEventListener('resize', () => {
