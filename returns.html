@@ -1185,6 +1185,25 @@ function scrollToCard(index, duration = 280) {
     requestAnimationFrame(anim);
 }
 
+
+
+    // ---- Active Card ----
+    function setActiveCard(target) {
+        if (!target) return;
+
+        cards.forEach(c => {
+            c.classList.remove('active', 'inactive', 'fade-in');
+        });
+
+        target.classList.add('active', 'fade-in');
+
+        cards.forEach(c => {
+            if (c !== target) c.classList.add('inactive');
+        });
+
+        
+
+
 // ---- Predictive Snap ----
 function predictIndex() {
     const velocityBoost = velocity * 0.25;
