@@ -663,27 +663,39 @@ function updateDashboardProgress() {
     progressFill.style.width = timeProgress + "%";
 }
 
+// ---------- Update Active Plans ----------
 function updateActivePlans() {
     const now = Date.now();
+    const cycleMs = 12 * 60 * 60 * 1000;
 
     const activeCount = ALL_PLANS.reduce((count, plan) => {
+
+        const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
+
         let startTime = unlockTimes[plan] || (trialActive ? trialStart : now);
         let elapsed = now - startTime;
 
-        // Stop counting if trial expired
         if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
-            return count;
+            elapsed = TRIAL_MS;
         }
 
-        const isActive = unlockedPlans[plan] || (trialActive && elapsed < TRIAL_MS);
+        const cycles = Math.floor(elapsed / cycleMs);
+        const cycleProgress = (elapsed % cycleMs) / cycleMs;
+
+        const growthAC =
+            cycles * plans[plan].per12h +
+            cycleProgress * plans[plan].per12h;
+
+        const value = Math.max(stored, growthAC);
+
+        const isActive = value > 0;
 
         return isActive ? count + 1 : count;
     }, 0);
 
     const el = document.getElementById('activePlans');
-    if (el) {
-        el.textContent = activeCount;
-    }
+    if (el) el.textContent = activeCount;
+}
 }
 
 // Update progress every second
@@ -740,22 +752,19 @@ function readActivatedCredits() {
 }
 
 // ---------- Update Total ACU (instant from localStorage) ----------
-function updateActivePlans() {
-    const now = Date.now();
-    const cycleMs = 12 * 60 * 60 * 1000;
-
-    const activeCount = ALL_PLANS.reduce((count, plan) => {
+function updateTotalACU() {
+    const total = ALL_PLANS.reduce((sum, plan) => {
 
         const stored = parseFloat(localStorage.getItem(plan + 'AC')) || 0;
 
-        let startTime = unlockTimes[plan] || (trialActive ? trialStart : now);
-        let elapsed = now - startTime;
+        let startTime = unlockTimes[plan] || (trialActive ? trialStart : Date.now());
+        let elapsed = Date.now() - startTime;
 
-        // clamp trial expiry
         if (trialStart && elapsed >= TRIAL_MS && userId !== FULL_ACCESS_ID) {
             elapsed = TRIAL_MS;
         }
 
+        const cycleMs = 12 * 60 * 60 * 1000;
         const cycles = Math.floor(elapsed / cycleMs);
         const cycleProgress = (elapsed % cycleMs) / cycleMs;
 
@@ -765,22 +774,20 @@ function updateActivePlans() {
 
         const value = Math.max(stored, growthAC);
 
-        const isActive =
-            value > 0; // 🔥 THIS is the key fix
+        return (unlockedPlans[plan] || trialActive)
+            ? sum + value
+            : sum;
 
-        return isActive ? count + 1 : count;
     }, 0);
 
-    const el = document.getElementById('activePlans');
-    if (el) el.textContent = activeCount;
-}
+    const el = document.getElementById('totalACU');
+    const prevValue = parseFloat(el.textContent) || 0;
 
-    const el = document.getElementById('totalACU');  
-    const prevValue = parseFloat(el.textContent) || 0;  
+    if (total.toFixed(2) !== prevValue.toFixed(2)) {
+        animateTotalChange();
+    }
 
-    if (total.toFixed(2) !== prevValue.toFixed(2)) animateTotalChange();  
-
-    el.textContent = total.toFixed(2) + ' ACU';  
+    el.textContent = total.toFixed(2) + ' ACU';
     localStorage.setItem('totalACU', total.toFixed(2));
 }
 
