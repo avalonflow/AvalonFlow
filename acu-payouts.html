@@ -471,14 +471,14 @@ left:300px;
     <div id="sidebar">
         <h2>AvalonFlow</h2>
     <button onclick="window.location.href='/dashboard'">Dashboard</button>
-    <button onclick="window.location.href='/acu-payouts'">Payout Details</button>
+    <button onclick="window.location.href='/acu-payouts'">Payout Settings</button>
     <button onclick="window.location.href='https://link.avalonflow.site/access-plans'">Plans</button>
     <button onclick="window.location.href='/returns'">Returns</button>
     <button onclick="window.location.href='/support'">Support</button>
     <button onclick="logout()">Logout</button>
 </div>
 <div id="overlay" onclick="toggleSidebar()"></div>
-<div id="rewardNotification" class="notification-bar"></div>
+<div id="planNotification" class="notification-bar"></div>
 
 
 <header style="text-align:center; padding:40px 0;">
@@ -580,7 +580,7 @@ let preference = "";
         // Show option 1 notification only
         window.addEventListener("load", () => {
             const notification = document.getElementById("planNotification");
-            notification.textContent = "Select a plan to continue.";
+            notification.textContent = "Provide your payout details";
             setTimeout(()=>notification.classList.add("show"),300);
             setTimeout(()=>notification.classList.remove("show"),3300);
         });
