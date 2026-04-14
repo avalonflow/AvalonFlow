@@ -573,6 +573,10 @@ const inputs = document.querySelectorAll(".payment-method input");
 
 let preference = "";
 
+        function logout() {
+            window.location.href = "https://profile-login.avalonflow.site";
+        }
+
         // Show option 1 notification only
         window.addEventListener("load", () => {
             const notification = document.getElementById("planNotification");
