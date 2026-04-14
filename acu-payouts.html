@@ -368,12 +368,76 @@ header .logo-card img {
   }
 }
 
+                    /* ---------- Sidebar ---------- */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 5;
+            padding: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        #sidebar.open { transform: translateX(0); }
+        #sidebar h2{
+font-size:22px;
+margin-bottom:20px;
+color:#a78bfa;
+}
+        #sidebar button {
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+
+                    /* ---------- Menu Button ---------- */
+        #menuBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 6;
+            background: #6b2cd8;
+            border: none;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
+}
+
+/* move button when sidebar opens */
+#menuBtn.shift{
+left:300px;
+}
+
   footer { position:fixed; bottom:0; left:0; width:100%; text-align:center; padding:18px 0; font-size:14px; color:#aaa; background:rgba(15,15,25,0.95); backdrop-filter:blur(12px); box-shadow:0 -5px 20px rgba(0,0,0,0.4); z-index:6; }
 </style>
 </head>
 <body>
   <!-- Floating Background -->
   <div id="floating-bg"></div>
+
+<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+
+    <div id="sidebar">
+        <h2>AvalonFlow</h2>
+    <button onclick="window.location.href='/dashboard'">Dashboard</button>
+    <button onclick="window.location.href='/ecosystem'">Ecosystem</button>
+    <button onclick="window.location.href='https://link.avalonflow.site/access-plans'">Plans</button>
+    <button onclick="window.location.href='/returns'">Returns</button>
+    <button onclick="window.location.href='/support'">Support</button>
+    <button onclick="logout()">Logout</button>
+</div>
+<div id="overlay" onclick="toggleSidebar()"></div>
+<div id="rewardNotification" class="notification-bar"></div>
+
 
 <header style="text-align:center; padding:40px 0;">
   <div class="logo-card">
@@ -438,14 +502,8 @@ header .logo-card img {
     </div> <!-- closes single glass-card wrapper -->
 
   </div> <!-- closes payment-container -->
-</section>
-
-    <!-- Navigation Buttons -->
-<div id="navButtons" style="max-width:600px;margin:40px auto 100px; display:flex;justify-content:space-between; position:relative; z-index:5;">
-    <button id="prevBtn" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Previous</button>
-    <button id="nextBtn" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Next</button>
-</div>
-
+</section>
+    
 <footer>© 2026 AvalonFlow • Powered by Centrical™</footer>
 
 <script>
@@ -472,6 +530,24 @@ window.addEventListener("DOMContentLoaded", () => {
 const inputs = document.querySelectorAll(".payment-method input");
 
 let preference = "";
+
+                    /* Sidebar toggle */
+        const sidebar = document.getElementById('sidebar');
+const content = document.getElementById('content');
+
+const menuBtn = document.getElementById('menuBtn');
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menuBtn');
+
+    sidebar.classList.toggle('open');
+    menuBtn.classList.toggle('shift');
+}
+
+function navigateTo(page){
+    window.location.href = page;
+}
 
 /* --------------------------
 LOAD SAVED DATA
