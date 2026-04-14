@@ -548,6 +548,24 @@ left:300px;
 <footer>© 2026 AvalonFlow • Powered by Centrical™</footer>
 
 <script>
+/* Sidebar toggle */
+        const sidebar = document.getElementById('sidebar');
+const content = document.getElementById('content');
+
+const menuBtn = document.getElementById('menuBtn');
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menuBtn');
+
+    sidebar.classList.toggle('open');
+    menuBtn.classList.toggle('shift');
+}
+
+function navigateTo(page){
+    window.location.href = page;
+}
+
 window.addEventListener("DOMContentLoaded", () => {
 
   // Floating particles
@@ -583,23 +601,7 @@ let preference = "";
             setTimeout(()=>notification.classList.add("show"),300);
             setTimeout(()=>notification.classList.remove("show"),3300);
         });
-                    /* Sidebar toggle */
-        const sidebar = document.getElementById('sidebar');
-const content = document.getElementById('content');
-
-const menuBtn = document.getElementById('menuBtn');
-
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('menuBtn');
-
-    sidebar.classList.toggle('open');
-    menuBtn.classList.toggle('shift');
-}
-
-function navigateTo(page){
-    window.location.href = page;
-}
+                    
 
 /* --------------------------
 LOAD SAVED DATA
