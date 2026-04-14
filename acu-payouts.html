@@ -555,3 +555,11 @@ venmo: document.getElementById("venmoInput")?.value.trim()
 localStorage.setItem("section3Data", JSON.stringify(data));
 
 }
+
+function getFingerprint() {
+  return btoa(
+    navigator.userAgent +
+    screen.width + screen.height +
+    navigator.language
+  );
+}
