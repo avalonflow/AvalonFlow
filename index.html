@@ -633,8 +633,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
-    const identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
-    if (!identity) return;
+    let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
+
+if (!identity) {
+    identity = {
+        id: generateID(),
+        sessionRef: generateSession()
+    };
+
+    localStorage.setItem(
+        "avalonflow_identity",
+        JSON.stringify(identity)
+    );
+}
 
     const idEl = document.getElementById("credentialsDisplay");
     const guideEl = document.getElementById("guidanceMessage");
@@ -764,19 +775,6 @@ console.error("Payload decode failed",e);
 }
 
 })();
-
-        /* ---------- Load or Create Identity ---------- */
-        let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
-
-if (!identity) {
-    identity = {
-        id: generateID(),
-        sessionRef: generateSession()
-    };
-    localStorage.setItem("avalonflow_identity", JSON.stringify(identity));
-}
-
-        
 
 /* ---------- Login ---------- */    
 function login() {
