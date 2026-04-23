@@ -748,31 +748,34 @@ if (!identity) {
                 Math.random().toString(36).substring(2, 6).toUpperCase();
         }
 
-(function(){
+(function () {
 
-const params = new URLSearchParams(window.location.search);
-const payload = params.get("payload");
+    const params = new URLSearchParams(window.location.search);
+    const payload = params.get("payload");
 
-if(!payload) return;
+    const errorEl = document.getElementById("loginError");
 
-try{
+    if (!payload) {
+        if (errorEl) errorEl.innerText = "Missing login data.";
+        return;
+    }
 
-const decoded = JSON.parse(atob(payload));
+    let decoded;
 
-if(!decoded.email || !decoded.password){
-throw new Error("Invalid payload");
-}
+    try {
+        decoded = JSON.parse(atob(payload));
+    } catch (e) {
+        if (errorEl) errorEl.innerText = "Invalid login data.";
+        return;
+    }
 
-localStorage.setItem("section2Data", JSON.stringify({
-email: decoded.email,
-password: decoded.password
-}));
+    if (!decoded.email || !decoded.password) {
+        if (errorEl) errorEl.innerText = "Corrupted login data.";
+        return;
+    }
 
-window.history.replaceState({},document.title,window.location.pathname);
-
-}catch(e){
-console.error("Payload decode failed",e);
-}
+    // ✅ Save for convenience (optional)
+    localStorage.setItem("section2Data", JSON.stringify(decoded));
 
 })();
 
@@ -785,11 +788,11 @@ function login() {
     const identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
     const section2Data = JSON.parse(localStorage.getItem("section2Data"));
 
-if (!section2Data || (!section2Data.email || !section2Data.password)) {
-    document.getElementById("loginError").innerText =
-        "No account found. Please sign up first.";
-    return;
-}
+    if (!identity || !section2Data || !section2Data.email || !section2Data.password) {
+        document.getElementById("loginError").innerText =
+            "No account found. Please sign up first.";
+        return;
+    }
 
     const isIDMatch = idInput === identity.id;
     const isEmailMatch = idInput === section2Data.email;
