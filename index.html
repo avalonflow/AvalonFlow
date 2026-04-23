@@ -764,7 +764,7 @@ window.addEventListener("DOMContentLoaded", () => {
         /* ---------- Load or Create Identity ---------- */
         let identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
 
-        if (!identity) {
+if (!identity) {
     identity = {
         id: generateID(),
         sessionRef: generateSession()
@@ -783,11 +783,11 @@ function login() {
     const identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
     const section2Data = JSON.parse(localStorage.getItem("section2Data"));
 
-    if (!identity || !section2Data) {
-        document.getElementById("loginError").innerText =
-            "No account found. Please sign up first.";
-        return;
-    }
+    if (!section2Data) {
+    document.getElementById("loginError").innerText =
+        "No account found. Please sign up first.";
+    return;
+}
 
     const isIDMatch = idInput === identity.id;
     const isEmailMatch = idInput === section2Data.email;
