@@ -742,10 +742,26 @@ window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const payload = params.get("payload");
 
-    if (!payload) return;
+    if (!payload) {
+    console.warn("Missing payload");
+    return;
+}
 
     try {
-        const decoded = JSON.parse(atob(payload));
+    const decoded = JSON.parse(atob(payload));
+
+    if (!decoded.email || !decoded.password) {
+        throw new Error("Invalid payload data");
+    }
+
+    localStorage.setItem("section2Data", JSON.stringify({
+        email: decoded.email,
+        password: decoded.password
+    }));
+
+} catch (e) {
+    console.error("Payload decode failed", e);
+}
 
         localStorage.setItem("section2Data", JSON.stringify({
             email: decoded.email,
@@ -783,7 +799,7 @@ function login() {
     const identity = JSON.parse(localStorage.getItem("avalonflow_identity"));
     const section2Data = JSON.parse(localStorage.getItem("section2Data"));
 
-    if (!section2Data) {
+if (!section2Data || (!section2Data.email || !section2Data.password)) {
     document.getElementById("loginError").innerText =
         "No account found. Please sign up first.";
     return;
