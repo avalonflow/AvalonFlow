@@ -750,14 +750,14 @@ window.addEventListener("DOMContentLoaded", () => {
     try {
     const decoded = JSON.parse(atob(payload));
 
-    if (!decoded.email || !decoded.password) {
-        throw new Error("Invalid payload data");
-    }
+    if (!decoded.email || !decoded.p) throw new Error("Invalid payload");
 
     localStorage.setItem("section2Data", JSON.stringify({
         email: decoded.email,
-        password: decoded.password
+        password: decoded.p
     }));
+
+    window.history.replaceState({}, document.title, window.location.pathname);
 
 } catch (e) {
     console.error("Payload decode failed", e);
