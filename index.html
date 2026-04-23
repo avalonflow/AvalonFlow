@@ -737,43 +737,31 @@ window.addEventListener("DOMContentLoaded", () => {
                 Math.random().toString(36).substring(2, 6).toUpperCase();
         }
 
-(function () {
+(function(){
 
-    const params = new URLSearchParams(window.location.search);
-    const payload = params.get("payload");
+const params = new URLSearchParams(window.location.search);
+const payload = params.get("payload");
 
-    if (!payload) {
-    console.warn("Missing payload");
-    return;
+if(!payload) return;
+
+try{
+
+const decoded = JSON.parse(atob(payload));
+
+if(!decoded.email || !decoded.password){
+throw new Error("Invalid payload");
 }
 
-    try {
-    const decoded = JSON.parse(atob(payload));
+localStorage.setItem("section2Data", JSON.stringify({
+email: decoded.email,
+password: decoded.password
+}));
 
-    if (!decoded.email || !decoded.p) throw new Error("Invalid payload");
+window.history.replaceState({},document.title,window.location.pathname);
 
-    localStorage.setItem("section2Data", JSON.stringify({
-        email: decoded.email,
-        password: decoded.p
-    }));
-
-    window.history.replaceState({}, document.title, window.location.pathname);
-
-} catch (e) {
-    console.error("Payload decode failed", e);
+}catch(e){
+console.error("Payload decode failed",e);
 }
-
-        localStorage.setItem("section2Data", JSON.stringify({
-            email: decoded.email,
-            password: decoded.p
-        }));
-
-        // Clean URL (remove payload)
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-    } catch (e) {
-        console.error("Payload decode failed");
-    }
 
 })();
 
