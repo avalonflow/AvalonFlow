@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACU Returns</title>
+<title>My Cashbacks</title>
 
         <!-- Favicon -->
     <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48">
@@ -836,7 +836,7 @@ header .logo-card img {
     <button onclick="window.location.href='/dashboard'">Dashboard</button>
 <button onclick="window.location.href='https://link.avalonflow.site/access-plans'">AVB</button>
     <button onclick="window.location.href='/acu-payouts'">Withdrawal</button>
-    <button onclick="window.location.href='/returns'">Returns</button>
+    <button onclick="window.location.href='/returns'">Cashbacks</button>
     <button onclick="window.location.href='/support'">Support</button>
     <button onclick="logout()">Logout</button>
 </div>
@@ -851,13 +851,13 @@ header .logo-card img {
 
 <div id="content">
     <div id="titleContainer">Returns / Progress</div>
-    <p>Track your daily returns on the AvalonCare Plans below:</p>
+    <p>Track your cashback returns on the AvalonCare Bond's below:</p>
 
     <div class="plans-wrapper">
 
     <div class="glass-card lite locked plan-lite" id="liteCard">
     <div class="card-header">
-        <h4 class="gradient-animation">🪽 AvalonCare Lite</h4>
+        <h4 class="gradient-animation">🪽AvalonCare Lite</h4>
         <span class="tier-badge status-locked" id="liteStatus">🔴 Locked</span>
     </div>
 
@@ -865,7 +865,7 @@ header .logo-card img {
         <div class="progress-fill" id="liteFill"></div>
     </div>
 
-    <p class="locked-text" id="liteLock">Activate access to unlock</p>
+    <p class="locked-text" id="liteLock">Verify asset's to unlock</p>
 
     <details>
             <summary>Return Summary ▾</summary>
@@ -898,7 +898,7 @@ header .logo-card img {
 
     <div class="glass-card basic locked plan-basic" id="basicCard">
     <div class="card-header">
-        <h4 class="gradient-animation">🪽 AvalonCare Basic</h4>
+        <h4 class="gradient-animation">🪽AvalonCare Basic</h4>
         <span class="tier-badge status-locked" id="basicStatus">🔴 Locked</span>
     </div>
 
@@ -906,7 +906,7 @@ header .logo-card img {
         <div class="progress-fill" id="basicFill"></div>
     </div>
 
-    <p class="locked-text" id="basicLock">Activate access to unlock</p>
+    <p class="locked-text" id="basicLock">Verify asset's to unlock</p>
 
     <details>
             <summary>Returns Summary ▾</summary>
@@ -939,7 +939,7 @@ header .logo-card img {
 
     <div class="glass-card premium locked plan-premium" id="premiumCard">
     <div class="card-header">
-        <h4 class="gradient-animation">🪽 AvalonCare Premium</h4>
+        <h4 class="gradient-animation">🪽AvalonCare Premium</h4>
         <span class="tier-badge status-locked" id="premiumStatus">🔴 Locked</span>
     </div>
 
@@ -947,7 +947,7 @@ header .logo-card img {
         <div class="progress-fill" id="premiumFill"></div>
     </div>
 
-    <p class="locked-text" id="premiumLock">Activate access to unlock</p>
+    <p class="locked-text" id="premiumLock">Verify asset's to unlock</p>
 
     <details>
             <summary>Returns Summary ▾</summary>
@@ -980,7 +980,7 @@ header .logo-card img {
 
 <div class="glass-card custom locked plan-custom" id="customCard">
     <div class="card-header">
-        <h4 class="gradient-animation">🪽 AvalonCare Custom</h4>
+        <h4 class="gradient-animation">🪽AvalonCare Custom</h4>
         <span class="tier-badge status-locked" id="customStatus">🔴 Locked</span>
     </div>
 
@@ -988,7 +988,7 @@ header .logo-card img {
         <div class="progress-fill" id="customFill"></div>
     </div>
 
-    <p class="locked-text" id="customLock">Activate access to unlock</p>
+    <p class="locked-text" id="customLock">Verify asset's to unlock</p>
 
     <details>
             <summary>Return Summary ▾</summary>
@@ -999,7 +999,7 @@ header .logo-card img {
 
         <div class="return-line">
     <span>Credits per 12h</span>
-    <span id="customPer12h">75% of deposit</span>
+    <span id="customPer12h">75% of listing price</span>
 </div>
 
         <div class="return-line highlight">
@@ -1478,7 +1478,7 @@ function updateReturns() {
             const per12hEl = document.getElementById("customPer12h");
 
             if (!planData || !planData.active) {
-                if (per12hEl) per12hEl.textContent = "75% of deposit";
+                if (per12hEl) per12hEl.textContent = "75% of listing price";
             } else {
                 const amount = planData.amount || 0;
                 const per12h = (amount * 1.5) / 2;
@@ -1631,11 +1631,11 @@ window.addEventListener("load", () => {
             planEntries.every(p => now >= p.expiresAt);
 
         if (hasActivePlan) {
-            notification.textContent = "Access activated";
+            notification.textContent = "Asset's verified";
             notification.classList.add("show");
 
         } else if (allExpired) {
-            notification.textContent = "Plan's locked";
+            notification.textContent = "Bond's locked";
             notification.classList.add("show");
         }
 
