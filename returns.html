@@ -147,24 +147,34 @@ position: relative;
         0 0 16px #6b2cd8,
         0 0 24px #6b2cd8;
 
-    animation:
-    spin 3s linear infinite,
-    hueShift 6s linear infinite;
+    animation: neonPulse 2.8s ease-in-out infinite;
 }
 
-@keyframes hueShift {
-    0% {
-        filter: blur(4px) hue-rotate(0deg);
-        opacity: 0.75;
-    }
-    50% {
-        filter: blur(5px) hue-rotate(180deg);
-        opacity: 0.9;
-    }
-    100% {
-        filter: blur(4px) hue-rotate(360deg);
-        opacity: 0.75;
-    }
+@keyframes neonPulse {
+  0% {
+    opacity: 0.6;
+    transform: scaleX(0.98);
+    box-shadow:
+      0 0 6px #6b2cd8,
+      0 0 12px #6b2cd8;
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+    box-shadow:
+      0 0 10px #6b2cd8,
+      0 0 20px #6b2cd8,
+      0 0 30px #6b2cd8;
+  }
+
+  100% {
+    opacity: 0.6;
+    transform: scaleX(0.98);
+    box-shadow:
+      0 0 6px #6b2cd8,
+      0 0 12px #6b2cd8;
+  }
 }
 
 /* =========================
