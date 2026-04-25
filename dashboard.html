@@ -247,19 +247,19 @@ NEON SPIN + PULSE GLOW
 .avatar-ring::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -2px;
     border-radius: 50%;
 
     background: conic-gradient(
-        #f1c40f,
-        #9b59b6,
-        #00d4ff,
-        #f1c40f
+        transparent 0deg,
+        transparent 300deg,
+        #f1c40f 325deg,
+        #9b59b6 335deg,
+        #00d4ff 345deg,
+        transparent 360deg
     );
 
-    animation:
-        spin 3s linear infinite,
-        pulseGlow 2.2s ease-in-out infinite;
+    animation: orbit 1.8s linear infinite;
 
     filter: blur(4px);
     opacity: 0.85;
@@ -293,13 +293,10 @@ PROFILE IMAGE
     border: 1px solid rgba(255,255,255,0.1);
 }
 
-
 /* =========================
-ANIMATIONS
+ANIMATION (MOVING LIGHT AROUND RING)
 ========================= */
-
-/* spinning neon ring */
-@keyframes spin {
+@keyframes orbit {
     0% {
         transform: rotate(0deg);
     }
