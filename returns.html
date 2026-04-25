@@ -177,6 +177,120 @@ position: relative;
     }
 }
 
+/* =========================
+TOP RIGHT PROFILE POSITION
+========================= */
+.top-right-profile {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+}
+
+
+/* =========================
+OUTER RING WRAPPER
+========================= */
+.avatar-ring {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    padding: 3px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================
+NEON SPIN + PULSE GLOW
+========================= */
+.avatar-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+
+    background: conic-gradient(
+        #f1c40f,
+        #9b59b6,
+        #00d4ff,
+        #f1c40f
+    );
+
+    animation:
+        spin 3s linear infinite,
+        pulseGlow 2.2s ease-in-out infinite;
+
+    filter: blur(4px);
+    opacity: 0.85;
+    z-index: 0;
+}
+
+
+/* =========================
+INNER CUT (CLEAN RING EFFECT)
+========================= */
+.avatar-ring::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background: transparent;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+
+/* =========================
+PROFILE IMAGE
+========================= */
+.avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+
+/* =========================
+ANIMATIONS
+========================= */
+
+/* spinning neon ring */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* breathing glow effect */
+@keyframes pulseGlow {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+        filter: blur(3px);
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+        filter: blur(6px);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+        filter: blur(3px);
+    }
+}
+
 /* Subtext animated gradient */
 #titleContainer + p {
     font-size: 14px;
@@ -843,6 +957,43 @@ header .logo-card img {
 <div id="overlay" onclick="toggleSidebar()"></div>
 <div id="rewardNotification" class="notification-bar"></div>
 
+<!-- =========================
+TOP RIGHT PROFILE AVATAR
+========================= -->
+<div class="top-right-profile">
+
+    <div class="avatar-ring">
+        <img id="profilePhoto" src="default-avatar.png" class="avatar">
+    </div>
+
+</div>
+
+
+<!-- =========================
+CROP MODAL
+========================= -->
+<div id="cropModal" class="crop-modal hidden">
+
+    <div class="crop-box">
+
+        <!-- file input (hidden trigger via JS) -->
+        <input type="file" id="photoInput" accept="image/*">
+
+        <!-- crop preview -->
+        <div class="crop-preview">
+            <img id="cropImage">
+        </div>
+
+        <!-- actions -->
+        <div class="crop-actions">
+            <button id="saveCropped">Save Photo</button>
+            <button id="cancelCrop">Cancel</button>
+        </div>
+
+    </div>
+
+</div>
+
 <header style="text-align:center; padding:40px 0;">
   <div class="logo-card">
     <img src="assets/pictures/1775740874549.jpg" alt="AvalonFlow Logo">
@@ -1037,6 +1188,102 @@ header .logo-card img {
 </footer>
 
 <script>
+const photoInput = document.getElementById('photoInput');
+const profilePhoto = document.getElementById('profilePhoto');
+
+const cropModal = document.getElementById('cropModal');
+const cropImage = document.getElementById('cropImage');
+
+let isProcessing = false;
+
+
+// open file picker when avatar clicked
+profilePhoto.addEventListener('click', () => {
+    if (isProcessing) return;
+    photoInput.click();
+});
+
+
+// AUTO PROCESS IMAGE (no save button)
+photoInput.addEventListener('change', (e) => {
+
+    const file = e.target.files[0];
+    if (!file || isProcessing) return;
+
+    isProcessing = true;
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+
+        const rawImage = event.target.result;
+
+        const img = new Image();
+        img.src = rawImage;
+
+        img.onload = function() {
+
+            const canvas = document.createElement('canvas');
+            const size = Math.min(img.width, img.height);
+
+            canvas.width = size;
+            canvas.height = size;
+
+            const ctx = canvas.getContext('2d');
+
+            ctx.drawImage(
+                img,
+                (img.width - size) / 2,
+                (img.height - size) / 2,
+                size,
+                size,
+                0,
+                0,
+                size,
+                size
+            );
+
+            const finalImage = canvas.toDataURL('image/png');
+
+            // update avatar instantly
+            profilePhoto.src = finalImage;
+
+            // save permanently
+            localStorage.setItem('profilePhoto', finalImage);
+
+            // close modal
+            cropModal.classList.add('hidden');
+
+            // reset input to prevent re-trigger bugs
+            photoInput.value = '';
+
+            // unlock system shortly after
+            setTimeout(() => {
+                isProcessing = false;
+            }, 300);
+        };
+    };
+
+    reader.readAsDataURL(file);
+});
+
+
+// OPTIONAL: cancel just closes modal (if you still use it)
+if (cancelCrop) {
+    cancelCrop.addEventListener('click', () => {
+        cropModal.classList.add('hidden');
+    });
+}
+
+
+// load saved photo
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('profilePhoto');
+    if (saved) {
+        profilePhoto.src = saved;
+    }
+});
+
     /* Floating particles */
     const bg = document.getElementById('floating-bg');
     const colors = ['#6b2cd8','#9b59b6','#8e44ad'];
