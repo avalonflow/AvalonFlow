@@ -241,15 +241,163 @@ footer { position: fixed; bottom: 0; width: 100%; text-align: center; padding: 1
 .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #00ff6a; box-shadow: 0 0 10px #00ff6a; }
 .status-offline { background: #ccc; box-shadow: 0 0 5px #ccc; }
 
-/* ---------- Kairos Bot ---------- */
-#assistantBotCard { width: 100%; max-width: 400px; margin-top: 20px; padding: 18px; z-index: 1; }
-#botHeader { background: rgba(107,44,216,0.8); color: #fff; text-align: center; padding: 10px; font-weight: bold; border-radius: 12px 12px 0 0; }
-#botMessagesContainer { height: 180px; overflow-y: auto; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 10px; border-radius: 0 0 12px 12px; }
-#botMessagesContainer .bot { text-align: left; color: #b3b3ff; margin-bottom: 4px; font-size: 13px; }
-#botMessagesContainer .user { text-align: right; color: #9b59b6; margin-bottom: 4px; font-size: 13px; }
-#botMessagesContainer .ambient { text-align: center; color: #aaa; font-size: 12px; opacity: 0.8; }
-#botInput { flex: 1; padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; margin-right: 4px; }
-#botSendBtn { background: rgba(107,44,216,0.8); border:none; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; }
+/* ---------- Kairos Bot (Full UI System) ---------- */
+
+#assistantBotCard {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+  padding: 18px;
+  z-index: 1;
+
+  background: rgba(20, 20, 35, 0.6);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+#botHeader {
+  background: linear-gradient(135deg, rgba(107,44,216,0.9), rgba(155,89,182,0.9));
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border-radius: 12px 12px 0 0;
+}
+
+#botMessagesContainer {
+  height: 180px;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  padding: 10px;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Messages */
+.message {
+  animation: fadeSlideIn 0.25s ease forwards;
+  opacity: 0;
+  font-size: 13px;
+  padding: 6px 10px;
+  display: inline-block;
+  max-width: 85%;
+}
+
+.bot {
+  text-align: left;
+  color: #c7c7ff;
+  background: rgba(107,44,216,0.12);
+  border-radius: 10px 10px 10px 4px;
+}
+
+.user {
+  text-align: right;
+  color: #fff;
+  background: rgba(155,89,182,0.3);
+  border-radius: 10px 10px 4px 10px;
+}
+
+/* Wrap */
+.msgWrap {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+}
+
+/* Animation */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typing dots */
+.typing {
+  display: inline-flex;
+  gap: 4px;
+  background: rgba(107,44,216,0.12);
+  padding: 6px 10px;
+  border-radius: 10px 10px 10px 4px;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  background: #c7c7ff;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
+
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; }
+  40% { opacity: 1; }
+}
+
+/* Meta (time + ticks) */
+.meta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.timestamp {
+  font-size: 10px;
+  opacity: 0.5;
+  color: #aaa;
+}
+
+/* Double ticks */
+.tick {
+  font-size: 11px;
+  letter-spacing: -2px;
+}
+
+.tick.delivered::after {
+  content: "✓✓";
+  color: #bbb;
+}
+
+.tick.seen::after {
+  content: "✓✓";
+  color: #6c8cff;
+}
+
+/* Ambient */
+.ambient {
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Input */
+#botInput {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  margin-right: 4px;
+  outline: none;
+}
+
+/* Button */
+#botSendBtn {
+  background: linear-gradient(135deg, rgba(107,44,216,0.9), rgba(155,89,182,0.9));
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
 
 /* ---------- Dark/Light Mode ---------- */
 body.light-mode { background: #f5f5f5; color: #111; }
@@ -481,9 +629,12 @@ themeToggle.addEventListener('click', ()=>{
 });
 
 // ---------- Kairos Bot / FAQ ----------
-const botMessagesContainer=document.getElementById('botMessagesContainer');
-const botInput=document.getElementById('botInput');
-const botSendBtn=document.getElementById('botSendBtn');
+const botMessagesContainer = document.getElementById('botMessagesContainer');
+const botInput = document.getElementById('botInput');
+const botSendBtn = document.getElementById('botSendBtn');
+
+let conversationMemory = [];
+
 const quotes=[ "Believe in yourself and all that you are.", "Small steps each day lead to big results.", "Life is about moments, not things.", "Consistency is the key to success.", "Every day is a fresh start.", "Faith is the compass that guides you through life’s storms.", "Pray not just for what you want, but   for the strength to receive it.", "Trust God’s timing; He never runs late.", "Your faith can move mountains, but your actions must build the path.", "God doesn’t call the equipped; He equips the called.", "Gratitude turns what we have into enough.", "Serve with love, and blessings will follow silently.", "When you focus on God, life focuses for you.", "Don’t chase money; build systems that make money chase you.", "Financial freedom begins when you learn to control your money, not your lifestyle.", "Save like a pessimist, invest like an optimist.", "Wealth grows when patience waters it daily.", "Your income is limited only by your imagination and action.", "Make your money work harder than you do.", "Life rewards those who act, not those who wait.", "Every setback is a setup for a stronger comeback.", "Your comfort zone is a beautiful place, but nothing ever grows there.", "Consistency beats talent when talent doesn’t show up.", "The storms of life shape the strongest sailors.", "Dream big, start small, move consistently." ];
 
 const faqs=[
@@ -506,107 +657,314 @@ const faqs=[
   {q:"Who can I contact for urgent issues?", a:"For urgent issues, generate a ticket and mark it 'High Priority', then email support."}
 ];
 
-// ---------- Bot Functions ----------
-function addBotMessage(msg, type='bot'){
-    const div=document.createElement('div');
-    div.className=type;
-    div.textContent=msg;
-    div.style.opacity=0;
-    botMessagesContainer.appendChild(div);
+// ---------- NLP ----------
+function normalize(text){
+    return text.toLowerCase().replace(/[^\w\s]/g,'');
+}
 
-    let opacity=0;
-    const fadeIn=setInterval(()=>{
-        opacity+=0.05;
-        div.style.opacity=opacity;
-        if(opacity>=1) clearInterval(fadeIn);
-    },30);
+function similarity(a, b){
+    const aWords = normalize(a).split(' ');
+    const bWords = normalize(b).split(' ');
 
+    const important = ['password','ticket','support','billing','plan','rewards'];
+
+    let score = 0;
+
+    aWords.forEach(w=>{
+        if(bWords.includes(w)){
+            score += important.includes(w) ? 2 : 1;
+        }
+    });
+
+    return score / bWords.length;
+}
+
+function findBestFAQ(input){
+    let best=null, bestScore=0;
+    faqs.forEach(f=>{
+        const score = similarity(input, f.q);
+        if(score>bestScore){ bestScore=score; best=f; }
+    });
+    return bestScore>0.5 ? best : null;
+}
+
+
+// ---------- Time ----------
+function getTime(){
+    const now = new Date();
+    return now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+
+// ---------- Messaging ----------
+function addMessage(text, sender="bot", status="delivered"){
+    const wrap=document.createElement("div");
+    wrap.className="msgWrap";
+
+    const msg=document.createElement("div");
+    msg.className=`${sender} message`;
+    msg.textContent=text;
+
+    wrap.appendChild(msg);
+
+    if(sender==="user"){
+        const meta=document.createElement("div");
+        meta.className="meta";
+
+        const time=document.createElement("span");
+        time.className="timestamp";
+        time.textContent=getTime();
+
+        const tick=document.createElement("span");
+        tick.className=`tick ${status}`;
+
+        meta.appendChild(time);
+        meta.appendChild(tick);
+        wrap.appendChild(meta);
+    }
+
+    botMessagesContainer.appendChild(wrap);
     botMessagesContainer.scrollTop=botMessagesContainer.scrollHeight;
 
-    while(botMessagesContainer.children.length>10){
-        botMessagesContainer.removeChild(botMessagesContainer.children[0]);
+    return wrap;
+}
+
+function markAsSeen(wrap){
+    const tick=wrap.querySelector(".tick");
+    if(tick){
+        tick.classList.remove("delivered");
+        tick.classList.add("seen");
     }
 }
 
-function addUserMessage(msg){ addBotMessage(msg,'user'); }
 
-function botReply(msg){
-    msg=msg.toLowerCase();
+// ---------- Typing ----------
+function showTyping(){
+    const t=document.createElement("div");
+    t.className="typing";
+    t.id="typingIndicator";
+    t.innerHTML="<span></span><span></span><span></span>";
+    botMessagesContainer.appendChild(t);
+    botMessagesContainer.scrollTop=botMessagesContainer.scrollHeight;
+}
 
-    if(/hi|hello|hey|yo/.test(msg)){
-        addBotMessage("Hi! I'm Kairos. I can guide you, provide info on rewards, or share motivational quotes.");
+function removeTyping(){
+    const t=document.getElementById("typingIndicator");
+    if(t) t.remove();
+}
+
+function getTypingDelay(text){
+    return Math.min(400 + text.length*35, 4000);
+}
+
+
+// ---------- USER Typing ----------
+let typingTimeout;
+let typingIndicatorEl=null;
+
+function showUserTyping(){
+    if(!typingIndicatorEl){
+        typingIndicatorEl=document.createElement("div");
+        typingIndicatorEl.className="ambient";
+        typingIndicatorEl.textContent="User is typing...";
+        botMessagesContainer.appendChild(typingIndicatorEl);
     }
-    else if(msg.includes('faq')){
-        addBotMessage("Here are some frequently asked questions:");
-        faqs.forEach(f=>{
-            addBotMessage(`Q: ${f.q}\nA: ${f.a}`);
-        });
+}
+
+function removeUserTyping(){
+    if(typingIndicatorEl){
+        typingIndicatorEl.remove();
+        typingIndicatorEl=null;
     }
-    else if(msg.includes('quote')){
-        addBotMessage(quotes[Math.floor(Math.random()*quotes.length)]);
+}
+
+botInput.addEventListener("input", ()=>{
+    showUserTyping();
+    clearTimeout(typingTimeout);
+    typingTimeout=setTimeout(removeUserTyping,1200);
+});
+
+
+// ---------- INTENT ENGINE ----------
+function detectIntent(msg){
+    const text = msg.toLowerCase();
+
+    // Human-style understanding
+    if(/cant see|too dark|increase brightness/.test(text)) return {type:'theme', value:'light'};
+    if(/too bright|hurts my eyes|reduce brightness/.test(text)) return {type:'theme', value:'dark'};
+
+    if(/help|issue|problem|not working/.test(text)) return {type:'support'};
+
+    if(/open|create|generate.*ticket|complaint/.test(text)) return {type:'ticket'};
+
+    if(/logout|sign out|exit account/.test(text)) return {type:'logout'};
+
+    if(/motivate|quote|inspire/.test(text)) return {type:'quote'};
+
+    return {type:'chat'};
+}
+
+
+// ---------- SMART RESPONSE ----------
+function generateSmartReply(msg){
+
+    // FAQ first
+    const faq = findBestFAQ(msg);
+    if(faq) return faq.a;
+
+    // Context memory (basic)
+    const last = conversationMemory.slice(-2).join(" ").toLowerCase();
+
+    if(msg.includes("yes") && last.includes("ticket")){
+        generateTicket();
+        return "Alright, your ticket has been generated.";
     }
-    else if(msg.includes('reward') || msg.includes('progress') || msg.includes('plan')){
+
+    if(msg.includes("help")){
+        return "I can help you with tickets, support, rewards, or settings. Just tell me what you need.";
+    }
+
+    if(msg.includes("reward") || msg.includes("progress")){
         let unlocked=JSON.parse(localStorage.getItem('unlockedPlans'))||{};
         let unlockTimes=JSON.parse(localStorage.getItem('unlockTimes'))||{};
-        let response="Bond progress:\n";
-        ['premium','basic','lite'].forEach(plan=>{
+        let res="Bond progress:\n";
+
+        ['premium','basic','lite', 'custom'].forEach(plan=>{
             if(unlocked[plan]){
                 const now=Date.now();
                 const elapsed=now-unlockTimes[plan];
-                const total=plan==='premium'?14*24*60*60*1000:plan==='basic'?28*24*60*60*1000:42*24*60*60*1000;
+                const total=plan==='premium'?14*86400000:plan==='basic'?28*86400000:42*86400000;
                 const percent=Math.min(100,Math.round((elapsed/total)*100));
-                response+=`${plan.charAt(0).toUpperCase()+plan.slice(1)}: ${percent}% completed\n`;
-            } else response+=`${plan.charAt(0).toUpperCase()+plan.slice(1)}: Locked\n`;
+                res+=`${plan}: ${percent}%\n`;
+            } else res+=`${plan}: Locked\n`;
         });
-        addBotMessage(response);
+
+        return res;
     }
-    else if(msg.includes('support') || msg.includes('help')){
-        addBotMessage("You can email support at avalonflow@usa.com. Make sure to include your ticket reference.");
-    }
-    else addBotMessage("I can provide tips, motivational quotes, info about AvalonFlow, or guide you to support.");
+
+    return "I understand. Tell me more or ask me something specific.";
 }
 
-// ---------- Hook Chat Messages ----------
-botSendBtn.addEventListener('click', () => {
-    const msg = botInput.value.trim();
-    if (!msg) return;
 
-    // Add user message
-    addUserMessage(msg);
+// ---------- BOT EXECUTION ----------
+function handleMessage(msg){
 
-    // Record the chat for badges
+    const intent = detectIntent(msg);
+
+    if(intent.type==='theme'){
+        setTheme(intent.value);
+        botReply(`Switched to ${intent.value} mode.`);
+        return;
+    }
+
+    if(intent.type==='ticket'){
+        generateTicket();
+        botReply("Your ticket has been generated.");
+        return;
+    }
+
+    if(intent.type==='logout'){
+        botReply("Logging you out...");
+        setTimeout(()=>logout(),1200);
+        return;
+    }
+
+    if(intent.type==='quote'){
+        botReply(quotes[Math.floor(Math.random()*quotes.length)]);
+        return;
+    }
+
+if(intent.type==='support'){
+    botReply("I can help with that. Do you want me to generate a support ticket for you?");
+    return;
+}
+
+    const reply = generateSmartReply(msg);
+    botReply(reply);
+}
+
+
+// ---------- BOT REPLY ----------
+function botReply(text){
+    showTyping();
+
+    const delay = getTypingDelay(text);
+
+    setTimeout(()=>{
+        removeTyping();
+        addMessage(text,"bot");
+
+        // ✅ store AFTER message is shown
+        conversationMemory.push({
+            role: "bot",
+            content: text,
+            time: Date.now()
+        });
+
+        // optional: limit memory size
+        if(conversationMemory.length > 10){
+            conversationMemory.shift();
+        }
+
+    }, delay);
+}
+
+
+// ---------- SEND ----------
+function sendMessage(){
+    const text = botInput.value.trim();
+    if(!text) return;
+
+    removeUserTyping();
+
+    const userMsg = addMessage(text,"user","delivered");
+    botInput.value="";
+
+    setTimeout(()=>markAsSeen(userMsg),800);
+
+    conversationMemory.push({
+    role: "user",
+    content: text,
+    time: Date.now()
+});
+
+// keep memory small (important)
+if(conversationMemory.length > 10){
+    conversationMemory.shift();
+}
+
+    handleMessage(text);
+
     recordChatMessage();
+}
 
-    botInput.value = '';
-    setTimeout(() => botReply(msg), 500);
+botSendBtn.addEventListener('click', sendMessage);
+
+botInput.addEventListener('keypress', e=>{
+    if(e.key==='Enter') sendMessage();
 });
 
-botInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter') botSendBtn.click();
-});
 
-// ---------- Record Chat Messages ----------
-function recordChatMessage() {
-    // Increment messages sent
-    let chats = parseInt(localStorage.getItem("messagesSent") || 0);
-    chats += 1;
-    localStorage.setItem("messagesSent", chats);
-
-    // Update badges immediately
+// ---------- Record Chat ----------
+function recordChatMessage(){
+    let chats=parseInt(localStorage.getItem("messagesSent")||0);
+    chats++;
+    localStorage.setItem("messagesSent",chats);
     updateEngagementUI();
 }
 
-// --- AI-Powered Auto-Suggestions ---
-const autoSuggest = [
-    {keywords:['ticket','issue','support'], suggestion:"Remember to generate a ticket reference for faster support."},
-    {keywords:['faq','question'], suggestion:"You can type 'FAQ' to see common questions."},
-    {keywords:['quote','motivation'], suggestion:"Type 'quote' to get a motivational message from Kairos."}
+
+// ---------- Auto Suggestions ----------
+const autoSuggest=[
+    {keywords:['ticket','issue'], suggestion:"You can say 'generate ticket'."},
+    {keywords:['faq'], suggestion:"Ask your question directly."},
+    {keywords:['quote'], suggestion:"Type 'quote' for motivation."}
 ];
 
-botInput.addEventListener('input', e => {
-    const msg = e.target.value.toLowerCase();
-    const found = autoSuggest.find(s => s.keywords.some(k => msg.includes(k)));
-    if(found) notify(`💡 Tip: ${found.suggestion}`);
+botInput.addEventListener('input', e=>{
+    const msg=e.target.value.toLowerCase();
+    const found=autoSuggest.find(s=>s.keywords.some(k=>msg.includes(k)));
+    if(found) notify(`💡 ${found.suggestion}`);
 });
 
 // --- File Upload for Tickets ---
