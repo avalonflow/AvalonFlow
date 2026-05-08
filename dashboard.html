@@ -952,7 +952,7 @@ function updateTotalACU() {
     }, 0);
 
     const el = document.getElementById("totalACU");
-    if (el) el.textContent = total.toFixed(2) + " ACU";
+    if (el) el.textContent = "$" + total.toFixed(2);
 
     localStorage.setItem("totalACU", total.toFixed(2));
 }
