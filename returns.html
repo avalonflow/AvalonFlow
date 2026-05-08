@@ -1021,12 +1021,12 @@ CROP MODAL
         </div>
 
         <div class="return-line">
-            <span>Credits per 12h</span>
-            <span>≈ 118.29 ACU</span>
+            <span>ACU Cashback</span>
+            <span>≈ 1.33% of Buyer's Payment</span>
         </div>
 
         <div class="return-line highlight">
-            <span>Credits activated</span>
+            <span>Cashback Activated</span>
             <span class="ac-value gradient-animation" id="liteAC">0.00 ACU</span>
         </div>
 
@@ -1062,12 +1062,12 @@ CROP MODAL
         </div>
 
         <div class="return-line">
-            <span>Credits per 12h</span>
-            <span>≈ 183.29 ACU</span>
+            <span>ACU Cashback</span>
+            <span>≈ 1.33% of Buyer's Payment</span>
         </div>
 
         <div class="return-line highlight">
-            <span>Credits activated</span>
+            <span>Cashback Activated</span>
             <span class="ac-value gradient-animation" id="basicAC">0.00 ACU</span>
         </div>
 
@@ -1103,12 +1103,12 @@ CROP MODAL
         </div>
 
         <div class="return-line">
-            <span>Credits per 12h</span>
-            <span>≈ 298.29 ACU</span>
+            <span>ACU Cashback</span>
+            <span>≈ 1.33% of Buyer's Payment</span>
         </div>
 
         <div class="return-line highlight">
-            <span>Credits activated</span>
+            <span>Cashback Activated</span>
             <span class="ac-value gradient-animation" id="premiumAC">0.00 ACU</span>
         </div>
 
@@ -1144,12 +1144,12 @@ CROP MODAL
         </div>
 
         <div class="return-line">
-    <span>Credits per 12hr</span>
-    <span id="customPer12h">25% of listing price</span>
+    <span>ACU Cashback</span>
+    <span id="customPer12h">1.33% of Buyer's Payment</span>
 </div>
 
         <div class="return-line highlight">
-            <span>Credits activated</span>
+            <span>Cashback Activated</span>
             <span class="ac-value gradient-animation" id="customAC">0.00 ACU</span>
         </div>
 
@@ -1720,7 +1720,7 @@ function updateReturns() {
             const per12hEl = document.getElementById("customPer12h");
 
             if (!planData || !planData.active) {
-                if (per12hEl) per12hEl.textContent = "25% of listing price";
+                if (per12hEl) per12hEl.textContent = "1.33% of Buyer's Payment";
             } else {
                 const amount = planData.amount || 0;
                 const per12h = (amount * 1.5) / 2;
