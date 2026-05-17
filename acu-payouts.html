@@ -890,18 +890,29 @@ const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
 
 if(saved.preference){
 
-methods.forEach(method=>{
+methods.forEach(method => {
 
-if(method.dataset.method === saved.preference){
+  const fields = method.querySelectorAll("input, select");
 
-method.classList.add("active");
+  method.onclick = () => {
 
-const input = method.querySelector("input");
-if(input) input.style.display = "block";
+    methods.forEach(m => {
+      m.classList.remove("active");
 
-preference = saved.preference;
+      m.querySelectorAll("input, select").forEach(el => {
+        el.style.display = "none";
+      });
+    });
 
-}
+    method.classList.add("active");
+
+    fields.forEach(el => {
+      el.style.display = "block";
+    });
+
+    preference = method.dataset.method;
+    saveData();
+  };
 
 });
 
