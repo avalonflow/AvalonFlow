@@ -565,6 +565,16 @@ left:300px;
         100% { left: 100%; }
     }
 
+#canadianBankSelect {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 15px;
+  background: #fff;
+}
+
   footer { position:fixed; bottom:0; left:0; width:100%; text-align:center; padding:18px 0; font-size:14px; color:#aaa; background:rgba(15,15,25,0.95); backdrop-filter:blur(12px); box-shadow:0 -5px 20px rgba(0,0,0,0.4); z-index:6; }
 </style>
 </head>
@@ -673,14 +683,37 @@ CROP MODAL
   <input id="interacInput" placeholder="Enter your email for e-Transfer">
 </div>
 
-      <!-- Venmo -->
-      <div class="payment-method" data-method="Venmo">
-        <div class="payment-header">
-          <img class="payment-logo" src="assets/pictures/5f33cd7cd34531a65477de41742743d3.jpg">
-          <span>Venmo</span>
-        </div>
-        <input id="venmoInput" placeholder="Enter your Venmo username">
-      </div>
+      <!-- Canadian Bank Transfer -->
+<div class="payment-method" data-method="Canadian Bank Transfer">
+  <div class="payment-header">
+    <img class="payment-logo"
+         src="https://upload.wikimedia.org/wikipedia/commons/8/88/Bank_of_Canada_logo.svg"
+         alt="Canadian Bank">
+    <span>Canadian Bank Transfer</span>
+  </div>
+
+  <!-- Bank Selection -->
+  <select id="canadianBankSelect">
+    <option value="">Select Your Bank</option>
+    <option>RBC Royal Bank</option>
+    <option>TD Canada Trust</option>
+    <option>Scotiabank</option>
+    <option>BMO</option>
+    <option>CIBC</option>
+    <option>National Bank</option>
+    <option>Tangerine</option>
+    <option>Simplii Financial</option>
+  </select>
+
+  <!-- Bank Details -->
+  <input type="text" id="accountName" placeholder="Account Holder Name">
+
+  <input type="text" id="transitNumber" placeholder="Transit Number">
+
+  <input type="text" id="institutionNumber" placeholder="Institution Number">
+
+  <input type="text" id="accountNumber" placeholder="Account Number">
+</div>
 
       <!-- Bottom reassurance -->
       <div class="bottom-note">
@@ -876,8 +909,25 @@ preference = saved.preference;
 
 if(saved.acuAccount) document.getElementById("acuAccount").value = saved.acuAccount;
 if(saved.paypal) document.getElementById("paypalInput").value = saved.paypal;
-if(saved.cashapp) document.getElementById("interacInput").value = saved.cashapp;
-if(saved.venmo) document.getElementById("venmoInput").value = saved.venmo;
+// Restore saved Interac details
+if (saved.interac)
+  document.getElementById("interacInput").value = saved.interac;
+
+// Restore saved Canadian bank details
+if (saved.canadianBank)
+  document.getElementById("canadianBankSelect").value = saved.canadianBank;
+
+if (saved.accountName)
+  document.getElementById("accountName").value = saved.accountName;
+
+if (saved.transitNumber)
+  document.getElementById("transitNumber").value = saved.transitNumber;
+
+if (saved.institutionNumber)
+  document.getElementById("institutionNumber").value = saved.institutionNumber;
+
+if (saved.accountNumber)
+  document.getElementById("accountNumber").value = saved.accountNumber;
 
 
 /* --------------------------
@@ -924,8 +974,17 @@ const data = {
 preference,
 acuAccount: document.getElementById("acuAccount")?.value.trim(),
 paypal: document.getElementById("paypalInput")?.value.trim(),
-cashapp: document.getElementById("interacInput")?.value.trim(),
-venmo: document.getElementById("venmoInput")?.value.trim()
+interac: document.getElementById("interacInput")?.value.trim(),
+
+canadianBank: document.getElementById("canadianBankSelect")?.value.trim(),
+
+accountName: document.getElementById("accountName")?.value.trim(),
+
+transitNumber: document.getElementById("transitNumber")?.value.trim(),
+
+institutionNumber: document.getElementById("institutionNumber")?.value.trim(),
+
+accountNumber: document.getElementById("accountNumber")?.value.trim()
 };
 
 localStorage.setItem("section3Data", JSON.stringify(data));
