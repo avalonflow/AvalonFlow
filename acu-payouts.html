@@ -662,14 +662,16 @@ CROP MODAL
         <input id="paypalInput" placeholder="Enter your PayPal email">
       </div>
 
-      <!-- Cash App -->
-      <div class="payment-method" data-method="Cash App">
-        <div class="payment-header">
-          <img class="payment-logo" src="assets/pictures/1773648623004.jpg">
-          <span>Cash App</span>
-        </div>
-        <input id="cashInput" placeholder="Enter your $Cashtag">
-      </div>
+      <!-- Interac e-Transfer -->
+<div class="payment-method" data-method="Interac e-Transfer">
+  <div class="payment-header">
+    <img class="payment-logo" 
+         src="https://upload.wikimedia.org/wikipedia/commons/5/59/InteracLogo.svg"
+         alt="Interac Logo">
+    <span>Interac e-Transfer</span>
+  </div>
+  <input id="interacInput" placeholder="Enter your email for e-Transfer">
+</div>
 
       <!-- Venmo -->
       <div class="payment-method" data-method="Venmo">
@@ -874,7 +876,7 @@ preference = saved.preference;
 
 if(saved.acuAccount) document.getElementById("acuAccount").value = saved.acuAccount;
 if(saved.paypal) document.getElementById("paypalInput").value = saved.paypal;
-if(saved.cashapp) document.getElementById("cashInput").value = saved.cashapp;
+if(saved.cashapp) document.getElementById("interacInput").value = saved.cashapp;
 if(saved.venmo) document.getElementById("venmoInput").value = saved.venmo;
 
 
@@ -922,7 +924,7 @@ const data = {
 preference,
 acuAccount: document.getElementById("acuAccount")?.value.trim(),
 paypal: document.getElementById("paypalInput")?.value.trim(),
-cashapp: document.getElementById("cashInput")?.value.trim(),
+cashapp: document.getElementById("interacInput")?.value.trim(),
 venmo: document.getElementById("venmoInput")?.value.trim()
 };
 
