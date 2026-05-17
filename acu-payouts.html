@@ -1019,30 +1019,42 @@ function validateCanadianBankDetails() {
   const account = document.getElementById("accountNumber")?.value.trim();
 
   if (!bank) {
-    alert("Please select your bank.");
-    return false;
+    document.querySelector(".payment-container")
+  .classList.add("warning");
+
+return false;
   }
 
   if (!accountName) {
-    alert("Please enter the account holder name.");
-    return false;
+    document.querySelector(".payment-container")
+  .classList.add("warning");
+
+return false;
   }
 
   if (!/^\d{5}$/.test(transit)) {
-    alert("Transit number must be exactly 5 digits.");
-    return false;
+    document.querySelector(".payment-container")
+  .classList.add("warning");
+
+return false;
   }
 
   if (!/^\d{3}$/.test(institution)) {
-    alert("Institution number must be exactly 3 digits.");
-    return false;
+    document.querySelector(".payment-container")
+  .classList.add("warning");
+
+return false;
   }
 
   if (!/^\d{7,12}$/.test(account)) {
-    alert("Account number must be between 7 and 12 digits.");
-    return false;
+    document.querySelector(".payment-container")
+  .classList.add("warning");
+
+return false;
   }
 
+document.querySelector(".payment-container")
+  .classList.remove("warning");
   return true;
 
 }
