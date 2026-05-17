@@ -890,29 +890,18 @@ const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
 
 if(saved.preference){
 
-methods.forEach(method => {
+methods.forEach(method=>{
 
-  const fields = method.querySelectorAll("input, select");
+if(method.dataset.method === saved.preference){
 
-  method.onclick = () => {
+method.classList.add("active");
 
-    methods.forEach(m => {
-      m.classList.remove("active");
+const input = method.querySelector("input");
+if(input) input.style.display = "block";
 
-      m.querySelectorAll("input, select").forEach(el => {
-        el.style.display = "none";
-      });
-    });
+preference = saved.preference;
 
-    method.classList.add("active");
-
-    fields.forEach(el => {
-      el.style.display = "block";
-    });
-
-    preference = method.dataset.method;
-    saveData();
-  };
+}
 
 });
 
@@ -947,23 +936,27 @@ CARD SELECTION
 
 methods.forEach(method => {
 
-const input = method.querySelector("input");
+  const fields = method.querySelectorAll("input, select");
 
-method.onclick = () => {
+  method.onclick = () => {
 
-methods.forEach(m=>{
-m.classList.remove("active");
-m.querySelector("input").style.display = "none";
-});
+    methods.forEach(m => {
+      m.classList.remove("active");
 
-method.classList.add("active");
-input.style.display = "block";
+      m.querySelectorAll("input, select").forEach(el => {
+        el.style.display = "none";
+      });
+    });
 
-preference = method.dataset.method;
+    method.classList.add("active");
 
-saveData();
+    fields.forEach(el => {
+      el.style.display = "block";
+    });
 
-};
+    preference = method.dataset.method;
+    saveData();
+  };
 
 });
 
