@@ -1018,43 +1018,16 @@ function validateCanadianBankDetails() {
   const institution = document.getElementById("institutionNumber")?.value.trim();
   const account = document.getElementById("accountNumber")?.value.trim();
 
-  if (!bank) {
-    document.querySelector(".payment-container")
-  .classList.add("warning");
+  if (!bank) return false;
 
-return false;
-  }
+  if (!accountName) return false;
 
-  if (!accountName) {
-    document.querySelector(".payment-container")
-  .classList.add("warning");
+  if (!/^\d{5}$/.test(transit)) return false;
 
-return false;
-  }
+  if (!/^\d{3}$/.test(institution)) return false;
 
-  if (!/^\d{5}$/.test(transit)) {
-    document.querySelector(".payment-container")
-  .classList.add("warning");
+  if (!/^\d{7,12}$/.test(account)) return false;
 
-return false;
-  }
-
-  if (!/^\d{3}$/.test(institution)) {
-    document.querySelector(".payment-container")
-  .classList.add("warning");
-
-return false;
-  }
-
-  if (!/^\d{7,12}$/.test(account)) {
-    document.querySelector(".payment-container")
-  .classList.add("warning");
-
-return false;
-  }
-
-document.querySelector(".payment-container")
-  .classList.remove("warning");
   return true;
 
 }
