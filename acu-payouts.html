@@ -888,32 +888,37 @@ LOAD SAVED DATA
 
 const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
 
-if(saved.preference){
+if (saved.preference) {
 
-methods.forEach(method=>{
+  methods.forEach(method => {
 
-if(method.dataset.method === saved.preference){
+    if (method.dataset.method === saved.preference) {
 
-method.classList.add("active");
+      method.classList.add("active");
 
-const input = method.querySelector("input");
-if(input) input.style.display = "block";
+      // Show all fields for active method
+      method.querySelectorAll("input, select").forEach(el => {
+        el.style.display = "block";
+      });
 
-preference = saved.preference;
+      preference = saved.preference;
+
+    }
+
+  });
 
 }
 
-});
+// Restore saved values
+if (saved.acuAccount)
+  document.getElementById("acuAccount").value = saved.acuAccount;
 
-}
+if (saved.paypal)
+  document.getElementById("paypalInput").value = saved.paypal;
 
-if(saved.acuAccount) document.getElementById("acuAccount").value = saved.acuAccount;
-if(saved.paypal) document.getElementById("paypalInput").value = saved.paypal;
-// Restore saved Interac details
 if (saved.interac)
   document.getElementById("interacInput").value = saved.interac;
 
-// Restore saved Canadian bank details
 if (saved.canadianBank)
   document.getElementById("canadianBankSelect").value = saved.canadianBank;
 
@@ -941,11 +946,13 @@ methods.forEach(method => {
   method.onclick = () => {
 
     methods.forEach(m => {
+
       m.classList.remove("active");
 
       m.querySelectorAll("input, select").forEach(el => {
         el.style.display = "none";
       });
+
     });
 
     method.classList.add("active");
@@ -955,7 +962,9 @@ methods.forEach(method => {
     });
 
     preference = method.dataset.method;
+
     saveData();
+
   };
 
 });
@@ -965,33 +974,114 @@ methods.forEach(method => {
 AUTO SAVE INPUT
 -------------------------- */
 
-inputs.forEach(input=>{
+// Include selects too
+document.querySelectorAll("input, select").forEach(input => {
 
-input.addEventListener("input", saveData);
+  input.addEventListener("input", saveData);
+  input.addEventListener("change", saveData);
 
 });
 
 
-function saveData(){
+/* --------------------------
+NUMBER-ONLY VALIDATION
+-------------------------- */
 
-const data = {
-preference,
-acuAccount: document.getElementById("acuAccount")?.value.trim(),
-paypal: document.getElementById("paypalInput")?.value.trim(),
-interac: document.getElementById("interacInput")?.value.trim(),
+["transitNumber", "institutionNumber", "accountNumber"].forEach(id => {
 
-canadianBank: document.getElementById("canadianBankSelect")?.value.trim(),
+  const input = document.getElementById(id);
 
-accountName: document.getElementById("accountName")?.value.trim(),
+  if (input) {
 
-transitNumber: document.getElementById("transitNumber")?.value.trim(),
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/\D/g, "");
+    });
 
-institutionNumber: document.getElementById("institutionNumber")?.value.trim(),
+  }
 
-accountNumber: document.getElementById("accountNumber")?.value.trim()
-};
+});
 
-localStorage.setItem("section3Data", JSON.stringify(data));
+
+/* --------------------------
+CANADIAN BANK VALIDATION
+-------------------------- */
+
+function validateCanadianBankDetails() {
+
+  if (preference !== "Canadian Bank Transfer") {
+    return true;
+  }
+
+  const bank = document.getElementById("canadianBankSelect")?.value.trim();
+  const accountName = document.getElementById("accountName")?.value.trim();
+  const transit = document.getElementById("transitNumber")?.value.trim();
+  const institution = document.getElementById("institutionNumber")?.value.trim();
+  const account = document.getElementById("accountNumber")?.value.trim();
+
+  if (!bank) {
+    alert("Please select your bank.");
+    return false;
+  }
+
+  if (!accountName) {
+    alert("Please enter the account holder name.");
+    return false;
+  }
+
+  if (!/^\d{5}$/.test(transit)) {
+    alert("Transit number must be exactly 5 digits.");
+    return false;
+  }
+
+  if (!/^\d{3}$/.test(institution)) {
+    alert("Institution number must be exactly 3 digits.");
+    return false;
+  }
+
+  if (!/^\d{7,12}$/.test(account)) {
+    alert("Account number must be between 7 and 12 digits.");
+    return false;
+  }
+
+  return true;
+
+}
+
+
+/* --------------------------
+SAVE DATA
+-------------------------- */
+
+function saveData() {
+
+  // Prevent invalid bank data from saving
+  if (!validateCanadianBankDetails()) {
+    return;
+  }
+
+  const data = {
+
+    preference,
+
+    acuAccount: document.getElementById("acuAccount")?.value.trim(),
+
+    paypal: document.getElementById("paypalInput")?.value.trim(),
+
+    interac: document.getElementById("interacInput")?.value.trim(),
+
+    canadianBank: document.getElementById("canadianBankSelect")?.value.trim(),
+
+    accountName: document.getElementById("accountName")?.value.trim(),
+
+    transitNumber: document.getElementById("transitNumber")?.value.trim(),
+
+    institutionNumber: document.getElementById("institutionNumber")?.value.trim(),
+
+    accountNumber: document.getElementById("accountNumber")?.value.trim()
+
+  };
+
+  localStorage.setItem("section3Data", JSON.stringify(data));
 
 }
 
