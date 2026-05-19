@@ -892,134 +892,168 @@ let preference = "";
 NOTIFICATION SYSTEM
 -------------------------- */
 
-const notification = document.getElementById("planNotification");
+const notification = document.getElementById("planNotification");    
+    
+function showNotification(message, duration = 3000) {    
+    
+if (!notification) return;    
+    
+notification.textContent = message;    
+    
+notification.classList.add("show");    
+    
+clearTimeout(notification.hideTimer);    
+    
+notification.hideTimer = setTimeout(() => {    
+notification.classList.remove("show");    
+}, duration);    
+}    
+    
+/* --------------------------    
+INITIAL NOTIFICATION    
+-------------------------- */    
+    
+window.addEventListener("load", () => {    
+    
+const saved = JSON.parse(    
+localStorage.getItem("section3Data") || "{}"    
+);    
+    
+const hasSavedData = Object.values(saved).some(    
+v => v && v.toString().trim() !== ""    
+);    
+    
+setTimeout(() => {    
+    
+if (hasSavedData) {      
+    
+  showNotification("Payout method linked successfully");      
+    
+} else {      
+    
+  showNotification("Provide your payout details");      
+    
+}    
+    
+}, 4000);
 
-function showNotification(message, duration = 3000) {
 
-if (!notification) return;
+/* --------------------------
+SESSION COUNTDOWN LOGIC
+-------------------------- */
 
-notification.textContent = message;
+const getTimerState = (remaining) => {
+
+if (remaining <= 0) return "expired";
+
+if (remaining <= 120) return "warning-red";
+
+if (remaining <= 240) return "warning-yellow";
+
+return "active";
+
+};
+
+const updateSessionUI = () => {
+
+const expiryTime = parseInt(
+localStorage.getItem("avb_expiry_time"),
+10
+);
+
+if (!expiryTime) return;
+
+const remaining = Math.floor(
+(expiryTime - Date.now()) / 1000
+);
+
+// Session expired
+if (remaining <= 0) {
+
+notification.textContent = "Session expired";
+
+notification.classList.remove(
+"warning-yellow",
+"warning-red"
+);
+
+notification.classList.add(
+"warning-red",
+"show"
+);
+
+return;
+
+}
+
+// Re-check saved data live
+const saved = JSON.parse(
+localStorage.getItem("section3Data") || "{}"
+);
+
+const hasSavedData = Object.values(saved).some(
+v => v && v.toString().trim() !== ""
+);
+
+const state = getTimerState(remaining);
+
+// Time formatting
+const minutes = Math.floor(remaining / 60);
+
+const seconds = remaining % 60;
+
+const timeString =
+`${String(minutes).padStart(2, "0")}:` +
+`${String(seconds).padStart(2, "0")}`;
+
+// Reset warning classes
+notification.classList.remove(
+"warning-yellow",
+"warning-red"
+);
+
+// Apply warning classes
+if (state === "warning-yellow") {
+notification.classList.add("warning-yellow");
+}
+
+if (state === "warning-red") {
+notification.classList.add("warning-red");
+}
+
+// First 10 seconds
+if (remaining > 590) {
+
+notification.textContent = hasSavedData
+? "Payout method linked successfully"
+: "Provide your payout details";
+
+} else {
+
+notification.textContent =
+`Session expires in: ${timeString}`;
+
+}
 
 notification.classList.add("show");
 
-clearTimeout(notification.hideTimer);
+// Vibrate at 2-minute warning
+if (remaining === 120 && navigator.vibrate) {
 
-notification.hideTimer = setTimeout(() => {
-notification.classList.remove("show");
-}, duration);
+navigator.vibrate([300, 100, 300]);
+
 }
 
-/* --------------------------
-INITIAL NOTIFICATION
--------------------------- */
+};
 
-window.addEventListener("load", () => {
+// Start countdown loop
+setTimeout(() => {
 
-    const notification = document.getElementById("dashboardNotification");
+updateSessionUI();
 
-    // Timer state styling
-    const getTimerState = (remaining) => {
-        if (remaining <= 0) return "expired";
-        if (remaining <= 120) return "warning-red";
-        if (remaining <= 240) return "warning-yellow";
-        return "active";
-    };
+setInterval(updateSessionUI, 1000);
 
-    // Main UI updater
-    const updateUI = () => {
-
-        // Re-check saved payout data live
-        const saved = JSON.parse(
-            localStorage.getItem("section3Data") || "{}"
-        );
-
-        const hasSavedData = Object.values(saved).some(
-            v => v && v.toString().trim() !== ""
-        );
-
-        const expiryTime = parseInt(
-            localStorage.getItem("avb_expiry_time"),
-            10
-        );
-
-        if (!expiryTime) return;
-
-        const remaining = Math.floor(
-            (expiryTime - Date.now()) / 1000
-        );
-
-        // Session expired
-        if (remaining <= 0) {
-
-            notification.textContent = "Session expired";
-
-            notification.classList.remove(
-                "warning-yellow",
-                "warning-red"
-            );
-
-            notification.classList.add(
-                "warning-red",
-                "show"
-            );
-
-            return;
-        }
-
-        const state = getTimerState(remaining);
-
-        // Time formatting
-        const minutes = Math.floor(remaining / 60);
-        const seconds = remaining % 60;
-
-        const timeString =
-            `${String(minutes).padStart(2, "0")}:` +
-            `${String(seconds).padStart(2, "0")}`;
-
-        // Reset classes
-        notification.classList.remove(
-            "warning-yellow",
-            "warning-red"
-        );
-
-        // Apply warning state
-        if (state === "warning-yellow") {
-            notification.classList.add("warning-yellow");
-        }
-
-        if (state === "warning-red") {
-            notification.classList.add("warning-red");
-        }
-
-        // First 10 seconds = status message
-        if (remaining > 590) {
-
-            notification.textContent = hasSavedData
-                ? "Payout method linked successfully"
-                : "Provide your payout details";
-
-        } else {
-
-            notification.textContent =
-                `Session expires in: ${timeString}`;
-        }
-
-        notification.classList.add("show");
-
-        // Vibrate at 2-minute warning
-        if (remaining === 120 && navigator.vibrate) {
-            navigator.vibrate([300, 100, 300]);
-        }
-    };
-
-    // Initial delayed start
-    setTimeout(() => {
-
-        updateUI();
-
-        setInterval(updateUI, 1000);
-
-    }, 300);
+}, 4000);
 
 });
 
