@@ -1055,6 +1055,18 @@ setInterval(updateACU, 30000); // every 30 seconds
     // login flag only
     localStorage.setItem("avalon_logged_in", "true");
 
+    let message;
+
+    if (!localStorage.getItem("avalon_seen_dashboard")) {
+        message = "Hi there — Proceed to AVB";
+        localStorage.setItem("avalon_seen_dashboard", "true");
+    } else {
+        message = "Welcome back";
+    }
+
+    notification.textContent = message;
+    notification.classList.add("show");
+
     let timer;
 
     const getState = (remaining) => {
@@ -1092,7 +1104,7 @@ setInterval(updateACU, 30000); // every 30 seconds
         const seconds = remaining % 60;
 
         notification.textContent =
-            `Verification session expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+            `Verification expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
 
     // initial render
