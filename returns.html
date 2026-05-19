@@ -1858,35 +1858,46 @@ window.addEventListener("load", () => {
     // 🔔 NOTIFICATION LOGIC (FIXED)
     // ================================
 
+    window.addEventListener("load", () => {
     const notification = document.getElementById("rewardNotification");
+    if (!notification) return; // safety check  
 
-window.addEventListener("load", () => {
+    // --- SESSION LOGIC HELPERS ---
+    const getTimerState = (remaining) => {
+        if (remaining <= 0) return "expired";
+        if (remaining <= 120) return "warning-red";
+        if (remaining <= 240) return "warning-yellow";
+        return "active";
+    };
 
-    if (!notification) return;
+    const updateSessionDisplay = () => {
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        if (!expiryTime) return;
 
-    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+        const state = getTimerState(remaining);
 
-    // ⛔ If session expired, let sessionGuard handle it
-    if (!expiryTime || Date.now() >= expiryTime) return;
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        const timeString = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-    // Welcome message first
+        notification.classList.remove("warning-yellow", "warning-red");
+        if (state === "warning-yellow" || state === "warning-red") {
+            notification.classList.add(state);
+        }
+
+        notification.textContent = `Session expires in ${timeString}`;
+    };
+    // ------------------------------
+
+    // Welcome message first  
     notification.textContent = "Welcome To Retention Bonus Tab";
     notification.classList.add("show");
 
-    let timer1, timer2;
-
-    timer1 = setTimeout(() => {
-
+    setTimeout(() => {
+        const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
         const now = Date.now();
-        const remainingSession = expiryTime - now;
-
-        // ⛔ stop if session is basically gone
-        if (remainingSession <= 0) return;
-
-        const paidPlans = JSON.parse(localStorage.getItem("paidPlans") || "{}");
-
         const planEntries = Object.values(paidPlans);
-
         const hasAnyPlan = planEntries.length > 0;
 
         const hasActivePlan = planEntries.some(p =>
@@ -1897,29 +1908,35 @@ window.addEventListener("load", () => {
             planEntries.every(p => now >= p.expiresAt);
 
         if (hasActivePlan) {
-            notification.textContent = "Assets verified";
-
+            notification.textContent = "Asset's verified";
+            notification.classList.add("show");
         } else if (allExpired) {
-            notification.textContent = "Bond locked";
+            notification.textContent = "Bond's locked";
+            notification.classList.add("show");
         }
 
     }, 2500);
 
-    // Hide notification safely (don’t fight sessionGuard)
-    timer2 = setTimeout(() => {
-        notification.classList.remove("show");
+    // Instead of just hiding, we transition to the session timer
+    setTimeout(() => {
+        // Start the live countdown loop
+        updateSessionDisplay(); 
+        const sessionTimer = setInterval(() => {
+            const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+            if (Date.now() >= expiryTime) {
+                clearInterval(sessionTimer);
+                notification.classList.remove("show");
+            } else {
+                updateSessionDisplay();
+            }
+        }, 1000);
     }, 5500);
 
-    // optional cleanup safety (prevents orphan timers on navigation)
-    window.addEventListener("beforeunload", () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-    });
-
-    animate();
-
+    // Original final calls
+    if (typeof animate === "function") animate();
     window.history.replaceState({}, document.title, window.location.pathname);
 });
+
 
 (function avbEngine() {
 
