@@ -892,169 +892,135 @@ let preference = "";
 NOTIFICATION SYSTEM
 -------------------------- */
 
-const notification = document.getElementById("planNotification");    
-    
-function showNotification(message, duration = 3000) {    
-    
-if (!notification) return;    
-    
-notification.textContent = message;    
-    
-notification.classList.add("show");    
-    
-clearTimeout(notification.hideTimer);    
-    
-notification.hideTimer = setTimeout(() => {    
-notification.classList.remove("show");    
-}, duration);    
-}    
-    
-/* --------------------------    
-INITIAL NOTIFICATION    
--------------------------- */    
-    
-window.addEventListener("load", () => {    
-    
-const saved = JSON.parse(    
-localStorage.getItem("section3Data") || "{}"    
-);    
-    
-const hasSavedData = Object.values(saved).some(    
-v => v && v.toString().trim() !== ""    
-);    
-    
-setTimeout(() => {    
-    
-if (hasSavedData) {      
-    
-  showNotification("Payout method linked successfully");      
-    
-} else {      
-    
-  showNotification("Provide your payout details");      
-    
-}    
-    
-}, 4000);
+const notification = document.getElementById("planNotification");
 
+function showNotification(message, duration = 3000) {
+  if (!notification) return;
+
+  notification.textContent = message;
+  notification.classList.add("show");
+
+  clearTimeout(notification.hideTimer);
+
+  notification.hideTimer = setTimeout(() => {
+    notification.classList.remove("show");
+  }, duration);
+}
 
 /* --------------------------
-SESSION COUNTDOWN LOGIC
+SESSION LOGIC
 -------------------------- */
 
 const getTimerState = (remaining) => {
-
-if (remaining <= 0) return "expired";
-
-if (remaining <= 120) return "warning-red";
-
-if (remaining <= 240) return "warning-yellow";
-
-return "active";
-
+  if (remaining <= 0) return "expired";
+  if (remaining <= 120) return "warning-red";
+  if (remaining <= 240) return "warning-yellow";
+  return "active";
 };
 
 const updateSessionUI = () => {
+  const expiryTime = parseInt(
+    localStorage.getItem("avb_expiry_time"),
+    10
+  );
 
-const expiryTime = parseInt(
-localStorage.getItem("avb_expiry_time"),
-10
-);
+  if (!expiryTime) return;
 
-if (!expiryTime) return;
+  const remaining = Math.floor(
+    (expiryTime - Date.now()) / 1000
+  );
 
-const remaining = Math.floor(
-(expiryTime - Date.now()) / 1000
-);
+  // Session expired
+  if (remaining <= 0) {
+    notification.textContent = "Session expired";
 
-// Session expired
-if (remaining <= 0) {
+    notification.classList.remove(
+      "warning-yellow",
+      "warning-red"
+    );
 
-notification.textContent = "Session expired";
+    notification.classList.add("warning-red", "show");
 
-notification.classList.remove(
-"warning-yellow",
-"warning-red"
-);
+    return;
+  }
 
-notification.classList.add(
-"warning-red",
-"show"
-);
+  // Check saved data
+  const saved = JSON.parse(
+    localStorage.getItem("section3Data") || "{}"
+  );
 
-return;
+  const hasSavedData = Object.values(saved).some(
+    v => v && v.toString().trim() !== ""
+  );
 
-}
+  const state = getTimerState(remaining);
 
-// Re-check saved data live
-const saved = JSON.parse(
-localStorage.getItem("section3Data") || "{}"
-);
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
 
-const hasSavedData = Object.values(saved).some(
-v => v && v.toString().trim() !== ""
-);
+  const timeString =
+    `${String(minutes).padStart(2, "0")}:` +
+    `${String(seconds).padStart(2, "0")}`;
 
-const state = getTimerState(remaining);
+  // Reset classes
+  notification.classList.remove(
+    "warning-yellow",
+    "warning-red"
+  );
 
-// Time formatting
-const minutes = Math.floor(remaining / 60);
+  // Apply warning states
+  if (state === "warning-yellow") {
+    notification.classList.add("warning-yellow");
+  }
 
-const seconds = remaining % 60;
+  if (state === "warning-red") {
+    notification.classList.add("warning-red");
+  }
 
-const timeString =
-`${String(minutes).padStart(2, "0")}:` +
-`${String(seconds).padStart(2, "0")}`;
+  // Initial phase text
+  if (remaining > 590) {
+    notification.textContent = hasSavedData
+      ? "Payout method linked successfully"
+      : "Provide your payout details";
+  } else {
+    notification.textContent =
+      `Session expires in: ${timeString}`;
+  }
 
-// Reset warning classes
-notification.classList.remove(
-"warning-yellow",
-"warning-red"
-);
+  notification.classList.add("show");
 
-// Apply warning classes
-if (state === "warning-yellow") {
-notification.classList.add("warning-yellow");
-}
-
-if (state === "warning-red") {
-notification.classList.add("warning-red");
-}
-
-// First 10 seconds
-if (remaining > 590) {
-
-notification.textContent = hasSavedData
-? "Payout method linked successfully"
-: "Provide your payout details";
-
-} else {
-
-notification.textContent =
-`Session expires in: ${timeString}`;
-
-}
-
-notification.classList.add("show");
-
-// Vibrate at 2-minute warning
-if (remaining === 120 && navigator.vibrate) {
-
-navigator.vibrate([300, 100, 300]);
-
-}
-
+  // Vibration alert
+  if (remaining === 120 && navigator.vibrate) {
+    navigator.vibrate([300, 100, 300]);
+  }
 };
 
-// Start countdown loop
-setTimeout(() => {
+/* --------------------------
+INITIAL NOTIFICATION
+-------------------------- */
 
-updateSessionUI();
+window.addEventListener("load", () => {
+  const saved = JSON.parse(
+    localStorage.getItem("section3Data") || "{}"
+  );
 
-setInterval(updateSessionUI, 1000);
+  const hasSavedData = Object.values(saved).some(
+    v => v && v.toString().trim() !== ""
+  );
 
-}, 4000);
+  setTimeout(() => {
+    if (hasSavedData) {
+      showNotification("Payout method linked successfully");
+    } else {
+      showNotification("Provide your payout details");
+    }
+  }, 300);
 
+  // Start session loop AFTER initial load
+  setTimeout(() => {
+    updateSessionUI();
+    setInterval(updateSessionUI, 1000);
+  }, 300);
 });
 
 
