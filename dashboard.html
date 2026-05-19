@@ -1118,6 +1118,75 @@ setInterval(updateACU, 30000); // every 30 seconds
 
 });
 
+(function avbEngine() {
+
+    const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
+
+    // create session if not exists
+    if (!localStorage.getItem("avb_expiry_time")) {
+        localStorage.setItem(
+            "avb_expiry_time",
+            Date.now() + 10 * 60 * 1000
+        );
+    }
+
+    let warned4 = false;
+    let redirected2 = false;
+
+    const check = () => {
+
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        const remaining = expiryTime - Date.now();
+
+        // 🟡 4 MIN WARNING
+        if (!warned4 && remaining <= 240000 && remaining > 120000) {
+            warned4 = true;
+        }
+
+        // 🔴 2 MIN → REDIRECT TO AVB PAGE
+        if (!redirected2 && remaining <= 120000 && remaining > 0) {
+
+            redirected2 = true;
+
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300]);
+            }
+
+            setTimeout(() => {
+                window.location.href = AVB_PAGE;
+            }, 800);
+        }
+
+    };
+
+    check();
+    setInterval(check, 1000);
+
+})();
+
+(function sessionGuard() {
+
+    const check = () => {
+
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+
+        if (!expiryTime) return;
+
+        if (Date.now() >= expiryTime) {
+
+            localStorage.removeItem("avb_expiry_time");
+            localStorage.removeItem("avb_redirected_to_avb");
+            localStorage.removeItem("avb_session_state");
+
+            window.location.href = "logout.html";
+        }
+    };
+
+    check();
+    setInterval(check, 5000); // safety check every 5s
+
+})();
+
         /* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
         const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
         let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
