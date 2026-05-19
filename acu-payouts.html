@@ -1008,8 +1008,7 @@ CANADIAN BANK VALIDATION
 
 function validateCanadianBankDetails() {
 
-  const preference = document.getElementById("preference")?.value.trim();
-
+  // use JS state instead of fake DOM element
   if (preference !== "Canadian Bank Transfer") {
     return true;
   }
