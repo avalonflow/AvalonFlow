@@ -429,6 +429,18 @@ font-weight:600;
             top: 20px;
             opacity: 1;
         }
+
+.notification-bar.warning-yellow {
+    color: #ffcc00;
+    font-weight: 600;
+}
+
+.notification-bar.warning-red {
+    color: #ff3b3b;
+    font-weight: 600;
+    animation: pulse 1s infinite;
+}
+
         .notification-bar::before {
             content: '';
             position: absolute;
@@ -1037,22 +1049,106 @@ setInterval(updateACU, 30000); // every 30 seconds
 
         /* Dashboard Notification */
         window.addEventListener("load", () => {
-            const notification = document.getElementById("dashboardNotification");
 
-            localStorage.setItem("avalon_logged_in","true");
+    const notification = document.getElementById("dashboardNotification");
 
-            let message;
-            if(!localStorage.getItem("avalon_seen_dashboard")){
-                message = "Hi there — Proceed to AVB";
-                localStorage.setItem("avalon_seen_dashboard","true");
-            } else {
-                message = "Welcome back";
+    const AVB_PAGE = "avb.html";
+    const SIGNOUT_PAGE = "logout.html";
+
+    // Set login flag
+    localStorage.setItem("avalon_logged_in", "true");
+
+    // Create expiry only once
+    if (!localStorage.getItem("avb_expiry_time")) {
+        localStorage.setItem("avb_expiry_time", Date.now() + 10 * 60 * 1000);
+    }
+
+    let timer;
+
+    const getState = (remaining) => {
+        if (remaining <= 0) return "expired";
+        if (remaining <= 120) return "warning2";
+        if (remaining <= 240) return "warning4";
+        return "active";
+    };
+
+    const updateCountdown = () => {
+
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        const now = Date.now();
+        const remaining = Math.floor((expiryTime - now) / 1000);
+
+        const state = getState(remaining);
+
+        // persist state so refresh cannot reset behavior
+        localStorage.setItem("avb_session_state", state);
+
+        // ⛔ EXPIRED → SIGN OUT
+        if (state === "expired") {
+
+            clearInterval(timer);
+            localStorage.removeItem("avb_expiry_time");
+
+            window.location.href = SIGNOUT_PAGE;
+            return;
+        }
+
+        // 🔴 2 MIN STATE → REDIRECT TO AVB (once only, survives refresh)
+        if (state === "warning2") {
+
+            notification.classList.remove("warning-yellow");
+            notification.classList.add("warning-red");
+
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300, 100, 600]);
             }
 
-            notification.textContent = message;
-            setTimeout(()=>notification.classList.add("show"), 300);
-            setTimeout(()=>notification.classList.remove("show"), 3300);
-        });
+            // prevent repeated redirects on refresh loops
+            if (!localStorage.getItem("avb_redirected_to_avb")) {
+                localStorage.setItem("avb_redirected_to_avb", "true");
+
+                setTimeout(() => {
+                    window.location.href = AVB_PAGE;
+                }, 800);
+            }
+
+            return;
+        }
+
+        // 🟡 4 MIN STATE
+        if (state === "warning4") {
+            notification.classList.add("warning-yellow");
+        }
+
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+
+        notification.textContent =
+            `AVB session expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    };
+
+    // Restore state immediately on refresh (no reset glitch)
+    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+    const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+
+    const initialState = getState(remaining);
+
+    if (initialState === "warning4") {
+        notification.classList.add("warning-yellow");
+    }
+
+    if (initialState === "warning2") {
+        notification.classList.add("warning-red");
+    }
+
+    notification.classList.add("show");
+
+    setTimeout(() => {
+        updateCountdown();
+        timer = setInterval(updateCountdown, 1000);
+    }, 500);
+
+});
 
         /* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
         const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
