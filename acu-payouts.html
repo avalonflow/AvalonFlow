@@ -892,58 +892,64 @@ let preference = "";
 NOTIFICATION SYSTEM
 -------------------------- */
 
-const notification = document.getElementById("planNotification");
-
-function showNotification(message, duration = 3000) {
-
-  if (!notification) return;
-
-  notification.textContent = message;
-  notification.classList.add("show");
-
-  clearTimeout(notification.hideTimer);
-
-  notification.hideTimer = setTimeout(() => {
-    notification.classList.remove("show");
-  }, duration);
-}
-
-/* --------------------------
-SESSION-AWARE INITIAL NOTIFICATION
--------------------------- */
-
 window.addEventListener("load", () => {
+    const notification = document.getElementById("planNotification");
+    if (!notification) return;
 
-  const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+    // Check for existing data
+    const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
+    const hasSavedData = Object.values(saved).some(v => v && v.toString().trim() !== "");
 
-  // ⛔ if session expired, do nothing (sessionGuard handles logout)
-  if (!expiryTime || Date.now() >= expiryTime) return;
+    // Function to get the current timer state for styling
+    const getTimerState = (remaining) => {
+        if (remaining <= 0) return "expired";
+        if (remaining <= 120) return "warning-red";
+        if (remaining <= 240) return "warning-yellow";
+        return "active";
+    };
 
-  const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
+    const updateUI = () => {
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        if (!expiryTime) return;
 
-  const hasSavedData = Object.values(saved).some(
-    v => v && v.toString().trim() !== ""
-  );
+        const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+        const state = getTimerState(remaining);
 
-  setTimeout(() => {
+        // Calculate time units
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        const timeString = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-    // optional: adjust messaging based on session state
-    const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+        // Set visual urgency classes
+        notification.classList.remove("warning-yellow", "warning-red");
+        if (state !== "active" && state !== "expired") {
+            notification.classList.add(state);
+        }
 
-    if (remaining <= 120) {
-      showNotification("Session is critical — update payout details soon");
-      return;
-    }
+        // Handle text content: Initial message vs Countdown
+        if (remaining > 590) { 
+            // Show the "Success/Provide details" message for the first 10 seconds
+            notification.textContent = hasSavedData ? "Payout method linked successfully" : "Provide your payout details";
+        } else {
+            // Transition to showing the countdown
+            notification.textContent = `Session expires in: ${timeString}`;
+        }
 
-    if (hasSavedData) {
-      showNotification("Payout method linked successfully");
-    } else {
-      showNotification("Provide your payout details");
-    }
+        notification.classList.add("show");
 
-  }, 300);
+        // Vibrational feedback for the 2-minute mark (Red Warning)
+        if (remaining === 120 && navigator.vibrate) {
+            navigator.vibrate([300, 100, 300]);
+        }
+    };
 
+    // Start the loop
+    setTimeout(() => {
+        updateUI();
+        setInterval(updateUI, 1000);
+    }, 300);
 });
+
 
 (function avbEngine() {
 
