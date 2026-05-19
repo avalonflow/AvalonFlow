@@ -1125,7 +1125,7 @@ setInterval(updateACU, 30000); // every 30 seconds
     setTimeout(() => {
         updateCountdown();
         timer = setInterval(updateCountdown, 1000);
-    }, 500);
+    }, 4000);
 
 });
 
@@ -1159,9 +1159,18 @@ setInterval(updateACU, 30000); // every 30 seconds
 
             redirected2 = true;
 
-            if (navigator.vibrate) {
-                navigator.vibrate([300, 100, 300]);
-            }
+            if (
+    state === "warning2" &&
+    !notification.classList.contains("vibrated")
+) {
+    notification.classList.remove("warning-yellow");
+    notification.classList.add("warning-red");
+    notification.classList.add("vibrated");
+
+    if (navigator.vibrate) {
+        navigator.vibrate([300, 100, 300]);
+    }
+}
 
             setTimeout(() => {
                 window.location.href = AVB_PAGE;
