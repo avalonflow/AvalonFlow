@@ -1014,13 +1014,13 @@ window.addEventListener("load", () => {
     } else {
       showNotification("Provide your payout details");
     }
-  }, 300);
+  }, 3000);
 
   // Start session loop AFTER initial load
   setTimeout(() => {
     updateSessionUI();
     setInterval(updateSessionUI, 1000);
-  }, 300);
+  }, 3000);
 });
 
 
