@@ -1092,7 +1092,7 @@ setInterval(updateACU, 30000); // every 30 seconds
         const seconds = remaining % 60;
 
         notification.textContent =
-            `AVB session expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+            `Verification session expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
 
     // initial render
@@ -1178,7 +1178,7 @@ setInterval(updateACU, 30000); // every 30 seconds
             localStorage.removeItem("avb_redirected_to_avb");
             localStorage.removeItem("avb_session_state");
 
-            window.location.href = "logout.html";
+            window.location.href = "https://membership-signup.avalonflow.site/sign-in";
         }
     };
 
