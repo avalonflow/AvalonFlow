@@ -892,15 +892,41 @@ let preference = "";
 NOTIFICATION SYSTEM
 -------------------------- */
 
+const notification = document.getElementById("planNotification");
+
+function showNotification(message, duration = 3000) {
+
+if (!notification) return;
+
+notification.textContent = message;
+
+notification.classList.add("show");
+
+clearTimeout(notification.hideTimer);
+
+notification.hideTimer = setTimeout(() => {
+notification.classList.remove("show");
+}, duration);
+}
+
+/* --------------------------
+INITIAL NOTIFICATION
+-------------------------- */
+
 window.addEventListener("load", () => {
-    const notification = document.getElementById("planNotification");
-    if (!notification) return;
 
-    // Check for existing data
-    const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
-    const hasSavedData = Object.values(saved).some(v => v && v.toString().trim() !== "");
+    const notification = document.getElementById("dashboardNotification");
 
-    // Function to get the current timer state for styling
+    // Load saved payout data
+    const saved = JSON.parse(
+        localStorage.getItem("section3Data") || "{}"
+    );
+
+    const hasSavedData = Object.values(saved).some(
+        v => v && v.toString().trim() !== ""
+    );
+
+    // Timer state styling
     const getTimerState = (remaining) => {
         if (remaining <= 0) return "expired";
         if (remaining <= 120) return "warning-red";
@@ -908,46 +934,86 @@ window.addEventListener("load", () => {
         return "active";
     };
 
+    // Main UI updater
     const updateUI = () => {
-        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+
+        const expiryTime = parseInt(
+            localStorage.getItem("avb_expiry_time"),
+            10
+        );
+
         if (!expiryTime) return;
 
-        const remaining = Math.floor((expiryTime - Date.now()) / 1000);
-        const state = getTimerState(remaining);
+        const remaining = Math.floor(
+            (expiryTime - Date.now()) / 1000
+        );
 
-        // Calculate time units
-        const minutes = Math.floor(remaining / 60);
-        const seconds = remaining % 60;
-        const timeString = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-        // Set visual urgency classes
-        notification.classList.remove("warning-yellow", "warning-red");
-        if (state !== "active" && state !== "expired") {
-            notification.classList.add(state);
+        // Stop negative countdown
+        if (remaining <= 0) {
+            notification.textContent = "Session expired";
+            notification.classList.remove(
+                "warning-yellow",
+                "warning-red"
+            );
+            notification.classList.add("warning-red", "show");
+            return;
         }
 
-        // Handle text content: Initial message vs Countdown
-        if (remaining > 590) { 
-            // Show the "Success/Provide details" message for the first 10 seconds
-            notification.textContent = hasSavedData ? "Payout method linked successfully" : "Provide your payout details";
+        const state = getTimerState(remaining);
+
+        // Time formatting
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+
+        const timeString =
+            `${String(minutes).padStart(2, "0")}:` +
+            `${String(seconds).padStart(2, "0")}`;
+
+        // Reset warning classes
+        notification.classList.remove(
+            "warning-yellow",
+            "warning-red"
+        );
+
+        // Apply warning class
+        if (state === "warning-yellow") {
+            notification.classList.add("warning-yellow");
+        }
+
+        if (state === "warning-red") {
+            notification.classList.add("warning-red");
+        }
+
+        // First 10 seconds = status message
+        if (remaining > 590) {
+
+            notification.textContent = hasSavedData
+                ? "Payout method linked successfully"
+                : "Provide your payout details";
+
         } else {
-            // Transition to showing the countdown
-            notification.textContent = `Session expires in: ${timeString}`;
+
+            notification.textContent =
+                `Session expires in: ${timeString}`;
         }
 
         notification.classList.add("show");
 
-        // Vibrational feedback for the 2-minute mark (Red Warning)
+        // Vibrate at 2-minute warning
         if (remaining === 120 && navigator.vibrate) {
             navigator.vibrate([300, 100, 300]);
         }
     };
 
-    // Start the loop
+    // Initial delayed start
     setTimeout(() => {
+
         updateUI();
+
         setInterval(updateUI, 1000);
+
     }, 300);
+
 });
 
 
