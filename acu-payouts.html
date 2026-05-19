@@ -549,6 +549,16 @@ left:300px;
         top: 20px;
         opacity: 1;
     }
+.notification-bar.warning-yellow {
+    color: #ffcc00;
+    font-weight: 600;
+}
+
+.notification-bar.warning-red {
+    color: #ff3b3b;
+    font-weight: 600;
+    animation: pulse 1s infinite;
+}
     .notification-bar::before {
         content: '';
         position: absolute;
@@ -889,7 +899,6 @@ function showNotification(message, duration = 3000) {
   if (!notification) return;
 
   notification.textContent = message;
-
   notification.classList.add("show");
 
   clearTimeout(notification.hideTimer);
@@ -899,16 +908,18 @@ function showNotification(message, duration = 3000) {
   }, duration);
 }
 
-
 /* --------------------------
-INITIAL NOTIFICATION
+SESSION-AWARE INITIAL NOTIFICATION
 -------------------------- */
 
 window.addEventListener("load", () => {
 
-  const saved = JSON.parse(
-    localStorage.getItem("section3Data") || "{}"
-  );
+  const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+
+  // ⛔ if session expired, do nothing (sessionGuard handles logout)
+  if (!expiryTime || Date.now() >= expiryTime) return;
+
+  const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
 
   const hasSavedData = Object.values(saved).some(
     v => v && v.toString().trim() !== ""
@@ -916,14 +927,18 @@ window.addEventListener("load", () => {
 
   setTimeout(() => {
 
+    // optional: adjust messaging based on session state
+    const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+
+    if (remaining <= 120) {
+      showNotification("Session is critical — update payout details soon");
+      return;
+    }
+
     if (hasSavedData) {
-
       showNotification("Payout method linked successfully");
-
     } else {
-
       showNotification("Provide your payout details");
-
     }
 
   }, 300);
