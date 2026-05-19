@@ -917,15 +917,6 @@ window.addEventListener("load", () => {
 
     const notification = document.getElementById("dashboardNotification");
 
-    // Load saved payout data
-    const saved = JSON.parse(
-        localStorage.getItem("section3Data") || "{}"
-    );
-
-    const hasSavedData = Object.values(saved).some(
-        v => v && v.toString().trim() !== ""
-    );
-
     // Timer state styling
     const getTimerState = (remaining) => {
         if (remaining <= 0) return "expired";
@@ -936,6 +927,15 @@ window.addEventListener("load", () => {
 
     // Main UI updater
     const updateUI = () => {
+
+        // Re-check saved payout data live
+        const saved = JSON.parse(
+            localStorage.getItem("section3Data") || "{}"
+        );
+
+        const hasSavedData = Object.values(saved).some(
+            v => v && v.toString().trim() !== ""
+        );
 
         const expiryTime = parseInt(
             localStorage.getItem("avb_expiry_time"),
@@ -948,14 +948,21 @@ window.addEventListener("load", () => {
             (expiryTime - Date.now()) / 1000
         );
 
-        // Stop negative countdown
+        // Session expired
         if (remaining <= 0) {
+
             notification.textContent = "Session expired";
+
             notification.classList.remove(
                 "warning-yellow",
                 "warning-red"
             );
-            notification.classList.add("warning-red", "show");
+
+            notification.classList.add(
+                "warning-red",
+                "show"
+            );
+
             return;
         }
 
@@ -969,13 +976,13 @@ window.addEventListener("load", () => {
             `${String(minutes).padStart(2, "0")}:` +
             `${String(seconds).padStart(2, "0")}`;
 
-        // Reset warning classes
+        // Reset classes
         notification.classList.remove(
             "warning-yellow",
             "warning-red"
         );
 
-        // Apply warning class
+        // Apply warning state
         if (state === "warning-yellow") {
             notification.classList.add("warning-yellow");
         }
