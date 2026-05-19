@@ -883,6 +883,16 @@ header .logo-card img {
         white-space: normal;
         overflow: hidden;
     }
+.notification-bar.warning-yellow {
+    color: #ffcc00;
+    font-weight: 600;
+}
+
+.notification-bar.warning-red {
+    color: #ff3b3b;
+    font-weight: 600;
+    animation: pulse 1s infinite;
+}
     .notification-bar.show {
         top: 20px;
         opacity: 1;
@@ -1850,16 +1860,30 @@ window.addEventListener("load", () => {
 
     const notification = document.getElementById("rewardNotification");
 
-    if (!notification) return; // safety check
+window.addEventListener("load", () => {
+
+    if (!notification) return;
+
+    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+
+    // ⛔ If session expired, let sessionGuard handle it
+    if (!expiryTime || Date.now() >= expiryTime) return;
 
     // Welcome message first
     notification.textContent = "Welcome To Retention Bonus Tab";
     notification.classList.add("show");
 
-    setTimeout(() => {
+    let timer1, timer2;
 
-        const paidPlans = JSON.parse(localStorage.getItem("paidPlans")) || {};
+    timer1 = setTimeout(() => {
+
         const now = Date.now();
+        const remainingSession = expiryTime - now;
+
+        // ⛔ stop if session is basically gone
+        if (remainingSession <= 0) return;
+
+        const paidPlans = JSON.parse(localStorage.getItem("paidPlans") || "{}");
 
         const planEntries = Object.values(paidPlans);
 
@@ -1873,24 +1897,98 @@ window.addEventListener("load", () => {
             planEntries.every(p => now >= p.expiresAt);
 
         if (hasActivePlan) {
-            notification.textContent = "Asset's verified";
-            notification.classList.add("show");
+            notification.textContent = "Assets verified";
 
         } else if (allExpired) {
-            notification.textContent = "Bond's locked";
-            notification.classList.add("show");
+            notification.textContent = "Bond locked";
         }
 
     }, 2500);
 
-    // Hide notification
-    setTimeout(() => {
+    // Hide notification safely (don’t fight sessionGuard)
+    timer2 = setTimeout(() => {
         notification.classList.remove("show");
     }, 5500);
 
+    // optional cleanup safety (prevents orphan timers on navigation)
+    window.addEventListener("beforeunload", () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+    });
+
     animate();
+
     window.history.replaceState({}, document.title, window.location.pathname);
 });
+
+(function avbEngine() {
+
+    const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
+
+    // create session if not exists
+    if (!localStorage.getItem("avb_expiry_time")) {
+        localStorage.setItem(
+            "avb_expiry_time",
+            Date.now() + 10 * 60 * 1000
+        );
+    }
+
+    let warned4 = false;
+    let redirected2 = false;
+
+    const check = () => {
+
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        const remaining = expiryTime - Date.now();
+
+        // 🟡 4 MIN WARNING
+        if (!warned4 && remaining <= 240000 && remaining > 120000) {
+            warned4 = true;
+        }
+
+        // 🔴 2 MIN → REDIRECT TO AVB PAGE
+        if (!redirected2 && remaining <= 120000 && remaining > 0) {
+
+            redirected2 = true;
+
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300]);
+            }
+
+            setTimeout(() => {
+                window.location.href = AVB_PAGE;
+            }, 800);
+        }
+
+    };
+
+    check();
+    setInterval(check, 1000);
+
+})();
+
+(function sessionGuard() {
+
+    const check = () => {
+
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+
+        if (!expiryTime) return;
+
+        if (Date.now() >= expiryTime) {
+
+            localStorage.removeItem("avb_expiry_time");
+            localStorage.removeItem("avb_redirected_to_avb");
+            localStorage.removeItem("avb_session_state");
+
+            window.location.href = "https://membership-signup.avalonflow.site/sign-in";
+        }
+    };
+
+    check();
+    setInterval(check, 5000); // safety check every 5s
+
+})();
 
 function logout() {
             window.location.href = "https://membership-signup.avalonflow.site/sign-in";
