@@ -914,6 +914,22 @@ if (saved.preference) {
 
 }
 
+function saveData() {
+  const data = {
+    preference,
+    acuAccount: document.getElementById("acuAccount")?.value || "",
+    paypal: document.getElementById("paypalInput")?.value || "",
+    interac: document.getElementById("interacInput")?.value || "",
+    canadianBank: document.getElementById("canadianBankSelect")?.value || "",
+    accountName: document.getElementById("accountName")?.value || "",
+    transitNumber: document.getElementById("transitNumber")?.value || "",
+    institutionNumber: document.getElementById("institutionNumber")?.value || "",
+    accountNumber: document.getElementById("accountNumber")?.value || ""
+  };
+
+  localStorage.setItem("section3Data", JSON.stringify(data));
+}
+
 // Restore saved values
 if (saved.acuAccount)
   document.getElementById("acuAccount").value = saved.acuAccount;
