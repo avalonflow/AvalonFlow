@@ -955,6 +955,20 @@ notification.textContent = "Verification expired";
 notification.classList.remove("warning-yellow");
 notification.classList.add("warning-red", "show");
 
+// stop intervals immediately
+clearInterval(sessionInterval);
+clearInterval(guardInterval);
+
+// clear storage
+localStorage.removeItem("avb_expiry_time");
+localStorage.removeItem("avb_redirected_to_avb");
+localStorage.removeItem("avb_session_state");
+
+// redirect instantly
+setTimeout(() => {
+window.location.href = "logout.html";
+}, 1000);
+
 return;
 
 }
@@ -1056,7 +1070,7 @@ showNotification("Provide your payout details");
 setTimeout(() => {
 
 updateSessionUI();
-setInterval(updateSessionUI, 1000);
+sessionInterval = setInterval(updateSessionUI, 1000);
 
 }, 3000);
 
@@ -1109,6 +1123,9 @@ setInterval(updateSessionUI, 1000);
 
 })();
 
+let sessionInterval;
+let guardInterval;
+
 (function sessionGuard() {
 
     const check = () => {
@@ -1128,7 +1145,7 @@ setInterval(updateSessionUI, 1000);
     };
 
     check();
-    setInterval(check, 5000); // safety check every 5s
+    guardInterval = setInterval(check, 5000);
 
 })();
                     
