@@ -1086,7 +1086,6 @@ sessionInterval = setInterval(updateSessionUI, 1000);
 
     const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
 
-    // create session if not exists
     if (!localStorage.getItem("avb_expiry_time")) {
         localStorage.setItem(
             "avb_expiry_time",
@@ -1094,37 +1093,36 @@ sessionInterval = setInterval(updateSessionUI, 1000);
         );
     }
 
-    let warned4 = false;
-    let redirected2 = false;
-
     const check = () => {
 
         const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
         const remaining = expiryTime - Date.now();
 
-        // 🟡 4 MIN WARNING
-        if (!warned4 && remaining <= 240000 && remaining > 120000) {
-            warned4 = true;
+        // 🟡 WARNING ONLY
+        if (remaining <= 240000 && remaining > 120000) {
+            // optional yellow state UI
         }
 
-        // 🔴 2 MIN → REDIRECT TO AVB PAGE
-        if (!redirected2 && remaining <= 120000 && remaining > 0) {
-
-            redirected2 = true;
+        // 🔴 RED STATE → SINGLE CONTROLLED REDIRECT
+        if (remaining <= 120000 && remaining > 0) {
 
             if (navigator.vibrate) {
                 navigator.vibrate([300, 100, 300]);
             }
 
-            setTimeout(() => {
-                window.location.href = AVB_PAGE;
-            }, 800);
-        }
+            // ONLY IF NOT ALREADY IN AVB FLOW
+            if (!localStorage.getItem("avb_redirected")) {
+                localStorage.setItem("avb_redirected", "true");
 
+                setTimeout(() => {
+                    window.location.href = AVB_PAGE;
+                }, 800);
+            }
+        }
     };
 
     check();
-    avbInterval = setInterval(check, 1000);
+    setInterval(check, 1000);
 
 })();
 
