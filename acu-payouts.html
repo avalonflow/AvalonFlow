@@ -1016,7 +1016,7 @@ notification.classList.add("show");
 // normal period = pulse visibility
 
 // show for 3 mins
-if (remaining % 360 < 180) {
+if (remaining % 360 >= 180) {
 notification.classList.add("show");
 } else {
 notification.classList.remove("show");
