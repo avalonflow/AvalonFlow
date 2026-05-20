@@ -892,6 +892,10 @@ let preference = "";
 NOTIFICATION SYSTEM
 -------------------------- */
 
+let sessionInterval;
+let guardInterval;
+let avbInterval;
+
 const notification = document.getElementById("planNotification");
 
 function showNotification(message, duration = 3000) {
@@ -958,6 +962,7 @@ notification.classList.add("warning-red", "show");
 // stop intervals immediately
 clearInterval(sessionInterval);
 clearInterval(guardInterval);
+clearInterval(avbInterval);
 
 // clear storage
 localStorage.removeItem("avb_expiry_time");
@@ -1119,7 +1124,7 @@ sessionInterval = setInterval(updateSessionUI, 1000);
     };
 
     check();
-    setInterval(check, 1000);
+    avbInterval = setInterval(check, 1000);
 
 })();
 
