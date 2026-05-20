@@ -1078,34 +1078,54 @@ setInterval(updateACU, 30000); // every 30 seconds
 
     const updateCountdown = () => {
 
-        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
-        if (!expiryTime) return;
+    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+    if (!expiryTime) return;
 
-        const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+    const remaining = Math.max(
+        0,
+        Math.floor((expiryTime - Date.now()) / 1000)
+    );
 
-        const state = getState(remaining);
+    const state = getState(remaining);
 
-        // 🟡 4 MIN WARNING
-        if (state === "warning4") {
-            notification.classList.add("warning-yellow");
+    // 🟡 4 MIN WARNING
+    if (state === "warning4") {
+        notification.classList.add("warning-yellow");
+    }
+
+    // 🔴 2 MIN WARNING
+    if (state === "warning2") {
+        notification.classList.remove("warning-yellow");
+        notification.classList.add("warning-red");
+
+        if (navigator.vibrate) {
+            navigator.vibrate([300, 100, 300]);
         }
+    }
 
-        // 🔴 2 MIN WARNING
-        if (state === "warning2") {
-            notification.classList.remove("warning-yellow");
-            notification.classList.add("warning-red");
+    // 🟡 ALWAYS VISIBLE IN WARNING STATES
+    if (remaining <= 240) {
+        notification.classList.add("show");
+    }
 
-            if (navigator.vibrate) {
-                navigator.vibrate([300, 100, 300]);
-            }
+    // 🔁 PULSE SYSTEM (ONLY ACTIVE STATE)
+    const cycle = remaining % 360;
+
+    if (remaining > 240) {
+        if (cycle >= 180) {
+            notification.classList.add("show");
+        } else {
+            notification.classList.remove("show");
         }
+    }
 
-        const minutes = Math.floor(remaining / 60);
-        const seconds = remaining % 60;
+    // 🕒 TEXT DISPLAY
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
 
-        notification.textContent =
-            `Verification expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-    };
+    notification.textContent =
+        `Verification expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+};
 
     // initial render
     const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
@@ -1189,22 +1209,25 @@ setInterval(updateACU, 30000); // every 30 seconds
 
     const check = () => {
 
-        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
 
-        if (!expiryTime) return;
+    if (!expiryTime) return;
 
-        if (Date.now() >= expiryTime) {
+    const remaining = expiryTime - Date.now();
 
-            localStorage.removeItem("avb_expiry_time");
-            localStorage.removeItem("avb_redirected_to_avb");
-            localStorage.removeItem("avb_session_state");
+    if (remaining <= 0) {
 
-            window.location.href = "https://membership-signup.avalonflow.site/sign-in";
-        }
-    };
+        localStorage.removeItem("avb_expiry_time");
+        localStorage.removeItem("avb_redirected_to_avb");
+        localStorage.removeItem("avb_session_state");
+
+        window.location.href =
+            "https://membership-signup.avalonflow.site/sign-in";
+    }
+};
 
     check();
-    setInterval(check, 5000); // safety check every 5s
+    setInterval(check, 1000);
 
 })();
 
