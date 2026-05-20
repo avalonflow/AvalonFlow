@@ -938,7 +938,7 @@ const remaining = Math.floor(
 (expiryTime - Date.now()) / 1000
 );
 
-// live saved data check (IMPORTANT RESTORE)
+// live saved data check
 const saved = JSON.parse(
 localStorage.getItem("section3Data") || "{}"
 );
@@ -947,11 +947,12 @@ const hasSavedData = Object.values(saved).some(
 v => v && v.toString().trim() !== ""
 );
 
-// expired state
+// expired
 if (remaining <= 0) {
 
-notification.textContent = "Session expired";
+notification.textContent = "Verification expired";
 
+notification.classList.remove("warning-yellow");
 notification.classList.add("warning-red", "show");
 
 return;
@@ -974,7 +975,7 @@ notification.classList.remove(
 "warning-red"
 );
 
-// warnings
+// warning styles
 if (state === "warning-yellow") {
 notification.classList.add("warning-yellow");
 }
@@ -983,26 +984,47 @@ if (state === "warning-red") {
 notification.classList.add("warning-red");
 }
 
-// 🔥 RESTORED HYBRID LOGIC
+// message
 if (remaining > 590) {
 
 if (hasSavedData) {
-notification.textContent = "Payout method linked successfully";
+notification.textContent =
+"Payout method linked successfully";
 } else {
-notification.textContent = "Provide your payout details";
+notification.textContent =
+"Provide your payout details";
 }
 
 } else {
 
 notification.textContent =
-`Session expires in: ${timeString}`;
+`Verification expires in: ${timeString}`;
 
 }
 
-// show UI
+/* --------------------------
+VISIBILITY LOGIC
+-------------------------- */
+
+// warning period = always visible
+if (remaining <= 240) {
+
 notification.classList.add("show");
 
-// vibration restore
+} else {
+
+// normal period = pulse visibility
+
+// show for 3 mins
+if (remaining % 360 < 180) {
+notification.classList.add("show");
+} else {
+notification.classList.remove("show");
+}
+
+}
+
+// vibration
 if (remaining === 120 && navigator.vibrate) {
 navigator.vibrate([300, 100, 300]);
 }
