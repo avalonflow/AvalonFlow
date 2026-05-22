@@ -1730,7 +1730,7 @@ function updateReturns() {
             const per12hEl = document.getElementById("customPer12h");
 
             if (!planData || !planData.active) {
-                if (per12hEl) per12hEl.textContent = "1.33% of Declared Asset Value";
+                if (per12hEl) per12hEl.textContent = "1.33% of Declared Value";
             } else {
                 const amount = planData.amount || 0;
                 const per12h = (amount * 1.5) / 2;
@@ -1882,7 +1882,7 @@ setTimeout(() => {
         planEntries.every(p => now >= p.expiresAt);  
 
     if (hasActivePlan) {  
-        notification.textContent = "Asset's verified";  
+        notification.textContent = "Bond verified";  
         notification.classList.add("show");  
 
     } else if (allExpired) {  
