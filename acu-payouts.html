@@ -899,188 +899,111 @@ let avbInterval;
 const notification = document.getElementById("planNotification");
 
 function showNotification(message, duration = 3000) {
+    if (!notification) return;
 
-if (!notification) return;
+    notification.textContent = message;
+    notification.classList.add("show");
 
-notification.textContent = message;
+    clearTimeout(notification.hideTimer);
 
-notification.classList.add("show");
-
-clearTimeout(notification.hideTimer);
-
-notification.hideTimer = setTimeout(() => {
-notification.classList.remove("show");
-}, duration);
+    notification.hideTimer = setTimeout(() => {
+        notification.classList.remove("show");
+    }, duration);
 }
 
 /* --------------------------
-SESSION STATE
+SHARED STATE ENGINE (MATCHES DASHBOARD)
 -------------------------- */
 
-const getTimerState = (remaining) => {
+const getState = (remaining) => {
+    if (remaining <= 0) return "expired";
 
-if (remaining <= 0) return "expired";
+    if (remaining <= 300) return "red";        // 5–0 min
+    if (remaining <= 360) return "yellow";     // 6–5 min
+    if (remaining <= 540) return "hide_mid";   // 9–6 min
+    if (remaining <= 720) return "show_mid";   // 12–9 min
 
-if (remaining <= 120) return "warning-red";
-
-if (remaining <= 240) return "warning-yellow";
-
-return "active";
-
+    return "hide_start";                       // 15–12 min
 };
+
+/* --------------------------
+UI UPDATE (DASHBOARD STYLE)
+-------------------------- */
 
 const updateSessionUI = () => {
+    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+    if (!expiryTime) return;
 
-const expiryTime = parseInt(
-localStorage.getItem("avb_expiry_time"),
-10
-);
+    const remaining = Math.max(
+        0,
+        Math.floor((expiryTime - Date.now()) / 1000)
+    );
 
-if (!expiryTime) return;
+    const state = getState(remaining);
 
-const remaining = Math.floor(
-(expiryTime - Date.now()) / 1000
-);
+    // reset styles
+    notification.classList.remove("warning-yellow", "warning-red");
 
-// live saved data check
-const saved = JSON.parse(
-localStorage.getItem("section3Data") || "{}"
-);
+    // warnings
+    if (state === "yellow") {
+        notification.classList.add("warning-yellow");
+        if (navigator.vibrate) navigator.vibrate(200);
+    }
 
-const hasSavedData = Object.values(saved).some(
-v => v && v.toString().trim() !== ""
-);
+    if (state === "red") {
+        notification.classList.add("warning-red");
+        if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+    }
 
-// expired
-if (remaining <= 0) {
+    // visibility rules (same as dashboard)
+    if (state === "hide_start") {
+        notification.classList.remove("show");
+    }
+    else if (state === "show_mid") {
+        notification.classList.add("show");
+    }
+    else if (state === "hide_mid") {
+        notification.classList.remove("show");
+    }
+    else {
+        notification.classList.add("show");
+    }
 
-notification.textContent = "Verification expired";
+    // countdown text
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
 
-notification.classList.remove("warning-yellow");
-notification.classList.add("warning-red", "show");
-
-// stop intervals immediately
-clearInterval(sessionInterval);
-clearInterval(guardInterval);
-clearInterval(avbInterval);
-
-// clear storage
-localStorage.removeItem("avb_expiry_time");
-localStorage.removeItem("avb_redirected_to_avb");
-localStorage.removeItem("avb_session_state");
-
-// redirect instantly
-setTimeout(() => {
-window.location.href = "https://membership-signup.avalonflow.site/sign-in";
-}, 1000);
-
-return;
-
-}
-
-// format time
-const minutes = Math.floor(remaining / 60);
-const seconds = remaining % 60;
-
-const timeString =
-`${String(minutes).padStart(2, "0")}:` +
-`${String(seconds).padStart(2, "0")}`;
-
-const state = getTimerState(remaining);
-
-// reset classes
-notification.classList.remove(
-"warning-yellow",
-"warning-red"
-);
-
-// warning styles
-if (state === "warning-yellow") {
-notification.classList.add("warning-yellow");
-}
-
-if (state === "warning-red") {
-notification.classList.add("warning-red");
-}
-
-// message
-if (remaining > 590) {
-
-if (hasSavedData) {
-notification.textContent =
-"Payout method linked successfully";
-} else {
-notification.textContent =
-"Provide your payout details";
-}
-
-} else {
-
-notification.textContent =
-`Verification expires in: ${timeString}`;
-
-}
-
-/* --------------------------
-VISIBILITY LOGIC
--------------------------- */
-
-// warning period = always visible
-if (remaining <= 240) {
-
-notification.classList.add("show");
-
-} else {
-
-// normal period = pulse visibility
-
-// show for 3 mins
-if (remaining % 360 >= 180) {
-notification.classList.add("show");
-} else {
-notification.classList.remove("show");
-}
-
-}
-
-// vibration
-if (remaining === 120 && navigator.vibrate) {
-navigator.vibrate([300, 100, 300]);
-}
-
+    notification.textContent =
+        `Verification expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 };
 
 /* --------------------------
-BOOT FLOW (YOUR 3000ms RULE)
+BOOT FLOW (same delay logic)
 -------------------------- */
 
 window.addEventListener("load", () => {
 
-const saved = JSON.parse(
-localStorage.getItem("section3Data") || "{}"
-);
+    const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
 
-const hasSavedData = Object.values(saved).some(
-v => v && v.toString().trim() !== ""
-);
+    const hasSavedData = Object.values(saved).some(
+        v => v && v.toString().trim() !== ""
+    );
 
-// initial message
-if (hasSavedData) {
-showNotification("Payout method linked successfully");
-} else {
-showNotification("Provide your payout details");
-}
+    if (hasSavedData) {
+        showNotification("Payout method linked successfully");
+    } else {
+        showNotification("Provide your payout details");
+    }
 
-// start session AFTER delay (your requirement)
-setTimeout(() => {
-
-updateSessionUI();
-sessionInterval = setInterval(updateSessionUI, 1000);
-
-}, 3000);
-
+    setTimeout(() => {
+        updateSessionUI();
+        sessionInterval = setInterval(updateSessionUI, 1000);
+    }, 3000);
 });
 
+/* --------------------------
+AVB ENGINE (DASHBOARD MATCH)
+-------------------------- */
 
 (function avbEngine() {
 
@@ -1089,47 +1012,42 @@ sessionInterval = setInterval(updateSessionUI, 1000);
     if (!localStorage.getItem("avb_expiry_time")) {
         localStorage.setItem(
             "avb_expiry_time",
-            Date.now() + 10 * 60 * 1000
+            Date.now() + 15 * 60 * 1000
         );
     }
 
+    let redirected = false;
+
     const check = () => {
-
         const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
-        const remaining = expiryTime - Date.now();
+        const remainingSec = Math.floor((expiryTime - Date.now()) / 1000);
 
-        // 🟡 WARNING ONLY
-        if (remaining <= 240000 && remaining > 120000) {
-            // optional yellow state UI
-        }
+        if (!redirected && remainingSec <= 360 && remainingSec > 300) {
 
-        // 🔴 RED STATE → SINGLE CONTROLLED REDIRECT
-        if (remaining <= 120000 && remaining > 0) {
+            redirected = true;
 
             if (navigator.vibrate) {
                 navigator.vibrate([300, 100, 300]);
             }
 
-            // ONLY IF NOT ALREADY IN AVB FLOW
-            if (!localStorage.getItem("avb_redirected")) {
-                localStorage.setItem("avb_redirected", "true");
-
-                setTimeout(() => {
-                    window.location.href = AVB_PAGE;
-                }, 800);
-            }
+            setTimeout(() => {
+                window.location.href = AVB_PAGE;
+            }, 800);
         }
     };
 
     check();
-    setInterval(check, 1000);
+    avbInterval = setInterval(check, 1000);
 
 })();
+
+/* --------------------------
+SESSION GUARD (CLEANED)
+-------------------------- */
 
 (function sessionGuard() {
 
     const check = () => {
-
         const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
 
         if (!expiryTime) return;
@@ -1140,7 +1058,8 @@ sessionInterval = setInterval(updateSessionUI, 1000);
             localStorage.removeItem("avb_redirected_to_avb");
             localStorage.removeItem("avb_session_state");
 
-            window.location.href = "https://membership-signup.avalonflow.site/sign-in";
+            window.location.href =
+                "https://membership-signup.avalonflow.site/sign-in";
         }
     };
 
