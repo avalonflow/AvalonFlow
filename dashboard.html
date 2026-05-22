@@ -1048,175 +1048,187 @@ window.addEventListener("load", () => {
 setInterval(updateACU, 30000); // every 30 seconds
 
         /* Dashboard Notification */
-        window.addEventListener("load", () => {
 
-    const notification = document.getElementById("dashboardNotification");
+window.addEventListener("load", () => {
 
-    // login flag only
-    localStorage.setItem("avalon_logged_in", "true");
+const notification = document.getElementById("dashboardNotification");
 
-    let message;
+// login flag only
+localStorage.setItem("avalon_logged_in", "true");
 
-    if (!localStorage.getItem("avalon_seen_dashboard")) {
-        message = "Hi there — Proceed to AVB";
-        localStorage.setItem("avalon_seen_dashboard", "true");
-    } else {
-        message = "Welcome back";
-    }
+let message;
 
-    notification.textContent = message;
-    notification.classList.add("show");
+if (!localStorage.getItem("avalon_seen_dashboard")) {
+    message = "Hi there — Proceed to AVB";
+    localStorage.setItem("avalon_seen_dashboard", "true");
+} else {
+    message = "Welcome back";
+}
 
-    let timer;
+notification.textContent = message;
+notification.classList.add("show");
 
-    const getState = (remaining) => {
+let timer;
+
+const getState = (remaining) => {
     if (remaining <= 0) return "expired";
-    if (remaining <= 300) return "warning_red";     // 5 min
-    if (remaining <= 540) return "warning_yellow";  // 9 min
-    return "active";
+
+    // 5–0
+    if (remaining <= 300) return "red";
+
+    // 6–5
+    if (remaining <= 360) return "yellow";
+
+    // 9–6 HIDE
+    if (remaining <= 540) return "hide_mid";
+
+    // 12–9 SHOW
+    if (remaining <= 720) return "show_mid";
+
+    // 15–12 HIDE
+    return "hide_start";
 };
 
-    const updateCountdown = () => {
+const updateCountdown = () => {
+
+const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+if (!expiryTime) return;
+
+const remaining = Math.max(
+    0,
+    Math.floor((expiryTime - Date.now()) / 1000)
+);
+
+const state = getState(remaining);
+
+// 🎨 STATE HANDLING
+notification.classList.remove("warning-yellow", "warning-red");
+
+if (state === "yellow") {
+    notification.classList.add("warning-yellow");
+    if (navigator.vibrate) navigator.vibrate(200);
+}
+
+if (state === "red") {
+    notification.classList.add("warning-red");
+    if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+}
+
+// 🔁 VISIBILITY RULES (your exact logic)
+if (state === "hide_start") {
+    notification.classList.remove("show"); // 15–12 HIDE
+}
+
+else if (state === "show_mid") {
+    notification.classList.add("show"); // 12–9 SHOW
+}
+
+else if (state === "hide_mid") {
+    notification.classList.remove("show"); // 9–6 HIDE
+}
+
+else {
+    notification.classList.add("show"); // 6–0 SHOW
+}
+
+// 🕒 TEXT DISPLAY
+const minutes = Math.floor(remaining / 60);
+const seconds = remaining % 60;
+
+notification.textContent =
+    `Verification expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+};
+
+// initial render
+const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+
+const initialState = getState(remaining);
+
+if (initialState === "yellow") {
+    notification.classList.add("warning-yellow");
+}
+
+if (initialState === "red") {
+    notification.classList.add("warning-red");
+}
+
+notification.classList.add("show");
+
+setTimeout(() => {
+    updateCountdown();
+    timer = setInterval(updateCountdown, 1000);
+}, 4000);
+
+});
+
+
+(function avbEngine() {
+
+const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
+
+if (!localStorage.getItem("avb_expiry_time")) {
+    localStorage.setItem(
+        "avb_expiry_time",
+        Date.now() + 15 * 60 * 1000
+    );
+}
+
+let redirected = false;
+
+const check = () => {
 
     const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
-    if (!expiryTime) return;
+    const remaining = expiryTime - Date.now();
 
-    const remaining = Math.max(
-        0,
-        Math.floor((expiryTime - Date.now()) / 1000)
-    );
+    // 🔴 REDIRECT AT 6–5 MIN (FIXED TO SECONDS CONSISTENCY)
+    const remainingSec = Math.floor(remaining / 1000);
 
-    const state = getState(remaining);
+    if (!redirected && remainingSec <= 360 && remainingSec > 300) {
 
-    // 🎨 STATE HANDLING
-    if (state === "warning_yellow") {
-        notification.classList.add("warning-yellow");
-        notification.classList.remove("warning-red");
-    }
-
-    if (state === "warning_red") {
-        notification.classList.remove("warning-yellow");
-        notification.classList.add("warning-red");
+        redirected = true;
 
         if (navigator.vibrate) {
             navigator.vibrate([300, 100, 300]);
         }
+
+        setTimeout(() => {
+            window.location.href = AVB_PAGE;
+        }, 800);
     }
-
-    // 🔁 VISIBILITY RULES (15 min session)
-
-    if (remaining > 720) {
-        notification.classList.add("show");
-    }
-
-    else if (remaining > 540) {
-        notification.classList.remove("show");
-    }
-
-    else if (remaining > 360) {
-        notification.classList.add("show");
-    }
-
-    else if (remaining > 300) {
-        notification.classList.remove("show");
-    }
-
-    else {
-        notification.classList.add("show");
-    }
-
-    // 🕒 TEXT DISPLAY
-    const minutes = Math.floor(remaining / 60);
-    const seconds = remaining % 60;
-
-    notification.textContent =
-        `Verification expires in ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 };
 
-    // initial render
-    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
-    const remaining = Math.floor((expiryTime - Date.now()) / 1000);
-
-    const initialState = getState(remaining);
-
-    if (initialState === "warning_yellow") {
-    notification.classList.add("warning-yellow");
-}
-
-if (initialState === "warning_red") {
-    notification.classList.add("warning-red");
-}
-
-    notification.classList.add("show");
-
-    setTimeout(() => {
-        updateCountdown();
-        timer = setInterval(updateCountdown, 1000);
-    }, 4000);
-
-});
-
-(function avbEngine() {
-
-    const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
-
-    if (!localStorage.getItem("avb_expiry_time")) {
-        localStorage.setItem(
-            "avb_expiry_time",
-            Date.now() + 15 * 60 * 1000
-        );
-    }
-
-    let redirected = false;
-
-    const check = () => {
-
-        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
-        const remaining = expiryTime - Date.now();
-
-        // 🔴 REDIRECT AT 5 MIN
-        if (!redirected && remaining <= 300000 && remaining > 0) {
-
-            redirected = true;
-
-            if (navigator.vibrate) {
-                navigator.vibrate([300, 100, 300]);
-            }
-
-            setTimeout(() => {
-                window.location.href = AVB_PAGE;
-            }, 800);
-        }
-    };
-
-    check();
-    setInterval(check, 1000);
+check();
+setInterval(check, 1000);
 
 })();
 
+
 (function sessionGuard() {
 
-    const check = () => {
+const check = () => {
 
-    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
 
-    if (!expiryTime) return;
+if (!expiryTime) return;
 
-    const remaining = expiryTime - Date.now();
+const remaining = expiryTime - Date.now();
 
-    if (remaining <= 0) {
+if (remaining <= 0) {
 
-        localStorage.removeItem("avb_expiry_time");
-        localStorage.removeItem("avb_redirected_to_avb");
-        localStorage.removeItem("avb_session_state");
+    localStorage.removeItem("avb_expiry_time");
+    localStorage.removeItem("avb_redirected_to_avb");
+    localStorage.removeItem("avb_session_state");
 
-        window.location.href =
-            "https://membership-signup.avalonflow.site/sign-in";
-    }
+    window.location.href =
+        "https://membership-signup.avalonflow.site/sign-in";
+}
+
 };
 
-    check();
-    setInterval(check, 1000);
+check();
+setInterval(check, 1000);
 
 })();
 
