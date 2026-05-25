@@ -111,6 +111,24 @@ TOP RIGHT PROFILE POSITION
     z-index: 999;
 }
 
+#profilePhoto:not([src]), 
+    #profilePhoto[src="default-avatar.png"] {
+        font-family: sans-serif !important;
+        font-size: 8px !important;
+        color: #c0a9ff !important;
+        text-align: center !important;
+        font-weight: 500 !important;
+        background: #1a1625;
+
+        /* Your exact layout styles moved here so they never touch the real photo */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1.2 !important;
+        padding: 4px !important;
+        box-sizing: border-box !important;
+    #1a1625;             /* Gives a clean dark background placeholder */
+    }
 
 /* =========================
 OUTER RING WRAPPER
@@ -592,7 +610,12 @@ left:300px;
   <!-- Floating Background -->
   <div id="floating-bg"></div>
 
-<button id="menuBtn" onclick="toggleSidebar()">☰</button>
+    <button id="menuBtn" onclick="toggleSidebar()">☰
+
+<div style="position: absolute; top: 54px; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none; text-align: center;">
+        <span id="sidebarLabel" style="font-family: sans-serif; font-size: 10px; font-weight: 500; color: #c0a9ff; letter-spacing: 0.3px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);">Sidebar</span>
+    </div>
+</button>
 
 <div id="planNotification" class="notification-bar"></div>
 
@@ -600,9 +623,12 @@ left:300px;
 TOP RIGHT PROFILE AVATAR
 ========================= -->
 <div class="top-right-profile">
+     <div class="avatar-ring">
+        <img id="profilePhoto" src="default-avatar.png" class="avatar" alt="Profile picture">
+    </div>
 
-    <div class="avatar-ring">
-        <img id="profilePhoto" src="default-avatar.png" class="avatar">
+    <div style="position: absolute; top: 58px; right: 70%; transform: translateX(50%); white-space: nowrap; pointer-events: none; text-align: center;">
+        <span id="avatarLabel" style="font-family: sans-serif; font-size: 10px; font-weight: 500; color: #c0a9ff; letter-spacing: 0.3px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);">Add Profile Picture</span>
     </div>
 
 </div>
@@ -766,17 +792,31 @@ function navigateTo(page){
 
 const photoInput = document.getElementById('photoInput');
 const profilePhoto = document.getElementById('profilePhoto');
+const avatarLabel = document.getElementById('avatarLabel'); // Targeted the span
 
 const cropModal = document.getElementById('cropModal');
 const cropImage = document.getElementById('cropImage');
 
+const DEFAULT_AVATAR = 'default-avatar.png';
 let isProcessing = false;
 
 
-// open file picker when avatar clicked
+// CLICK TO ADD OR REMOVE
 profilePhoto.addEventListener('click', () => {
     if (isProcessing) return;
-    photoInput.click();
+
+    // Check if a custom photo is currently set
+    const hasPhoto = localStorage.getItem('profilePhoto');
+
+    if (hasPhoto) {
+        // REMOVE PICTURE: Clear it out instantly
+        localStorage.removeItem('profilePhoto');
+        profilePhoto.src = DEFAULT_AVATAR;
+        if (avatarLabel) avatarLabel.textContent = "Add Profile Picture";
+    } else {
+        // ADD PICTURE: Open the file picker if it's empty
+        photoInput.click();
+    }
 });
 
 
@@ -827,6 +867,9 @@ photoInput.addEventListener('change', (e) => {
             // save permanently
             localStorage.setItem('profilePhoto', finalImage);
 
+            // Switch label text to show it can now be removed
+            if (avatarLabel) avatarLabel.textContent = "Remove Profile Picture";
+
             // close modal
             cropModal.classList.add('hidden');
 
@@ -845,18 +888,22 @@ photoInput.addEventListener('change', (e) => {
 
 
 // OPTIONAL: cancel just closes modal (if you still use it)
-if (cancelCrop) {
+if (typeof cancelCrop !== 'undefined' && cancelCrop) {
     cancelCrop.addEventListener('click', () => {
         cropModal.classList.add('hidden');
     });
 }
 
 
-// load saved photo
+// load saved photo and set correct initial text
 window.addEventListener('DOMContentLoaded', () => {
     const saved = localStorage.getItem('profilePhoto');
     if (saved) {
         profilePhoto.src = saved;
+        if (avatarLabel) avatarLabel.textContent = "Remove Profile Picture";
+    } else {
+        profilePhoto.src = DEFAULT_AVATAR;
+        if (avatarLabel) avatarLabel.textContent = "Add Profile Picture";
     }
 });
 
