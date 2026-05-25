@@ -649,7 +649,7 @@ TOP RIGHT PROFILE AVATAR
     <div class="avatar-ring">
         <img id="profilePhoto" src="default-avatar.png" class="avatar" alt="Profile picture">
     </div>
- <span class="avatar-label">Click to upload a new photo</span>
+ <span class="avatar-label">Add Profile Picture</span>
 </div>
 
 
@@ -724,17 +724,31 @@ CROP MODAL
     <script>
 const photoInput = document.getElementById('photoInput');
 const profilePhoto = document.getElementById('profilePhoto');
+const avatarLabel = document.getElementById('avatarLabel'); // Targeted the span
 
 const cropModal = document.getElementById('cropModal');
 const cropImage = document.getElementById('cropImage');
 
+const DEFAULT_AVATAR = 'default-avatar.png';
 let isProcessing = false;
 
 
-// open file picker when avatar clicked
+// CLICK TO ADD OR REMOVE
 profilePhoto.addEventListener('click', () => {
     if (isProcessing) return;
-    photoInput.click();
+
+    // Check if a custom photo is currently set
+    const hasPhoto = localStorage.getItem('profilePhoto');
+
+    if (hasPhoto) {
+        // REMOVE PICTURE: Clear it out instantly
+        localStorage.removeItem('profilePhoto');
+        profilePhoto.src = DEFAULT_AVATAR;
+        if (avatarLabel) avatarLabel.textContent = "Add Profile Picture";
+    } else {
+        // ADD PICTURE: Open the file picker if it's empty
+        photoInput.click();
+    }
 });
 
 
@@ -784,6 +798,9 @@ photoInput.addEventListener('change', (e) => {
 
             // save permanently
             localStorage.setItem('profilePhoto', finalImage);
+            
+            // Switch label text to show it can now be removed
+            if (avatarLabel) avatarLabel.textContent = "Remove Profile Picture";
 
             // close modal
             cropModal.classList.add('hidden');
@@ -803,20 +820,25 @@ photoInput.addEventListener('change', (e) => {
 
 
 // OPTIONAL: cancel just closes modal (if you still use it)
-if (cancelCrop) {
+if (typeof cancelCrop !== 'undefined' && cancelCrop) {
     cancelCrop.addEventListener('click', () => {
         cropModal.classList.add('hidden');
     });
 }
 
 
-// load saved photo
+// load saved photo and set correct initial text
 window.addEventListener('DOMContentLoaded', () => {
     const saved = localStorage.getItem('profilePhoto');
     if (saved) {
         profilePhoto.src = saved;
+        if (avatarLabel) avatarLabel.textContent = "Remove Profile Picture";
+    } else {
+        profilePhoto.src = DEFAULT_AVATAR;
+        if (avatarLabel) avatarLabel.textContent = "Add Profile Picture";
     }
 });
+
 
         /* Floating particles */
         const bg = document.getElementById('floating-bg');
