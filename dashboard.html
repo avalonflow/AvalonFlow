@@ -243,12 +243,20 @@ OUTER RING WRAPPER
 #profilePhoto:not([src]), 
     #profilePhoto[src="default-avatar.png"] {
         font-family: sans-serif !important;
-        font-size: 8px !important;       /* Minimizes the alt text so it actually fits */
+        font-size: 8px !important;
         color: #c0a9ff !important;
         text-align: center !important;
-        line-height: 46px !important;    /* Centers it vertically inside the 46px circle */
         font-weight: 500 !important;
-        background: #1a1625;             /* Gives a clean dark background placeholder */
+        background: #1a1625;
+        
+        /* Your exact layout styles moved here so they never touch the real photo */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1.2 !important;
+        padding: 4px !important;
+        box-sizing: border-box !important;
+    #1a1625;             /* Gives a clean dark background placeholder */
     }
 
 
