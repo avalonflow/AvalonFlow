@@ -301,6 +301,13 @@ font-weight: bold;
   filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
 }
 
+.payment-logos{
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
+}
+
 .payment-container {
   position: relative;  /* required for z-index & box-shadow */
   max-width: 600px;
@@ -762,7 +769,7 @@ CROP MODAL
       <!-- Canadian Bank Transfer -->
 <div class="payment-method" data-method="Canadian Bank Transfer">
   <div class="payment-header">
-    <img class="payment-logo"
+    <img class="payment-logos"
          src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png"
          alt="Canadian Bank">
     <span>▼ Canadian Bank Transfer</span>
@@ -870,7 +877,7 @@ $(document).ready(function () {
 
         const logo = bankLogos[selectedBank] || defaultLogo;
 
-        const $logo = $('.payment-logo');
+        const $logo = $('.payment-logos');
 
         // Fade out
         $logo.fadeOut(200, function () {
