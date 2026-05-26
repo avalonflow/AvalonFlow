@@ -19,6 +19,12 @@
     }
 </script>
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <style>
   /* ---------- Base ---------- */
   body {         font-family: 'Georgia', sans-serif;  margin:0; background:#0d0d0d; color:#fff; overflow-x:hidden; }
@@ -827,13 +833,15 @@ CROP MODAL
 
 <script>
 
-$(document).ready(function() {
-    // 1. Initialize your glass Select2 element
+$(document).ready(function () {
+
+    // Initialize Select2
     $('#canadianBankSelect').select2({
-        minimumResultsForSearch: Infinity
+        minimumResultsForSearch: Infinity,
+        width: '100%'
     });
 
-    // 2. Map out the premium official logo URLs
+    // Bank logos
     const bankLogos = {
         "RBC Royal Bank": "https://logo.clearbit.com/rbcroyalbank.com",
         "TD Canada Trust": "https://logo.clearbit.com/td.com",
@@ -845,20 +853,19 @@ $(document).ready(function() {
         "Simplii Financial": "https://logo.clearbit.com/simplii.com"
     };
 
-    // Keep your neutral placeholder fallback handy
+    // Default logo
     const defaultLogo = "https://cdn-icons-png.flaticon.com/512/2830/2830284.png";
 
-    // 3. Watch for changes to swap the image src instantly
-    $('#canadianBankSelect').on('select2:select select2:unselect change', function() {
+    // Change logo on selection
+    $('#canadianBankSelect').on('change', function () {
+
         const selectedBank = $(this).val();
-        const $logoImage = $(this).closest('.payment-method').find('.payment-logo');
-        
-        if (bankLogos[selectedBank]) {
-            $logoImage.attr('src', bankLogos[selectedBank]);
-        } else {
-            $logoImage.attr('src', defaultLogo);
-        }
+
+        const logo = bankLogos[selectedBank] || defaultLogo;
+
+        $('.payment-logo').attr('src', logo);
     });
+
 });
 
 
