@@ -636,10 +636,9 @@ CROP MODAL
   </div>
 </div>
 
-     <!-- Navigation Buttons -->
-<div id="navButtons" style="max-width:600px;margin:40px auto 100px; display:flex;justify-content:space-between; position:relative; z-index:5;">
-    <button id="prevBtn" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Previous</button>
-    <button id="submitBtn" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Proceed to Authorization</button>
+       <!-- Navigation Buttons -->
+<div id="navButtons" style="max-width:600px;margin:40px auto 100px; display:flex;justify-content:flex-end; position:relative; z-index:5;">
+    <button id="nextBtnSeparate" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Proceed to Authorization</button>
 </div>
 
 <footer>
@@ -993,10 +992,6 @@ document.getElementById('submitBtn').onclick = (e) => {
   window.location.href = 'https://link.avalonflow.site/custom';
 };
 
-// Previous button logic
-document.getElementById("prevBtn").onclick = () => {
-  window.location.href = "https://membership.avalonflow.site/acu-payouts";
-};
 
 if (localStorage.getItem('membershipConfirmed') === 'true') {
     window.location.href = "https://link.avalonflow.site/custom";
