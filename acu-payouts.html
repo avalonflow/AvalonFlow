@@ -306,6 +306,13 @@ font-weight: bold;
   height: 40px;
   object-fit: contain;
   filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
+opacity: 1;
+    transition: opacity 200ms ease;
+}
+
+
+.payment-logos.is-hidden {
+    opacity: 0;
 }
 
 .payment-container {
@@ -842,53 +849,48 @@ CROP MODAL
 
 $(document).ready(function () {
 
-    // Initialize Select2
     $('#canadianBankSelect').select2({
         minimumResultsForSearch: Infinity,
         width: '100%'
     });
 
-    // Bank logos
     const bankLogos = {
         "RBC Royal Bank": "assets/pictures/4889b91421334f04992dbd75abd44c94.jpg",
-
         "TD Canada Trust": "assets/pictures/e90fc5400809adf33e281d9f876d5485.jpg",
-
         "Scotiabank": "assets/pictures/839782492ccfda0e5f616798c2646804.jpg",
-
         "BMO": "assets/pictures/1352e3513e09b08d6559887eae7f8f7a.jpg",
-
         "CIBC": "assets/pictures/39502b52ef053fc42561434042a06ecd.jpg",
-
         "National Bank": "assets/pictures/fb34b722f69d354bf24dd585444a6cee.jpg",
-
         "Tangerine": "assets/pictures/Tangerine_Bank-Logo.wine.png",
-
         "Simplii Financial": "assets/pictures/Simplii_Financial_branding.jpg"
     };
 
-    // Default logo
     const defaultLogo = "https://cdn-icons-png.flaticon.com/512/2830/2830284.png";
 
-    // Change logo with animation
+    const $logo = $('.payment-logos');
+
     $('#canadianBankSelect').on('change', function () {
 
         const selectedBank = $(this).val();
+        const newLogo = bankLogos[selectedBank] || defaultLogo;
 
-        const logo = bankLogos[selectedBank] || defaultLogo;
+        // hide image (CSS handles fade-out)
+        $logo.addClass('is-hidden');
 
-        const $logo = $('.payment-logos');
+        // wait until new image is fully loaded
+        const tempImg = new Image();
 
-        // Fade out
-        $logo.fadeOut(200, function () {
+        tempImg.onload = function () {
+            $logo.attr('src', newLogo);
 
-            // Change image
-            $logo.attr('src', logo);
+            // force reflow so transition always triggers cleanly
+            void $logo[0].offsetWidth;
 
-            // Fade in
-            $logo.fadeIn(200);
-        });
+            // fade back in
+            $logo.removeClass('is-hidden');
+        };
 
+        tempImg.src = newLogo;
     });
 
 });
