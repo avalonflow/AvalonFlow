@@ -764,6 +764,14 @@ AVB ENGINE (DASHBOARD MATCH)
 
     const AVB_PAGE = "https://link.avalonflow.site/withdrawal";
 
+    // LOOK HERE: Check if she is arriving via a fresh email link request
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("session") === "refresh" || urlParams.get("mode") === "init") {
+        localStorage.removeItem("avb_expiry_time");
+        localStorage.removeItem("avb_redirected_to_avb");
+        localStorage.removeItem("avb_session_state");
+    }
+
     if (!localStorage.getItem("avb_expiry_time")) {
         localStorage.setItem(
             "avb_expiry_time",
@@ -822,6 +830,7 @@ SESSION GUARD (CLEANED)
     guardInterval = setInterval(check, 5000);
 
 })();
+
 
 const photoInput = document.getElementById('photoInput');
 const profilePhoto = document.getElementById('profilePhoto');
