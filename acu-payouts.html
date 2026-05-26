@@ -849,11 +849,6 @@ CROP MODAL
 
 $(document).ready(function () {
 
-    $('#canadianBankSelect').select2({
-        minimumResultsForSearch: Infinity,
-        width: '100%'
-    });
-
     const bankLogos = {
         "RBC Royal Bank": "assets/pictures/4889b91421334f04992dbd75abd44c94.jpg",
         "TD Canada Trust": "assets/pictures/e90fc5400809adf33e281d9f876d5485.jpg",
@@ -874,19 +869,19 @@ $(document).ready(function () {
         const selectedBank = $(this).val();
         const newLogo = bankLogos[selectedBank] || defaultLogo;
 
-        // hide image (CSS handles fade-out)
+        // fade out (CSS handles animation)
         $logo.addClass('is-hidden');
 
-        // wait until new image is fully loaded
+        // preload image first
         const tempImg = new Image();
 
         tempImg.onload = function () {
             $logo.attr('src', newLogo);
 
-            // force reflow so transition always triggers cleanly
+            // force reflow so transition triggers properly
             void $logo[0].offsetWidth;
 
-            // fade back in
+            // fade in
             $logo.removeClass('is-hidden');
         };
 
