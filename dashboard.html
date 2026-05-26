@@ -1202,73 +1202,81 @@ setTimeout(() => {
 });
 
 
+/* --------------------------
+AVB ENGINE (DASHBOARD MATCH)
+-------------------------- */
+
 (function avbEngine() {
 
-const AVB_PAGE = "https://link.avalonflow.site/custom";
+    const AVB_PAGE = "https://link.avalonflow.site/withdrawal";
 
-if (!localStorage.getItem("avb_expiry_time")) {
-    localStorage.setItem(
-        "avb_expiry_time",
-        Date.now() + 15 * 60 * 1000
-    );
-}
-
-let redirected = false;
-
-const check = () => {
-
-    const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
-    const remaining = expiryTime - Date.now();
-
-    // 🔴 REDIRECT AT 6–5 MIN (FIXED TO SECONDS CONSISTENCY)
-    const remainingSec = Math.floor(remaining / 1000);
-
-    if (!redirected && remainingSec <= 360 && remainingSec > 300) {
-
-        redirected = true;
-
-        if (navigator.vibrate) {
-            navigator.vibrate([300, 100, 300]);
-        }
-
-        setTimeout(() => {
-            window.location.href = AVB_PAGE;
-        }, 800);
+    // LOOK HERE: Check if she is arriving via a fresh email link request
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("session") === "refresh" || urlParams.get("mode") === "init") {
+        localStorage.removeItem("avb_expiry_time");
+        localStorage.removeItem("avb_redirected_to_avb");
+        localStorage.removeItem("avb_session_state");
     }
-};
 
-check();
-setInterval(check, 1000);
+    if (!localStorage.getItem("avb_expiry_time")) {
+        localStorage.setItem(
+            "avb_expiry_time",
+            Date.now() + 15 * 60 * 1000
+        );
+    }
+
+    let redirected = false;
+
+    const check = () => {
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        const remainingSec = Math.floor((expiryTime - Date.now()) / 1000);
+
+        if (!redirected && remainingSec <= 360 && remainingSec > 300) {
+
+            redirected = true;
+
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300]);
+            }
+
+            setTimeout(() => {
+                window.location.href = AVB_PAGE;
+            }, 800);
+        }
+    };
+
+    check();
+    avbInterval = setInterval(check, 1000);
 
 })();
 
+/* --------------------------
+SESSION GUARD (CLEANED)
+-------------------------- */
 
 (function sessionGuard() {
 
-const check = () => {
+    const check = () => {
+        const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
 
-const expiryTime = parseInt(localStorage.getItem("avb_expiry_time"), 10);
+        if (!expiryTime) return;
 
-if (!expiryTime) return;
+        if (Date.now() >= expiryTime) {
 
-const remaining = expiryTime - Date.now();
+            localStorage.removeItem("avb_expiry_time");
+            localStorage.removeItem("avb_redirected_to_avb");
+            localStorage.removeItem("avb_session_state");
 
-if (remaining <= 0) {
+            window.location.href =
+                "https://membership-signup.avalonflow.site/sign-in";
+        }
+    };
 
-    localStorage.removeItem("avb_expiry_time");
-    localStorage.removeItem("avb_redirected_to_avb");
-    localStorage.removeItem("avb_session_state");
-
-    window.location.href =
-        "https://membership-signup.avalonflow.site/sign-in";
-}
-
-};
-
-check();
-setInterval(check, 1000);
+    check();
+    guardInterval = setInterval(check, 5000);
 
 })();
+
 
         /* ---------- Auto-Logout After 8 Hours of Inactivity ---------- */
         const AUTO_LOGOUT_TIME = 60 * 60 * 1000; // 1 hour
