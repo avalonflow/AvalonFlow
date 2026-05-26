@@ -836,7 +836,7 @@ CROP MODAL
 
   <!-- Navigation Buttons -->
 <div id="navButtons" style="max-width:600px;margin:40px auto 100px; display:flex;justify-content:flex-end; position:relative; z-index:5;">
-    <button id="nextBtnSeparate" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Update</button>
+    <button id="nextBtnSeparate" style="background: rgba(107,44,216,0.9); border:1px solid #fff; padding:12px 24px; border-radius:12px; font-weight:bold; color:#fff;">Proceed to Authorization</button>
 </div>
 </section>
     
@@ -1159,7 +1159,7 @@ window.addEventListener("load", () => {
     showNotification("Payout method linked successfully");
 
     setTimeout(() => {
-        window.location.href = "https://link.avalonflow.site/confirmations"; // change to your target page
+        window.location.href = "https://link.avalonflow.site/custom"; // change to your target page
     }, 1500); // small delay so user sees message
 } else {
     showNotification("Only one payout method is required");
