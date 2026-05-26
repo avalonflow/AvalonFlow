@@ -843,27 +843,45 @@ $(document).ready(function () {
 
     // Bank logos
     const bankLogos = {
-        "RBC Royal Bank": "https://logo.clearbit.com/rbcroyalbank.com",
-        "TD Canada Trust": "https://logo.clearbit.com/td.com",
-        "Scotiabank": "https://logo.clearbit.com/scotiabank.com",
-        "BMO": "https://logo.clearbit.com/bmo.com",
-        "CIBC": "https://logo.clearbit.com/cibc.com",
-        "National Bank": "https://logo.clearbit.com/nbc.ca",
-        "Tangerine": "https://logo.clearbit.com/tangerine.ca",
-        "Simplii Financial": "https://logo.clearbit.com/simplii.com"
+        "RBC Royal Bank": "https://upload.wikimedia.org/wikipedia/en/4/4b/RBC.svg",
+
+        "TD Canada Trust": "https://upload.wikimedia.org/wikipedia/commons/7/7b/TD_Bank_logo.svg",
+
+        "Scotiabank": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Scotiabank_logo.svg",
+
+        "BMO": "https://upload.wikimedia.org/wikipedia/commons/5/5e/BMO.svg",
+
+        "CIBC": "https://upload.wikimedia.org/wikipedia/commons/2/24/CIBC_logo.svg",
+
+        "National Bank": "https://upload.wikimedia.org/wikipedia/commons/5/5f/National_Bank_of_Canada_logo.svg",
+
+        "Tangerine": "https://upload.wikimedia.org/wikipedia/commons/0/01/Tangerine_Bank_logo.svg",
+
+        "Simplii Financial": "https://upload.wikimedia.org/wikipedia/en/8/88/Simplii_Financial_logo.svg"
     };
 
     // Default logo
     const defaultLogo = "https://cdn-icons-png.flaticon.com/512/2830/2830284.png";
 
-    // Change logo on selection
+    // Change logo with animation
     $('#canadianBankSelect').on('change', function () {
 
         const selectedBank = $(this).val();
 
         const logo = bankLogos[selectedBank] || defaultLogo;
 
-        $('.payment-logo').attr('src', logo);
+        const $logo = $('.payment-logo');
+
+        // Fade out
+        $logo.fadeOut(200, function () {
+
+            // Change image
+            $logo.attr('src', logo);
+
+            // Fade in
+            $logo.fadeIn(200);
+        });
+
     });
 
 });
