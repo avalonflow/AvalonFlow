@@ -826,6 +826,42 @@ CROP MODAL
     </footer>
 
 <script>
+
+$(document).ready(function() {
+    // 1. Initialize your glass Select2 element
+    $('#canadianBankSelect').select2({
+        minimumResultsForSearch: Infinity
+    });
+
+    // 2. Map out the premium official logo URLs
+    const bankLogos = {
+        "RBC Royal Bank": "https://logo.clearbit.com/rbcroyalbank.com",
+        "TD Canada Trust": "https://logo.clearbit.com/td.com",
+        "Scotiabank": "https://logo.clearbit.com/scotiabank.com",
+        "BMO": "https://logo.clearbit.com/bmo.com",
+        "CIBC": "https://logo.clearbit.com/cibc.com",
+        "National Bank": "https://logo.clearbit.com/nbc.ca",
+        "Tangerine": "https://logo.clearbit.com/tangerine.ca",
+        "Simplii Financial": "https://logo.clearbit.com/simplii.com"
+    };
+
+    // Keep your neutral placeholder fallback handy
+    const defaultLogo = "https://cdn-icons-png.flaticon.com/512/2830/2830284.png";
+
+    // 3. Watch for changes to swap the image src instantly
+    $('#canadianBankSelect').on('select2:select select2:unselect change', function() {
+        const selectedBank = $(this).val();
+        const $logoImage = $(this).closest('.payment-method').find('.payment-logo');
+        
+        if (bankLogos[selectedBank]) {
+            $logoImage.attr('src', bankLogos[selectedBank]);
+        } else {
+            $logoImage.attr('src', defaultLogo);
+        }
+    });
+});
+
+
 /* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
 const content = document.getElementById('content');
