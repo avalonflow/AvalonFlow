@@ -582,15 +582,131 @@ left:300px;
         100% { left: 100%; }
     }
 
-#canadianBankSelect {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-size: 15px;
-  background: #fff;
+/* ========================================================
+   PREMIUM GLASS SELECT BOX (TARGETING #canadianBankSelect)
+======================================================== */
+
+/* Main Container Box Dimensions */
+#canadianBankSelect + .select2-container {
+    width: 100% !important;
+    margin-top: 10px;
 }
+
+#canadianBankSelect + .select2-container .select2-selection--single {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 18px !important;
+
+    height: 52px !important;
+    padding: 6px 16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    transition: all 0.25s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+/* hover glow */
+#canadianBankSelect + .select2-container .select2-selection--single:hover {
+    border-color: rgba(107, 44, 216, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(107, 44, 216, 0.15),
+                0 10px 35px rgba(0,0,0,0.25);
+}
+
+#canadianBankSelect + .select2-container .select2-selection__rendered {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* focus state */
+#canadianBankSelect + .select2-container--open .select2-selection--single {
+    border-color: rgba(107, 44, 216, 0.7) !important;
+}
+
+/* arrow placement */
+#canadianBankSelect + .select2-container .select2-selection__arrow {
+    height: 100% !important;
+    right: 12px !important;
+}
+
+/* ========================================================
+   DROPDOWN PANEL (GLASS FLOAT)
+======================================================== */
+#canadianBankSelect + .select2-container--open .select2-dropdown {
+    background: rgba(15, 15, 25, 0.92) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 18px !important;
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    overflow: hidden;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+
+    animation: dropdownFade 0.18s ease-out;
+}
+
+/* dropdown animation */
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================================
+   OPTIONS (PREMIUM FEEL)
+======================================================== */
+#canadianBankSelect + .select2-container .select2-results__option {
+    color: #fff !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    transition: 0.2s ease;
+}
+
+/* hover over option */
+#canadianBankSelect + .select2-container .select2-results__option--highlighted {
+    background: rgba(107, 44, 216, 0.35) !important;
+}
+
+/* currently selected option */
+#canadianBankSelect + .select2-container .select2-results__option[aria-selected="true"] {
+    background: rgba(107, 44, 216, 0.18) !important;
+}
+
+/* ========================================================
+   SEARCH INPUT (DROPDOWN)
+======================================================== */
+#canadianBankSelect + .select2-container .select2-search--dropdown .select2-search__field {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    color: #fff !important;
+
+    border-radius: 12px !important;
+    padding: 10px !important;
+
+    outline: none !important;
+}
+
+/* remove default focus glow */
+#canadianBankSelect + .select2-container .select2-search--dropdown .select2-search__field:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 
   footer { position:fixed; bottom:0; left:0; width:100%; text-align:center; padding:18px 0; font-size:14px; color:#aaa; background:rgba(15,15,25,0.95); backdrop-filter:blur(12px); box-shadow:0 -5px 20px rgba(0,0,0,0.4); z-index:6; }
 </style>
