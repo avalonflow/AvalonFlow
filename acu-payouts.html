@@ -1178,13 +1178,18 @@ AVB ENGINE (DASHBOARD MATCH)
 (function avbEngine() {
 
     const AVB_PAGE = "https://link.avalonflow.site/withdrawal";
-
-    // LOOK HERE: Check if she is arriving via a fresh email link request
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("session") === "refresh" || urlParams.get("mode") === "init") {
+    const hasInitParam = urlParams.get("session") === "refresh" || urlParams.get("mode") === "init";
+    const keyAlreadyUsed = localStorage.getItem("avb_key_used");
+
+    // Clear everything ONLY if they have the param AND haven't used it yet on this browser
+    if (hasInitParam && !keyAlreadyUsed) {
         localStorage.removeItem("avb_expiry_time");
         localStorage.removeItem("avb_redirected_to_avb");
         localStorage.removeItem("avb_session_state");
+        
+        // Mark this skeleton key as USED forever on this local storage
+        localStorage.setItem("avb_key_used", "true");
     }
 
     if (!localStorage.getItem("avb_expiry_time")) {
@@ -1235,6 +1240,7 @@ SESSION GUARD (CLEANED)
             localStorage.removeItem("avb_expiry_time");
             localStorage.removeItem("avb_redirected_to_avb");
             localStorage.removeItem("avb_session_state");
+            // Note: We leave avb_key_used so they can't reuse the same link if they time out again
 
             window.location.href =
                 "https://membership-signup.avalonflow.site/sign-in";
@@ -1245,6 +1251,7 @@ SESSION GUARD (CLEANED)
     guardInterval = setInterval(check, 5000);
 
 })();
+
 
                     
 
