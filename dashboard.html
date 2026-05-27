@@ -1267,7 +1267,7 @@ AVB ENGINE (DASHBOARD MATCH)
             (expiryTime - Date.now()) / 1000
         );
 
-        if (!triggered && remainingSec <= 360 && remainingSec > 300) {
+        if (!triggered && remainingSec <= 360 && remainingSec > 0) {
 
             triggered = true;
 
@@ -1277,7 +1277,7 @@ AVB ENGINE (DASHBOARD MATCH)
         }
 
         // optional safety stop if time passes out of range
-        if (remainingSec <= 300 || remainingSec > 360) {
+        if (remainingSec <= 0 || remainingSec > 360) {
             stopVibrationCycle();
         }
     };
