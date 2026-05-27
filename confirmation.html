@@ -1004,14 +1004,21 @@ if (localStorage.getItem('membershipConfirmed') === 'true') {
 
 // Submit button logic
 document.getElementById('submitBtn').onclick = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!checkbox.checked) {
-    // Trigger red warning glow
-    card.classList.add('warning');
-    setTimeout(() => card.classList.remove('warning'), 2200);
-    return;
-  }
+    if (!checkbox.checked) {
+        // Trigger red warning glow
+        card.classList.add('warning');
+
+        // Show notification message
+        showNotification("Confirmation required to finalize your withdrawal");
+
+        setTimeout(() => {
+            card.classList.remove('warning');
+        }, 2200);
+
+        return;
+    }
 
   // Save confirmation locally
   localStorage.setItem('membershipConfirmed', 'true');
