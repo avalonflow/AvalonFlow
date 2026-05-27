@@ -166,20 +166,21 @@ header {
 .checkbox-container {
   display: flex;
   flex-direction: row-reverse; /* Flips the visual order so input goes to the right */
-  align-items: flex-start;
+  align-items: flex-end;      /* CHANGED: Pulls the checkbox down to the bottom edge */
   justify-content: space-between; /* Pushes text to left, checkbox to far right */
   gap: 16px; /* Slightly more breathing room since it's on the right */
   margin-top: 14px;
 }
 
 .checkbox-container input {
-  margin-top: 4px;
+  margin-bottom: 4px;         /* CHANGED: Switched from top to bottom margin for a cleaner baseline alignment */
   cursor: pointer;
 }
 
 .checkbox-container label {
   flex: 1; /* Ensures the label takes up all remaining space on the left */
 }
+
 
 
 /* =========================
