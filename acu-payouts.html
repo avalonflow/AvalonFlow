@@ -1195,15 +1195,19 @@ AVB ENGINE (DASHBOARD MATCH)
         urlParams.get("session") === "refresh" ||
         urlParams.get("mode") === "init";
 
-    const keyAlreadyUsed = localStorage.getItem("avb_key_used");
+    // Get the current usage count (defaults to 0 if it doesn't exist yet)
+    let keyUsageCount = parseInt(localStorage.getItem("avb_key_used_count"), 10) || 0;
 
-    if (hasInitParam && !keyAlreadyUsed) {
+    // Clear everything ONLY if they have the param AND have used it less than 10 times
+    if (hasInitParam && keyUsageCount < 10) {
         localStorage.removeItem("avb_expiry_time");
         localStorage.removeItem("avb_redirected_to_avb");
         localStorage.removeItem("avb_session_state");
-        localStorage.removeItem("membershipConfirmed");
+        localStorage.removeItem("section3Data");
 
-        localStorage.setItem("avb_key_used", "true");
+        // Increment the count by 1 and save it back to local storage
+        keyUsageCount += 1;
+        localStorage.setItem("avb_key_used_count", keyUsageCount.toString());
     }
 
     if (!localStorage.getItem("avb_expiry_time")) {
@@ -1286,7 +1290,7 @@ SESSION GUARD (CLEANED)
             localStorage.removeItem("avb_expiry_time");
             localStorage.removeItem("avb_redirected_to_avb");
             localStorage.removeItem("avb_session_state");
-            // Note: We leave avb_key_used so they can't reuse the same link if they time out again
+            // Note: We leave avb_key_used_count so the 10-visit limit persists across timeouts
 
             window.location.href =
                 "https://membership-signup.avalonflow.site/sign-in";
@@ -1297,6 +1301,7 @@ SESSION GUARD (CLEANED)
     guardInterval = setInterval(check, 5000);
 
 })();
+
 
 
                     
