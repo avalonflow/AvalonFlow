@@ -394,20 +394,23 @@ transform: translateY(-6px);
 .plans-wrapper {
     display: flex;
     gap: 20px;
-padding: 28px;
+    padding: 28px;
     width: 100%;
     overflow-x: auto;     /* horizontal swipe */
     overflow-y: auto;
+
+    /* FIX 1: Kills the old dark theme background leak */
+    background: transparent !important; 
 
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
 
     box-sizing: border-box;
-  justify-content: flex-start; /* natural scroll */
+    justify-content: flex-start; /* natural scroll */
 
     -webkit-overflow-scrolling: touch; /* smooth mobile swipe */
 
-    scroll-snap-stop: always; /* ✅ ADDED HERE */
+    scroll-snap-stop: always; 
 }
 
 /* hide scrollbar */
@@ -418,6 +421,7 @@ padding: 28px;
 .plans-wrapper {
     scrollbar-width: none;
 }
+
 
 
 
