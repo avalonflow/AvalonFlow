@@ -420,15 +420,15 @@ padding: 28px;
 }
 
 
-/* ---------------- ACTIVE FLOW BORDER (STRONG NEON) ---------------- */
+/* ---------------- ACTIVE FLOW BORDER (FIXED NEON) ---------------- */
 .glass-card.active::before {
     content: "";
     position: absolute;
-    inset: -2px; /* makes border slightly outside (more visible) */
-    border-radius: 20px;
-
-    padding: 28px;
-
+    inset: -2px; 
+    border-radius: 25px; /* Matches the 25px of your glass-card */
+    z-index: -1;         /* Forces the neon backplane cleanly behind the glass */
+    pointer-events: none;
+    
     background: linear-gradient(
         90deg,
         #7a2cff,
@@ -437,29 +437,20 @@ padding: 28px;
         #7a2cff,
         #00f2fe
     );
-
     background-size: 400% 400%;
-
-    z-index: 0;
-    pointer-events: none;
-
-    /* stronger visibility */
-    opacity: 1;
-
-    /* neon glow */
-    filter: drop-shadow(0 0 8px #7a2cff)
-        drop-shadow(0 0 14px #00f2fe)
-        drop-shadow(0 0 20px #ff2bd6);
-
-    /* keep only border visible */
-    mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    -webkit-mask-composite: destination-out;
-
+    
+    /* Clean WebKit-preferred mask combination */
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            
+    /* Smooth, hardware-accelerated neon glow */
+    filter: drop-shadow(0 0 6px rgba(122, 44, 255, 0.6))
+            drop-shadow(0 0 12px rgba(0, 242, 254, 0.4));
+            
     animation: flowBorder 2s linear infinite;
 }
+
 
 /* ---------------- STRONGER ANIMATION ---------------- */
 @keyframes flowBorder {
