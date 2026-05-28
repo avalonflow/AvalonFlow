@@ -341,7 +341,10 @@ transform-style: preserve-3d;
     transition: transform 0.35s ease, opacity 0.35s ease;
 
     border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: none;
+    box-shadow: 
+    0px 8px 24px rgba(0, 0, 0, 0.08),  /* Soft, realistic depth */
+    0px 2px 6px rgba(0, 0, 0, 0.04);   /* Crisp edge definition */
+
 
     flex: 0 0 auto;
 
