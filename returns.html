@@ -343,28 +343,32 @@ margin: 20px 0px;
 .glass-card {
     background: rgba(120, 180, 255, 0.7);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Required for smooth iOS rendering */
     border-radius: 25px;
     padding: 28px;
-transform-style: preserve-3d;
-    transition: transform 0.35s ease, opacity 0.35s ease;
+    transform-style: preserve-3d;
+    
+    /* FIX: Forces mobile GPU to stay active, stopping the dark background glitch */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0); 
 
     border: 1px solid rgba(255,255,255,0.06);
     box-shadow: 
-    0px 8px 24px rgba(0, 0, 0, 0.08),  /* Soft, realistic depth */
-    0px 2px 6px rgba(0, 0, 0, 0.04);   /* Crisp edge definition */
-
+    0px 8px 24px rgba(0, 0, 0, 0.08),  
+    0px 2px 6px rgba(0, 0, 0, 0.04);   
 
     flex: 0 0 auto;
-
-    width: 95vw;        /* 🔥 KEY: makes only one card visible */
+    width: 95vw;        
     max-width: 212px;
 
     scroll-snap-align: center;
-    scroll-snap-stop: always;  /* 🔥 LOCKS swipe to one card */
+    scroll-snap-stop: always;  
 
-    transition: 0.4s ease;
+    transition: transform 0.4s ease, opacity 0.4s ease;
     position: relative;
 }
+
 
 
 /* ---------------- ACTIVE CARD ---------------- */
