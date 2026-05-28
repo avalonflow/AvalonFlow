@@ -420,44 +420,7 @@ padding: 28px;
 }
 
 
-/* ---------------- ACTIVE FLOW BORDER (FIXED NEON) ---------------- */
-.glass-card.active::before {
-    content: "";
-    position: absolute;
-    inset: -2px; 
-    border-radius: 25px; /* Matches the 25px of your glass-card */
-    z-index: -1;         /* Forces the neon backplane cleanly behind the glass */
-    pointer-events: none;
-    
-    background: linear-gradient(
-        90deg,
-        #7a2cff,
-        #00f2fe,
-        #ff2bd6,
-        #7a2cff,
-        #00f2fe
-    );
-    background-size: 400% 400%;
-    
-    /* Clean WebKit-preferred mask combination */
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            
-    /* Smooth, hardware-accelerated neon glow */
-    filter: drop-shadow(0 0 6px rgba(122, 44, 255, 0.6))
-            drop-shadow(0 0 12px rgba(0, 242, 254, 0.4));
-            
-    animation: flowBorder 2s linear infinite;
-}
 
-
-/* ---------------- STRONGER ANIMATION ---------------- */
-@keyframes flowBorder {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 
 /* ---------------- FADE IN ---------------- */
 .glass-card.fade-in {
