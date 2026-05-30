@@ -1377,6 +1377,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+const methods = document.querySelectorAll(".payment-method");
+const inputs = document.querySelectorAll(".payment-method input");
+
+let preference = "";
+
 window.addEventListener("DOMContentLoaded", () => {
 
   // Floating particles
@@ -1395,11 +1400,6 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(()=>p.remove(),30000);
   }
   setInterval(particle,800);
-
-  const methods = document.querySelectorAll(".payment-method");
-const inputs = document.querySelectorAll(".payment-method input");
-
-let preference = "";
 
         function logout() {
             window.location.href = "https://membership-signup.avalonflow.site/sign-in";
@@ -1942,7 +1942,6 @@ function resetLogoutTimer() {
 
 ["mousemove", "keydown", "scroll", "click"].forEach(event => {
   window.addEventListener(event, resetLogoutTimer);
-});
 });
 </script>
 
