@@ -895,41 +895,25 @@ left:300px;
     z-index: 6;
 }
 
-/* The outer container clips anything that overflows layout boundaries */
+#section3 {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+#section3::-webkit-scrollbar {
+    display: none; /* Keeps layout clean from native browser scrollbars */
+}
+
 .payment-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 10px 0;
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    scroll-snap-align: center;
 }
 
-/* The slider allows horizontal scrolling and hides the ugly desktop scrollbar */
-.payment-slider {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  gap: 15px; /* Space between your payment cards */
-  padding: 5px 10px;
-  
-  /* Smooth physics for trackpads and mobile swiping */
-  -webkit-overflow-scrolling: touch; 
-  scroll-snap-type: x mandatory; 
-}
 
-/* Hide the default browser scrollbar but keep the functionality */
-.payment-slider::-webkit-scrollbar {
-  display: none; 
-}
-.payment-slider {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-/* Ensure your cards don't shrink when forced into a row */
-.payment-method {
-  flex: 0 0 260px; /* Adjust '260px' to whatever width you want your cards to be */
-  scroll-snap-align: start; /* Makes cards snap nicely into place when scrolling */
-  box-sizing: border-box;
-}
 
 .dots {
   display: flex;
@@ -1024,7 +1008,6 @@ CROP MODAL
 <section id="section3">
 
   <div class="payment-container">
- <div class="payment-slider">
 
     <p class="glass-cardsrd acu-gradient">
       <strong>Canada 🇨🇦</strong>
@@ -1037,7 +1020,6 @@ CROP MODAL
         Secure ACU payouts supported by global payment networks.
       </div>
 
-      <!-- Interac -->
       <div class="payment-method glass-cards"
            data-method="Interac e-Transfer"
            data-region="canada">
@@ -1051,7 +1033,6 @@ CROP MODAL
         <input id="interacInput" placeholder="Enter your email for e-Transfer">
       </div>
 
-      <!-- Canadian Bank -->
       <div class="payment-method glass-cards"
            data-method="Canadian Bank Transfer"
            data-region="canada">
@@ -1080,7 +1061,6 @@ CROP MODAL
         <input id="accountNumber" placeholder="Account Number">
       </div>
 
-      <!-- PayPal Canada -->
       <div class="payment-method glass-cards"
            data-method="Canada PayPal"
            data-region="canada">
@@ -1094,7 +1074,6 @@ CROP MODAL
         <input id="paypalInput" placeholder="Enter your PayPal email">
       </div>
 
-      <!-- Crypto Canada -->
       <div class="payment-method glass-cards"
            data-method="Canada USDT / USDC ERC20"
            data-region="canada">
@@ -1114,10 +1093,7 @@ CROP MODAL
     </div>
   </div>
 
-  <!-- USA SECTION -->
-
   <div class="payment-container">
- <div class="payment-slider">
 
     <p class="glass-cardsrd acu-gradient">
       <strong>United States 🇺🇸</strong>
@@ -1130,7 +1106,6 @@ CROP MODAL
         Secure ACU payouts supported by global payment networks.
       </div>
 
-      <!-- Venmo -->
       <div class="payment-method glass-cards"
            data-method="Venmo"
            data-region="usa">
@@ -1144,7 +1119,6 @@ CROP MODAL
         <input id="venmoInput" placeholder="Enter your Venmo username">
       </div>
 
-      <!-- US Bank -->
       <div class="payment-method glass-cards"
            data-method="American Bank Transfer"
            data-region="usa">
@@ -1173,7 +1147,6 @@ CROP MODAL
         <input id="accountNumber-us" placeholder="Account Number">
       </div>
 
-      <!-- PayPal US -->
       <div class="payment-method glass-cards"
            data-method="US PayPal"
            data-region="usa">
@@ -1187,7 +1160,6 @@ CROP MODAL
         <input id="paypalInput-us" placeholder="Enter your PayPal email">
       </div>
 
-      <!-- Crypto US -->
       <div class="payment-method glass-cards"
            data-method="US USDT / USDC ERC20"
            data-region="usa">
@@ -1207,18 +1179,15 @@ CROP MODAL
     </div>
   </div>
 
-    <!-- Carousel Dots -->
-    <div class="dots">
-        <span class="active"></span>
-        <span></span>
-        <span></span>
-    </div>
+  <div class="dots">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+  </div>
 
-    <!-- Navigation Buttons -->
-    <button class="nav-btn left">&#8592;</button>
-    <button class="nav-btn right">&#8594;</button>
+  <button class="nav-btn left">&#8592;</button>
+  <button class="nav-btn right">&#8594;</button>
 
-  <!-- BUTTON -->
   <div id="navButtons"
        style="max-width:600px;margin:40px auto 100px;display:flex;justify-content:flex-end;position:relative;z-index:5;">
     <button id="nextBtnSeparate"
@@ -1228,6 +1197,7 @@ CROP MODAL
   </div>
 
 </section>
+
     
 <!-- Sticky Footer -->
     <footer>
@@ -1810,76 +1780,32 @@ document.querySelectorAll("input, select").forEach(input => {
 });
 
 // ==========================================
-// 🌍 IP GEOLOCATION REGION SELECTOR
+// 💎 ENCAPSULATED 3D MAIN CARD SLIDER ENGINE
 // ==========================================
-const savedData = JSON.parse(localStorage.getItem("section3Data") || "{}");
-
-// Only auto-switch if they haven't explicitly saved a payment choice yet
-if (!savedData.preference) {
-    fetch('https://ipapi.co/json/')
-        .then(response => response.json())
-        .then(geo => {
-            const containers = document.querySelectorAll('#section3 .payment-container');
-            if (containers.length >= 2) {
-                const canadaTrack = containers[0];
-                const usaTrack = containers[1];
-
-                if (geo.country_code === 'CA') {
-                    usaTrack.style.display = 'none';
-                    canadaTrack.style.display = 'block';
-                    // Initialize the slider animations exclusively for Canada
-                    initialize3DSlider(canadaTrack);
-                } else if (geo.country_code === 'US') {
-                    canadaTrack.style.display = 'none';
-                    usaTrack.style.display = 'block';
-                    // Initialize the slider animations exclusively for the USA
-                    initialize3DSlider(usaTrack);
-                } else {
-                    // Fallback if they are outside CA/US: Just initialize the first track
-                    initialize3DSlider(canadaTrack);
-                }
-            }
-        })
-        .catch(err => {
-            console.warn("Location check bypassed:", err);
-            // Default safe fallback initialization
-            const firstContainer = document.querySelector('#section3 .payment-container');
-            if (firstContainer) initialize3DSlider(firstContainer);
-        });
-} else {
-    // If they already have saved data, fallback to initialize the first visible track
-    const firstContainer = document.querySelector('#section3 .payment-container');
-    if (firstContainer) initialize3DSlider(firstContainer);
-}
-
-// ==========================================
-// 💎 ENCAPSULATED 3D SLIDER ENGINE
-// ==========================================
-function initialize3DSlider(activeContainer) {
-    // Crucial: Target ONLY elements inside the active container track
-    const container = activeContainer.querySelector('.payment-slider');
-    if (!container) return;
-
-    // Find the payment methods inside this specific container track
-    const cards = Array.from(activeContainer.querySelectorAll('.payment-method.glass-cards'));
+$(document).ready(function() {
+    /* 
+       FIXED SELECTORS:
+       1. Since we removed .payment-slider, the master section element (#section3) acts as our viewport container.
+       2. Your individual country blocks are now defined by the '.payment-container' class wrappers.
+    */
+    const container = document.querySelector('#section3');
+    const cards = Array.from(document.querySelectorAll('#section3 .payment-container'));
     const dotsWrapper = document.querySelector('.dots');
 
-    if (cards.length === 0) return;
+    if (!container || cards.length === 0) return;
 
     let isScrolling = false;
     let isDragging = false;
-
     let dragStartX = 0;
     let scrollStart = 0;
     let lastX = 0;
     let velocity = 0;
 
-    // ---- Snap Feedback ----
     function snapFeedback() {
         if (navigator.vibrate) navigator.vibrate(10);
     }
 
-    // ---- Generate Dots ----
+    // ---- Generate Nav Dots ----
     function generateDots() {
         if (!dotsWrapper) return;
         dotsWrapper.innerHTML = '';
@@ -1891,13 +1817,12 @@ function initialize3DSlider(activeContainer) {
     }
     generateDots();
 
-    // ---- Clamp ----
     function clampScroll(left) {
         const max = container.scrollWidth - container.clientWidth;
         return Math.max(0, Math.min(left, max));
     }
 
-    // ---- 3D DEPTH EFFECT 💎 ----
+    // ---- 3D Depth Engine for Main Cards ----
     function update3D() {
         const center = container.scrollLeft + container.clientWidth / 2;
 
@@ -1908,28 +1833,24 @@ function initialize3DSlider(activeContainer) {
             const maxDist = container.clientWidth;
             const ratio = Math.min(dist / maxDist, 1);
 
-            const scale = 1 - (ratio * 0.15); // shrink sides
-            const opacity = 1 - (ratio * 0.5);
-            const rotateY = (cardCenter < center ? 1 : -1) * ratio * 15;
+            const scale = 1 - (ratio * 0.12); 
+            const opacity = 1 - (ratio * 0.4);
+            const rotateY = (cardCenter < center ? 1 : -1) * ratio * 10;
 
             card.style.transform = `
                 scale(${scale})
-                perspective(1000px)
+                perspective(1200px)
                 rotateY(${rotateY}deg)
             `;
             card.style.opacity = opacity;
         });
     }
 
-    // ---- Active Card ----
     function setActiveCard(target) {
         if (!target) return;
 
-        cards.forEach(c => {
-            c.classList.remove('active', 'inactive', 'fade-in');
-        });
-
-        target.classList.add('active', 'fade-in');
+        cards.forEach(c => c.classList.remove('active', 'inactive'));
+        target.classList.add('active');
 
         cards.forEach(c => {
             if (c !== target) c.classList.add('inactive');
@@ -1938,19 +1859,16 @@ function initialize3DSlider(activeContainer) {
         if (dotsWrapper) {
             const dots = dotsWrapper.querySelectorAll('span');
             dots.forEach(d => d.classList.remove('active'));
-
             const idx = cards.indexOf(target);
             if (dots[idx]) dots[idx].classList.add('active');
         }
     }
 
-    // ---- Easing ----
     function easeOutExpo(t) {
         return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
     }
 
-    // ---- Scroll To ----
-    function scrollToCard(index, duration = 280) {
+    function scrollToCard(index, duration = 300) {
         if (index < 0 || index >= cards.length) return;
 
         const target = cards[index];
@@ -1970,7 +1888,6 @@ function initialize3DSlider(activeContainer) {
             const eased = easeOutExpo(p);
 
             container.scrollLeft = start + dist * eased;
-
             update3D();
 
             if (p < 1) {
@@ -1981,18 +1898,12 @@ function initialize3DSlider(activeContainer) {
                 snapFeedback();
             }
         }
-
         requestAnimationFrame(anim);
     }
 
-    // ---- Predictive Snap 🧠 ----
     function predictIndex() {
         const activeIdx = cards.findIndex(c => c.classList.contains('active'));
-
-        const velocityBoost = velocity * 0.25;
-        const dragDistance = (dragStartX - lastX) * 0.15;
-
-        const intent = velocityBoost + dragDistance;
+        const intent = (velocity * 0.25) + ((dragStartX - lastX) * 0.15);
 
         if (Math.abs(intent) > 5) {
             if (intent > 0) return activeIdx + 1;
@@ -2001,104 +1912,83 @@ function initialize3DSlider(activeContainer) {
 
         let closest = null, min = Infinity;
         const center = container.scrollLeft + container.clientWidth / 2;
-
         cards.forEach(c => {
             const cc = c.offsetLeft + c.offsetWidth / 2;
             const d = Math.abs(center - cc);
-            if (d < min) {
-                min = d;
-                closest = c;
-            }
+            if (d < min) { min = d; closest = c; }
         });
-
         return cards.indexOf(closest);
     }
 
-    // ---- NAV ----
+    // ---- Nav Arrows Wire-up ----
     const leftBtn = document.querySelector('.nav-btn.left');
     const rightBtn = document.querySelector('.nav-btn.right');
 
     if (leftBtn) {
         leftBtn.onclick = () => {
             const i = cards.findIndex(c => c.classList.contains('active'));
-            scrollToCard(i - 1);
+            if (i > 0) scrollToCard(i - 1);
         };
     }
-
     if (rightBtn) {
         rightBtn.onclick = () => {
             const i = cards.findIndex(c => c.classList.contains('active'));
-            scrollToCard(i + 1);
+            if (i < cards.length - 1) scrollToCard(i + 1);
         };
     }
 
-    // ---- POINTER EVENTS ----
+    // ---- Pointer Drag Dragging Mechanics ----
     container.addEventListener('pointerdown', e => {
-        if (isScrolling) return;
-
+        if (isScrolling || e.target.closest('input, select, button')) return; 
         isDragging = true;
         dragStartX = e.clientX;
         scrollStart = container.scrollLeft;
         lastX = e.clientX;
         velocity = 0;
-
         container.setPointerCapture(e.pointerId);
     });
 
     container.addEventListener('pointermove', e => {
         if (!isDragging) return;
-
         const dx = dragStartX - e.clientX;
         container.scrollLeft = scrollStart + dx;
-
         velocity = lastX - e.clientX;
         lastX = e.clientX;
-
         update3D();
-
-        let closest = null, min = Infinity;
-        const center = container.scrollLeft + container.clientWidth / 2;
-
-        cards.forEach(c => {
-            const cc = c.offsetLeft + c.offsetWidth / 2;
-            const d = Math.abs(center - cc);
-            if (d < min) {
-                min = d;
-                closest = c;
-            }
-        });
-
-        if (closest) setActiveCard(closest);
     });
 
     container.addEventListener('pointerup', e => {
         if (!isDragging) return;
         isDragging = false;
-
         container.releasePointerCapture(e.pointerId);
-
-        const predicted = predictIndex();
-        scrollToCard(predicted);
+        scrollToCard(predictIndex());
     });
 
-    // ---- INITIALIZE CONTAINER ORIENTATION ----
-    const first = cards[0];
-    setActiveCard(first);
+    // ---- 🌍 IP DETECTION AUTO-FOCUS GEOLOCATION ----
+    const savedData = JSON.parse(localStorage.getItem("section3Data") || "{}");
+    
+    if (!savedData.preference) {
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(geo => {
+                let targetIndex = 0; // Default to Canada
+                if (geo.country_code === 'US') {
+                    targetIndex = 1; // Slide to US Card
+                }
+                scrollToCard(targetIndex, 400);
+            })
+            .catch(() => scrollToCard(0, 0));
+    } else {
+        // Fallback layout initialization
+        scrollToCard(0, 0);
+    }
 
-    container.scrollLeft = clampScroll(
-        first.offsetLeft - container.offsetWidth/2 + first.offsetWidth/2
-    );
-
-    update3D();
-
-    // ---- Resize listener ----
     window.addEventListener('resize', () => {
-        if (!isScrolling) {
-            const active = cards.find(c => c.classList.contains('active'));
-            if (active) scrollToCard(cards.indexOf(active), 200);
-        }
+        const active = cards.find(c => c.classList.contains('active'));
+        if (active) scrollToCard(cards.indexOf(active), 50);
     });
-}
+});
+
 
 /* --------------------------
 NUMBER-ONLY VALIDATION
