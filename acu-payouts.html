@@ -1665,19 +1665,18 @@ LOAD SAVED DATA
 const methods = document.querySelectorAll(".payment-method");
 const inputs = document.querySelectorAll(".payment-method input");
 
-// ADD THIS LINE RIGHT HERE:
 const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
 
-let preference = "";
-if (saved.preference) {
+// FIX: Make sure preference is explicitly tracked from saved state globally
+let preference = saved.preference || ""; 
 
+if (saved.preference) {
   methods.forEach(method => {
     if (method.dataset.method === saved.preference) {
       method.classList.add("active");
       method.querySelectorAll("input, select").forEach(el => {
         el.style.display = "block";
       });
-      preference = saved.preference;
     }
   });
 }
@@ -1701,6 +1700,7 @@ if (saved.institutionNumberUs) document.getElementById("institutionNumber-us").v
 if (saved.accountNumberUs) document.getElementById("accountNumber-us").value = saved.accountNumberUs;
 if (saved.paypalUs) document.getElementById("paypalInput-us").value = saved.paypalUs;
 if (saved.acuAccountUs) document.getElementById("acuAccount-us").value = saved.acuAccountUs;
+
 
 
 /* --------------------------
@@ -2099,13 +2099,13 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
       setTimeout(() => { notification.classList.remove("show"); }, duration);
   }
 
-  // Uses the strict preference function check here to block empty submissions
-    // 1. Check validation and stop submission if incomplete
+  // 1. FIRST check validation. If incomplete, stop right here.
   if (!validateCurrentPreference()) {
     localShowNotification("Please fill out all required fields for your selected payment method.", 3000);
-    return; // Stops execution immediately without adding any warning classes
+    return; 
   }
 
+  // 2. NOW that we know the data is valid, show the verification progress message!
   localShowNotification("Verifying payout information...", 2500);
 
   const data = {
