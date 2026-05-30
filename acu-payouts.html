@@ -2100,14 +2100,10 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
   }
 
   // Uses the strict preference function check here to block empty submissions
+    // 1. Check validation and stop submission if incomplete
   if (!validateCurrentPreference()) {
     localShowNotification("Please fill out all required fields for your selected payment method.", 3000);
-    const container = document.querySelector(".payment-container");
-    if (container) {
-      container.classList.add("warning");
-      setTimeout(() => { container.classList.remove("warning"); }, 2000);
-    }
-    return; 
+    return; // Stops execution immediately without adding any warning classes
   }
 
   localShowNotification("Verifying payout information...", 2500);
