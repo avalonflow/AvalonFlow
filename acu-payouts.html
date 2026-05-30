@@ -867,6 +867,42 @@ left:300px;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08);
     z-index: 6;
 }
+
+/* The outer container clips anything that overflows layout boundaries */
+.payment-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+}
+
+/* The slider allows horizontal scrolling and hides the ugly desktop scrollbar */
+.payment-slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 15px; /* Space between your payment cards */
+  padding: 5px 10px;
+  
+  /* Smooth physics for trackpads and mobile swiping */
+  -webkit-overflow-scrolling: touch; 
+  scroll-snap-type: x mandatory; 
+}
+
+/* Hide the default browser scrollbar but keep the functionality */
+.payment-slider::-webkit-scrollbar {
+  display: none; 
+}
+.payment-slider {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Ensure your cards don't shrink when forced into a row */
+.payment-method {
+  flex: 0 0 260px; /* Adjust '260px' to whatever width you want your cards to be */
+  scroll-snap-align: start; /* Makes cards snap nicely into place when scrolling */
+  box-sizing: border-box;
+}
 </style>
 </head>
 <body>
@@ -943,6 +979,7 @@ CROP MODAL
 <section id="section3">
 
   <div class="payment-container">
+ <div class="payment-slider">
 
     <p class="glass-cardsrd acu-gradient">
       <strong>Canada 🇨🇦</strong>
@@ -1035,6 +1072,7 @@ CROP MODAL
   <!-- USA SECTION -->
 
   <div class="payment-container">
+ <div class="payment-slider">
 
     <p class="glass-cardsrd acu-gradient">
       <strong>United States 🇺🇸</strong>
@@ -1714,6 +1752,37 @@ document.querySelectorAll("input, select").forEach(input => {
   input.addEventListener("input", saveData);
   input.addEventListener("change", saveData);
 });
+
+const slider = document.querySelector('.payment-slider');
+let autoSwipeInterval;
+
+function startAutoSwipe() {
+    autoSwipeInterval = setInterval(() => {
+        // If we've reached the end of the scroll, go back to the beginning
+        if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 1) {
+            slider.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            // Otherwise, scroll right by the width of one card (plus gap)
+            slider.scrollBy({ left: 275, behavior: 'smooth' }); // 260px card + 15px gap
+        }
+    }, 4000); // Swipes every 4 seconds
+}
+
+function stopAutoSwipe() {
+    clearInterval(autoSwipeInterval);
+}
+
+// Start it up
+startAutoSwipe();
+
+// Netflix behavior: Stop auto-swiping if the user interacts with it manually
+slider.addEventListener('mouseenter', stopAutoSwipe);
+slider.addEventListener('touchstart', stopAutoSwipe);
+
+// Resume auto-swiping when they leave it alone
+slider.addEventListener('mouseleave', startAutoSwipe);
+slider.addEventListener('touchend', startAutoSwipe);
+
 
 /* --------------------------
 NUMBER-ONLY VALIDATION
