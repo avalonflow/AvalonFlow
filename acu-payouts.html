@@ -1645,8 +1645,12 @@ LOAD SAVED DATA
 const methods = document.querySelectorAll(".payment-method");
 const inputs = document.querySelectorAll(".payment-method input");
 
+// ADD THIS LINE RIGHT HERE:
+const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
+
 let preference = "";
 if (saved.preference) {
+
   methods.forEach(method => {
     if (method.dataset.method === saved.preference) {
       method.classList.add("active");
