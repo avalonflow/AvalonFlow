@@ -1098,6 +1098,49 @@ $(document).ready(function () {
 
 });
 
+$(document).ready(function () {
+
+    const bankLogos = {
+        "Chase Bank": "assets/pictures/4889b91421334f04992dbd75abd44c94.jpg",
+        "Bank of America": "assets/pictures/e90fc5400809adf33e281d9f876d5485.jpg",
+        "Wells Fargo": "assets/pictures/839782492ccfda0e5f616798c2646804.jpg",
+        "Citi (Citibank)": "assets/pictures/1352e3513e09b08d6559887eae7f8f7a.jpg",
+        "U.S. Bank": "assets/pictures/39502b52ef053fc42561434042a06ecd.jpg",
+        "PNC Bank": "assets/pictures/fb34b722f69d354bf24dd585444a6cee.jpg",
+        "Capital One": "assets/pictures/Tangerine_Bank-Logo.wine.png",
+        "Fifth Third Bank": "assets/pictures/Simplii_Financial_branding.jpg"
+    };
+
+    const defaultLogo = "https://cdn-icons-png.flaticon.com/512/2830/2830284.png";
+
+    const $logo = $('.payment-logos');
+
+    $('#canadianBankSelect').on('change', function () {
+
+        const selectedBank = $(this).val();
+        const newLogo = bankLogos[selectedBank] || defaultLogo;
+
+        // fade out (CSS handles animation)
+        $logo.addClass('is-hidden');
+
+        // preload image first
+        const tempImg = new Image();
+
+        tempImg.onload = function () {
+            $logo.attr('src', newLogo);
+
+            // force reflow so transition triggers properly
+            void $logo[0].offsetWidth;
+
+            // fade in
+            $logo.removeClass('is-hidden');
+        };
+
+        tempImg.src = newLogo;
+    });
+
+});
+
 
 /* Sidebar toggle */
         const sidebar = document.getElementById('sidebar');
