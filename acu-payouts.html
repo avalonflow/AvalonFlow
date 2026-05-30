@@ -1377,11 +1377,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-const methods = document.querySelectorAll(".payment-method");
-const inputs = document.querySelectorAll(".payment-method input");
-
-let preference = "";
-
 window.addEventListener("DOMContentLoaded", () => {
 
   // Floating particles
@@ -1647,7 +1642,10 @@ SESSION GUARD (CLEANED)
 /* --------------------------
 LOAD SAVED DATA
 -------------------------- */
+const methods = document.querySelectorAll(".payment-method");
+const inputs = document.querySelectorAll(".payment-method input");
 
+let preference = "";
 if (saved.preference) {
   methods.forEach(method => {
     if (method.dataset.method === saved.preference) {
