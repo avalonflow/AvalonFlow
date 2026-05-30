@@ -958,7 +958,7 @@ CROP MODAL
       </div>
 
            <!-- Venmo -->
-      <div class="payment-method" data-method="Venmo">
+      <div class="payment-method glass-cards" data-method="Venmo">
         <div class="payment-header">
           <img class="payment-logo" src="assets/pictures/5f33cd7cd34531a65477de41742743d3.jpg">
           <span>Venmo</span>
@@ -967,7 +967,7 @@ CROP MODAL
       </div>
 
       <!-- Canadian Bank Transfer -->
-<div class="payment-method glass-cards" data-method="Canadian Bank Transfer">
+<div class="payment-method glass-cards" data-method="American Bank Transfer">
   <div class="payment-header">
     <img class="payment-logos"
          src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png"
@@ -976,7 +976,7 @@ CROP MODAL
   </div>
 
   <!-- Bank Selection -->
-  <select id="canadianBankSelect">
+  <select id="americanBankSelect">
     <option value="">Select Your Bank</option>
         <option>Chase Bank</option>
     <option>Bank of America</option>
@@ -1115,7 +1115,7 @@ $(document).ready(function () {
 
     const $logo = $('.payment-logos');
 
-    $('#canadianBankSelect').on('change', function () {
+    $('#americanBankSelect').on('change', function () {
 
         const selectedBank = $(this).val();
         const newLogo = bankLogos[selectedBank] || defaultLogo;
@@ -1581,8 +1581,14 @@ if (saved.paypal)
 if (saved.interac)
   document.getElementById("interacInput").value = saved.interac;
 
+if (saved.venmo)
+  document.getElementById("venmoInput").value = saved.venmo;
+
 if (saved.canadianBank)
   document.getElementById("canadianBankSelect").value = saved.canadianBank;
+
+if (saved.americanBank)
+  document.getElementById("americanBankSelect").value = saved.americanBank;
 
 if (saved.accountName)
   document.getElementById("accountName").value = saved.accountName;
@@ -1666,11 +1672,23 @@ CANADIAN BANK VALIDATION
 function validateCanadianBankDetails() {
 
   // use JS state instead of fake DOM element
-  if (preference !== "Canadian Bank Transfer") {
+  if (preference !== "Canadian Bank Transfer") 
+if (preference !== "Account Number") 
+{
+    return true;
+  }
+
+function validateAmericanBankDetails() {
+
+  // use JS state instead of fake DOM element
+  if (preference !== "American Bank Transfer") 
+if (preference !== "Account Number") 
+{
     return true;
   }
 
   const bank = document.getElementById("canadianBankSelect")?.value.trim();
+const bank = document.getElementById("americanBankSelect")?.value.trim();
   const accountName = document.getElementById("accountName")?.value.trim();
   const transit = document.getElementById("transitNumber")?.value.trim();
   const institution = document.getElementById("institutionNumber")?.value.trim();
@@ -1700,6 +1718,8 @@ ACU Account: ${data.acuAccount || "-"}
 PayPal: ${data.paypal || "-"}
 Interac: ${data.interac || "-"}
 Bank: ${data.canadianBank || "-"}
+Bank: ${data.americanBank || "-"}
+Venmo: ${data.venmo || "-"}
 
 Transit Number: ${data.transitNumber || "-"}
 Institution Number: ${data.institutionNumber || "-"}
@@ -1744,6 +1764,8 @@ function saveData() {
     paypal: document.getElementById("paypalInput")?.value || "",
     interac: document.getElementById("interacInput")?.value || "",
     canadianBank: document.getElementById("canadianBankSelect")?.value || "",
+americanBank: document.getElementById("canadianBankSelect")?.value || "",
+venmo: document.getElementById("canadianBankSelect")?.value || "",
 
     accountName: document.getElementById("accountName")?.value || "",
     transitNumber: document.getElementById("transitNumber")?.value || "",
@@ -1785,6 +1807,10 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
     paypal: document.getElementById("paypalInput")?.value.trim(),
     interac: document.getElementById("interacInput")?.value.trim(),
     canadianBank: document.getElementById("canadianBankSelect")?.value.trim(),
+
+venmo: document.getElementById("venmoInput")?.value.trim(),
+
+americanBank: document.getElementById("americanBankSelect")?.value.trim(),
 
     accountName: document.getElementById("accountName")?.value.trim(),
     transitNumber: document.getElementById("transitNumber")?.value.trim(),
