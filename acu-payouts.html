@@ -895,16 +895,18 @@ left:300px;
     z-index: 6;
 }
 
-#section3 {
+/* Update your CSS targeting rule to look like this */
+.payment-slider-viewport {
     display: flex;
     overflow-x: auto;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
-#section3::-webkit-scrollbar {
-    display: none; /* Keeps layout clean from native browser scrollbars */
+.payment-slider-viewport::-webkit-scrollbar {
+    display: none;
 }
 
 .payment-container {
@@ -912,6 +914,7 @@ left:300px;
     box-sizing: border-box;
     scroll-snap-align: center;
 }
+
 
 
 
@@ -1005,181 +1008,133 @@ CROP MODAL
   </div>
 </header>
 
-<section id="section3">
+<section id="section3" style="position: relative; max-width: 600px; margin: 0 auto;">
 
-  <div class="payment-container">
+  <div class="payment-slider-viewport">
 
-    <p class="glass-cardsrd acu-gradient">
-      <strong>Canada 🇨🇦</strong>
-      <div style="height:14px;"></div>
-    </p>
+    <div class="payment-container">
+      <p class="glass-cardsrd acu-gradient">
+        <strong>Canada 🇨🇦</strong>
+        <div style="height:14px;"></div>
+      </p>
 
-    <div class="glass-card">
-
-      <div class="top-trust">
-        Secure ACU payouts supported by global payment networks.
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="Interac e-Transfer"
-           data-region="canada">
-
-        <div class="payment-header">
-          <img class="payment-logo"
-               src="assets/pictures/980ec2577fa19bf58d7ca687805b52c3.jpg">
-          <span>▼ Interac e-Transfer</span>
+      <div class="glass-card">
+        <div class="top-trust">
+          Secure ACU payouts supported by global payment networks.
         </div>
 
-        <input id="interacInput" placeholder="Enter your email for e-Transfer">
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="Canadian Bank Transfer"
-           data-region="canada">
-
-        <div class="payment-header">
-          <img class="payment-logos"
-               src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
-          <span>▼ Canadian Bank Transfer</span>
+        <div class="payment-method glass-cards" data-method="Interac e-Transfer" data-region="canada">
+          <div class="payment-header">
+            <img class="payment-logo" src="assets/pictures/980ec2577fa19bf58d7ca687805b52c3.jpg">
+            <span>▼ Interac e-Transfer</span>
+          </div>
+          <input id="interacInput" placeholder="Enter your email for e-Transfer">
         </div>
 
-        <select id="canadianBankSelect">
-          <option value="">Select Your Bank</option>
-          <option>RBC Royal Bank</option>
-          <option>TD Canada Trust</option>
-          <option>Scotiabank</option>
-          <option>BMO</option>
-          <option>CIBC</option>
-          <option>National Bank</option>
-          <option>Tangerine</option>
-          <option>Simplii Financial</option>
-        </select>
-
-        <input id="accountName" placeholder="Account Holder Name">
-        <input id="transitNumber" placeholder="Transit Number">
-        <input id="institutionNumber" placeholder="Institution Number">
-        <input id="accountNumber" placeholder="Account Number">
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="Canada PayPal"
-           data-region="canada">
-
-        <div class="payment-header">
-          <img class="payment-logo"
-               src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg">
-          <span>▼ PayPal</span>
+        <div class="payment-method glass-cards" data-method="Canadian Bank Transfer" data-region="canada">
+          <div class="payment-header">
+            <img class="payment-logos" src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
+            <span>▼ Canadian Bank Transfer</span>
+          </div>
+          <select id="canadianBankSelect">
+            <option value="">Select Your Bank</option>
+            <option>RBC Royal Bank</option>
+            <option>TD Canada Trust</option>
+            <option>Scotiabank</option>
+            <option>BMO</option>
+            <option>CIBC</option>
+            <option>National Bank</option>
+            <option>Tangerine</option>
+            <option>Simplii Financial</option>
+          </select>
+          <input id="accountName" placeholder="Account Holder Name">
+          <input id="transitNumber" placeholder="Transit Number">
+          <input id="institutionNumber" placeholder="Institution Number">
+          <input id="accountNumber" placeholder="Account Number">
         </div>
 
-        <input id="paypalInput" placeholder="Enter your PayPal email">
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="Canada USDT / USDC ERC20"
-           data-region="canada">
-
-        <div class="token-logos">
-          <img class="payment-logo"
-               src="https://assets.coingecko.com/coins/images/325/large/Tether.png">
-          <img class="payment-logo"
-               src="https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png">
-          <span>▼ USDT / USDC [ERC-20]</span>
+        <div class="payment-method glass-cards" data-method="Canada PayPal" data-region="canada">
+          <div class="payment-header">
+            <img class="payment-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg">
+            <span>▼ PayPal</span>
+          </div>
+          <input id="paypalInput" placeholder="Enter your PayPal email">
         </div>
 
-        <input id="acuAccount" placeholder="Enter your ERC-20 wallet address">
-        <div class="network-note">⚠ ERC-20 network only</div>
+        <div class="payment-method glass-cards" data-method="Canada USDT / USDC ERC20" data-region="canada">
+          <div class="token-logos">
+            <img class="payment-logo" src="https://assets.coingecko.com/coins/images/325/large/Tether.png">
+            <img class="payment-logo" src="https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png">
+            <span>▼ USDT / USDC [ERC-20]</span>
+          </div>
+          <input id="acuAccount" placeholder="Enter your ERC-20 wallet address">
+          <div class="network-note">⚠ ERC-20 network only</div>
+        </div>
       </div>
-
     </div>
-  </div>
 
-  <div class="payment-container">
+    <div class="payment-container">
+      <p class="glass-cardsrd acu-gradient">
+        <strong>United States 🇺🇸</strong>
+        <div style="height:14px;"></div>
+      </p>
 
-    <p class="glass-cardsrd acu-gradient">
-      <strong>United States 🇺🇸</strong>
-      <div style="height:14px;"></div>
-    </p>
-
-    <div class="glass-card">
-
-      <div class="top-trust">
-        Secure ACU payouts supported by global payment networks.
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="Venmo"
-           data-region="usa">
-
-        <div class="payment-header">
-          <img class="payment-logo"
-               src="assets/pictures/5f33cd7cd34531a65477de41742743d3.jpg">
-          <span>Venmo</span>
+      <div class="glass-card">
+        <div class="top-trust">
+          Secure ACU payouts supported by global payment networks.
         </div>
 
-        <input id="venmoInput" placeholder="Enter your Venmo username">
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="American Bank Transfer"
-           data-region="usa">
-
-        <div class="payment-header">
-          <img class="payment-logoss"
-               src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
-          <span>▼ American Bank Transfer</span>
+        <div class="payment-method glass-cards" data-method="Venmo" data-region="usa">
+          <div class="payment-header">
+            <img class="payment-logo" src="assets/pictures/5f33cd7cd34531a65477de41742743d3.jpg">
+            <span>Venmo</span>
+          </div>
+          <input id="venmoInput" placeholder="Enter your Venmo username">
         </div>
 
-        <select id="americanBankSelect">
-          <option value="">Select Your Bank</option>
-          <option>Chase Bank</option>
-          <option>Bank of America</option>
-          <option>Wells Fargo</option>
-          <option>Citi (Citibank)</option>
-          <option>U.S. Bank</option>
-          <option>PNC Bank</option>
-          <option>Capital One</option>
-          <option>Fifth Third Bank</option>
-        </select>
-
-        <input id="accountName-us" placeholder="Account Holder Name">
-        <input id="transitNumber-us" placeholder="Transit Number">
-        <input id="institutionNumber-us" placeholder="Institution Number">
-        <input id="accountNumber-us" placeholder="Account Number">
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="US PayPal"
-           data-region="usa">
-
-        <div class="payment-header">
-          <img class="payment-logo"
-               src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg">
-          <span>▼ PayPal</span>
+        <div class="payment-method glass-cards" data-method="American Bank Transfer" data-region="usa">
+          <div class="payment-header">
+            <img class="payment-logoss" src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
+            <span>▼ American Bank Transfer</span>
+          </div>
+          <select id="americanBankSelect">
+            <option value="">Select Your Bank</option>
+            <option>Chase Bank</option>
+            <option>Bank of America</option>
+            <option>Wells Fargo</option>
+            <option>Citi (Citibank)</option>
+            <option>U.S. Bank</option>
+            <option>PNC Bank</option>
+            <option>Capital One</option>
+            <option>Fifth Third Bank</option>
+          </select>
+          <input id="accountName-us" placeholder="Account Holder Name">
+          <input id="transitNumber-us" placeholder="Transit Number">
+          <input id="institutionNumber-us" placeholder="Institution Number">
+          <input id="accountNumber-us" placeholder="Account Number">
         </div>
 
-        <input id="paypalInput-us" placeholder="Enter your PayPal email">
-      </div>
-
-      <div class="payment-method glass-cards"
-           data-method="US USDT / USDC ERC20"
-           data-region="usa">
-
-        <div class="token-logos">
-          <img class="payment-logo"
-               src="https://assets.coingecko.com/coins/images/325/large/Tether.png">
-          <img class="payment-logo"
-               src="https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png">
-          <span>▼ USDT / USDC [ERC-20]</span>
+        <div class="payment-method glass-cards" data-method="US PayPal" data-region="usa">
+          <div class="payment-header">
+            <img class="payment-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg">
+            <span>▼ PayPal</span>
+          </div>
+          <input id="paypalInput-us" placeholder="Enter your PayPal email">
         </div>
 
-        <input id="acuAccount-us" placeholder="Enter your ERC-20 wallet address">
-        <div class="network-note">⚠ ERC-20 network only</div>
+        <div class="payment-method glass-cards" data-method="US USDT / USDC ERC20" data-region="usa">
+          <div class="token-logos">
+            <img class="payment-logo" src="https://assets.coingecko.com/coins/images/325/large/Tether.png">
+            <img class="payment-logo" src="https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png">
+            <span>▼ USDT / USDC [ERC-20]</span>
+          </div>
+          <input id="acuAccount-us" placeholder="Enter your ERC-20 wallet address">
+          <div class="network-note">⚠ ERC-20 network only</div>
+        </div>
       </div>
-
     </div>
-  </div>
 
-  <div class="dots">
+  </div> <div class="dots">
     <span class="active"></span>
     <span></span>
     <span></span>
@@ -1197,6 +1152,7 @@ CROP MODAL
   </div>
 
 </section>
+
 
     
 <!-- Sticky Footer -->
@@ -1788,8 +1744,8 @@ $(document).ready(function() {
        1. Since we removed .payment-slider, the master section element (#section3) acts as our viewport container.
        2. Your individual country blocks are now defined by the '.payment-container' class wrappers.
     */
-    const container = document.querySelector('#section3');
-    const cards = Array.from(document.querySelectorAll('#section3 .payment-container'));
+    const container = document.querySelector('.payment-slider-viewport');
+    const cards = Array.from(document.querySelectorAll('.payment-slider-viewport .payment-container'));
     const dotsWrapper = document.querySelector('.dots');
 
     if (!container || cards.length === 0) return;
