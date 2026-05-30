@@ -1647,9 +1647,6 @@ SESSION GUARD (CLEANED)
 /* --------------------------
 LOAD SAVED DATA
 -------------------------- */
-const methods = document.querySelectorAll(".payment-method");
-const saved = JSON.parse(localStorage.getItem("section3Data") || "{}");
-let preference = "";
 
 if (saved.preference) {
   methods.forEach(method => {
