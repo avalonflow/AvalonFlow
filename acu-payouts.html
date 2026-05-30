@@ -1753,35 +1753,78 @@ document.querySelectorAll("input, select").forEach(input => {
   input.addEventListener("change", saveData);
 });
 
-const slider = document.querySelector('.payment-slider');
+// ==========================================
+// 🌍 IP GEOLOCATION REGION SELECTOR
+// ==========================================
+const savedData = JSON.parse(localStorage.getItem("section3Data") || "{}");
+
+// Only auto-switch if they haven't explicitly saved a payment choice yet
+if (!savedData.preference) {
+    fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(geo => {
+            // Find both structural country wrapper containers
+            const containers = document.querySelectorAll('#section3 .payment-container');
+            if (containers.length >= 2) {
+                const canadaTrack = containers[0];
+                const usaTrack = containers[1];
+
+                if (geo.country_code === 'CA') {
+                    // Keep Canada visible, tuck away USA track smoothly
+                    usaTrack.style.display = 'none';
+                    canadaTrack.style.display = 'block';
+                } else if (geo.country_code === 'US') {
+                    // Keep USA visible, tuck away Canada track smoothly
+                    canadaTrack.style.display = 'none';
+                    usaTrack.style.display = 'block';
+                }
+            }
+        })
+        .catch(err => console.warn("Location check bypassed:", err));
+}
+
+
+// ==========================================
+// 🚀 FIXED DUAL AUTO-SWIPE ENGINE:
+// ==========================================
+// Use querySelectorAll to catch BOTH the Canada and US sliders
+const sliders = document.querySelectorAll('.payment-slider');
 let autoSwipeInterval;
 
-function startAutoSwipe() {
-    autoSwipeInterval = setInterval(() => {
-        // If we've reached the end of the scroll, go back to the beginning
-        if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 1) {
-            slider.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-            // Otherwise, scroll right by the width of one card (plus gap)
-            slider.scrollBy({ left: 275, behavior: 'smooth' }); // 260px card + 15px gap
-        }
-    }, 4000); // Swipes every 4 seconds
+if (sliders.length > 0) {
+    function startAutoSwipe() {
+        autoSwipeInterval = setInterval(() => {
+            // Apply the scroll movement to whichever slider is currently visible
+            sliders.forEach(slider => {
+                // Only scroll it if the container is actually visible to the user
+                if (slider.offsetParent !== null) {
+                    if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 1) {
+                        slider.scrollTo({ left: 0, behavior: 'smooth' });
+                    } else {
+                        slider.scrollBy({ left: 275, behavior: 'smooth' }); 
+                    }
+                }
+            });
+        }, 4000); 
+    }
+
+    function stopAutoSwipe() {
+        clearInterval(autoSwipeInterval);
+    }
+
+    // Start the tracking loop
+    startAutoSwipe();
+
+    // Attach interaction safety cutoffs to both tracks cleanly
+    sliders.forEach(slider => {
+        slider.addEventListener('mouseenter', stopAutoSwipe);
+        slider.addEventListener('touchstart', stopAutoSwipe);
+        slider.addEventListener('mouseleave', startAutoSwipe);
+        slider.addEventListener('touchend', startAutoSwipe);
+        slider.addEventListener('focusin', stopAutoSwipe); 
+    });
 }
 
-function stopAutoSwipe() {
-    clearInterval(autoSwipeInterval);
-}
-
-// Start it up
-startAutoSwipe();
-
-// Netflix behavior: Stop auto-swiping if the user interacts with it manually
-slider.addEventListener('mouseenter', stopAutoSwipe);
-slider.addEventListener('touchstart', stopAutoSwipe);
-
-// Resume auto-swiping when they leave it alone
-slider.addEventListener('mouseleave', startAutoSwipe);
-slider.addEventListener('touchend', startAutoSwipe);
 
 
 /* --------------------------
