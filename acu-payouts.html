@@ -99,6 +99,9 @@
   margin-right: auto;
 }
 
+/* ==========================================================================
+   1. YOUR EXACT CODE (COMPLETELY UNTOUCHED)
+   ========================================================================== */
 .glass-cardsrd{
     background: rgba(120, 180, 255, 0.7);
     backdrop-filter: blur(14px);
@@ -125,7 +128,47 @@
 
     /* 3. OPTIONAL: Subtle tilted perspective to reinforce the 3D space */
     transform: perspective(1000px) translateZ(0);
+
+    /* REQUIRED ADDITION: Ensures the absolute positioned pill pins relative to this card */
+    position: relative; 
 }
+
+/* ==========================================================================
+   2. THE PILL BUTTON EXTENSION (ADDS THE OVERLAPPING CENTERED BADGE)
+   ========================================================================== */
+.glass-cardsrd::before {
+    content: "Canada 🇨🇦"; /* Inserts the text directly via CSS */
+    
+    /* Absolute Positioning Core */
+    position: absolute;
+    top: -24px;       /* Pulls it exactly halfway out of the top border */
+    left: 50%;        /* Shifts the anchor to the horizontal center */
+    transform: translateX(-50%); /* Perfectly balances the button on the exact center axis */
+    z-index: 10;      /* Forces it to layer cleanly over the glass container edge */
+
+    /* Typography & Styling from the image */
+    background: #89baff;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 44px;
+    border-radius: 50px; /* Perfect rounded capsule pill edge */
+    text-align: center;
+    white-space: nowrap; /* Prevents text fragmentation or wrapping on smaller panels */
+    display: inline-block;
+
+    /* Depth Matching Shadow Scheme */
+    box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.15),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Adds space inside the top of your card so the first layout item doesn't collide with the pill */
+.glass-cardsrd > *:first-child {
+    margin-top: 24px !important;
+}
+
 
 /* Top trust line & bottom note */
 .top-trust, .bottom-note {
