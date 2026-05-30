@@ -1960,47 +1960,54 @@ NUMBER-ONLY VALIDATION
 
 
 /* --------------------------
-CANADIAN BANK VALIDATION
+UNIFIED PREFERENCE VALIDATION
 -------------------------- */
-function validateCanadianBankDetails() {
-  if (preference !== "Canadian Bank Transfer") {
-    return true;
+// Your new function sits perfectly right here, replacing the two old validation blocks
+function validateCurrentPreference() {
+  if (!preference) return false;
+
+  switch (preference) {
+    case "Canadian Bank Transfer":
+      const caBank = document.getElementById("canadianBankSelect")?.value.trim();
+      const caName = document.getElementById("accountName")?.value.trim();
+      const caTransit = document.getElementById("transitNumber")?.value.trim();
+      const caInst = document.getElementById("institutionNumber")?.value.trim();
+      const caAcc = document.getElementById("accountNumber")?.value.trim();
+
+      if (!caBank || !caName) return false;
+      if (!/^\d{5}$/.test(caTransit)) return false;
+      if (!/^\d{3}$/.test(caInst)) return false;
+      if (!/^\d{7,12}$/.test(caAcc)) return false;
+      return true;
+
+    case "American Bank Transfer":
+      const usBank = document.getElementById("americanBankSelect")?.value.trim();
+      const usName = document.getElementById("accountName-us")?.value.trim();
+      const usTransit = document.getElementById("transitNumber-us")?.value.trim();
+      const usInst = document.getElementById("institutionNumber-us")?.value.trim();
+      const usAcc = document.getElementById("accountNumber-us")?.value.trim();
+
+      return !!(usBank && usName && usTransit && usInst && usAcc);
+
+    case "PayPal":
+      const paypal = document.getElementById("paypalInput")?.value.trim() || 
+                     document.getElementById("paypalInput-us")?.value.trim();
+      return !!paypal;
+
+    case "Interac":
+      return !!document.getElementById("interacInput")?.value.trim();
+
+    case "Venmo":
+      return !!document.getElementById("venmoInput")?.value.trim();
+
+    case "ACU Account":
+      const acu = document.getElementById("acuAccount")?.value.trim() || 
+                  document.getElementById("acuAccount-us")?.value.trim();
+      return !!acu;
+
+    default:
+      return false;
   }
-  const bank = document.getElementById("canadianBankSelect")?.value.trim();
-  const accountName = document.getElementById("accountName")?.value.trim();
-  const transit = document.getElementById("transitNumber")?.value.trim();
-  const institution = document.getElementById("institutionNumber")?.value.trim();
-  const account = document.getElementById("accountNumber")?.value.trim();
-
-  if (!bank) return false;
-  if (!accountName) return false;
-  if (!/^\d{5}$/.test(transit)) return false;
-  if (!/^\d{3}$/.test(institution)) return false;
-  if (!/^\d{7,12}$/.test(account)) return false;
-
-  return true;
-}
-
-/* --------------------------
-AMERICAN BANK VALIDATION
--------------------------- */
-function validateAmericanBankDetails() {
-  if (preference !== "American Bank Transfer") {
-    return true;
-  }
-  const bank = document.getElementById("americanBankSelect")?.value.trim();
-  const accountName = document.getElementById("accountName-us")?.value.trim();
-  const transit = document.getElementById("transitNumber-us")?.value.trim();
-  const institution = document.getElementById("institutionNumber-us")?.value.trim();
-  const account = document.getElementById("accountNumber-us")?.value.trim();
-
-  if (!bank) return false;
-  if (!accountName) return false;
-  if (!transit) return false;
-  if (!institution) return false;
-  if (!account) return false;
-
-  return true;
 }
 
 
@@ -2092,15 +2099,18 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
       setTimeout(() => { notification.classList.remove("show"); }, duration);
   }
 
-  localShowNotification("Verifying payout information...", 2500);
-
-  // Prevent invalid data structural chains
-  if (!validateCanadianBankDetails() || !validateAmericanBankDetails()) {
+  // Uses the strict preference function check here to block empty submissions
+  if (!validateCurrentPreference()) {
+    localShowNotification("Please fill out all required fields for your selected payment method.", 3000);
     const container = document.querySelector(".payment-container");
-    container.classList.add("warning");
-    setTimeout(() => { container.classList.remove("warning"); }, 2000);
-    return;
+    if (container) {
+      container.classList.add("warning");
+      setTimeout(() => { container.classList.remove("warning"); }, 2000);
+    }
+    return; 
   }
+
+  localShowNotification("Verifying payout information...", 2500);
 
   const data = {
     preference,
@@ -2123,17 +2133,6 @@ document.getElementById('nextBtnSeparate').addEventListener('click', async () =>
     paypalUs: document.getElementById("paypalInput-us")?.value.trim(),
     acuAccountUs: document.getElementById("acuAccount-us")?.value.trim()
   };
-
-  const hasAnyValue = Object.values(data).some(
-    v => v && v.toString().trim() !== ""
-  );
-
-  if (!hasAnyValue) {
-    const container = document.querySelector(".payment-container");
-    container.classList.add("warning");
-    setTimeout(() => { container.classList.remove("warning"); }, 2000);
-    return;
-  }
 
   localStorage.setItem("section3Data", JSON.stringify(data));
 
