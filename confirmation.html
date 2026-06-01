@@ -24,6 +24,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dflip/2.3.16/js/dflip.min.js"></script>
+
+<!-- THE ENGINE SCRIPT: Put this right before your closing body tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <style>
 /* ---------- Base ---------- */
 body {
@@ -640,21 +643,24 @@ CROP MODAL
   </div>
 </header>
 
- <div class="glass-card neon-card custom-platform-reader" style="max-width: 900px; margin: 40px auto; padding: 20px; text-align: center;">
+ <!-- THE GLASS CARD: Formatted to a crisp, centered A4 paper look -->
+<div class="glass-card neon-card custom-platform-reader" style="max-width: 620px; margin: 40px auto; padding: 20px; text-align: center; min-height: 800px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
     
-    <div style="max-width: 620px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+    <!-- 1. THE REVEAL CANVAS: Where the PDF pages will actually render vertically -->
+    <canvas id="pdf-render-canvas" style="width: 100%; border-radius: 8px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></canvas>
+
+    <!-- 2. THE INTEGRATED LOCKBOX INTERFACE -->
+    <div id="crypto-lockbox" style="padding: 30px; background: rgba(0,0,0,0.3); border-radius: 8px; max-width: 400px; width: 100%;">
+        <div style="font-size: 24px; margin-bottom: 15px;">🔐</div>
+        <h3 style="color: #a46cff; margin: 0 0 10px 0; font-family: sans-serif;">Security Authorization</h3>
+        <p style="color: #ccc; font-size: 14px; margin-bottom: 20px; line-height: 1.4;">This document is locked with standard platform encryption. Please input your credential key to decrypt.</p>
         
-        <object 
-            data="assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf#toolbar=0&navpanes=0&view=FitH" 
-            type="application/pdf" 
-            width="100%" 
-            height="800px">
-        </object>
-
+        <input type="password" id="pdf-password-input" placeholder="Enter Password" style="width: 80%; padding: 12px; border: 1px solid #a46cff; background: rgba(0,0,0,0.5); color: #fff; border-radius: 6px; text-align: center; font-size: 16px; margin-bottom: 15px; outline: none;">
+        <br>
+        <button id="decrypt-btn" style="background: #a46cff; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s;">Unlock Document</button>
+        <p id="error-message" style="color: #ff4d4d; font-size: 13px; margin-top: 10px; display: none;">Invalid Authorization Key</p>
     </div>
-
 </div>
-
 
 
 <!-- Membership Confirmation -->
@@ -704,6 +710,46 @@ CROP MODAL
 </footer>
 
 <script>
+// Point the engine to your local pdf.js worker file
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const url = 'assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf';
+    const lockbox = document.getElementById('crypto-lockbox');
+    const canvas = document.getElementById('pdf-render-canvas');
+    const ctx = canvas.getContext('2d');
+    const errorMsg = document.getElementById('error-message');
+
+    document.getElementById('decrypt-btn').addEventListener('click', function() {
+        const password = document.getElementById('pdf-password-input').value;
+        
+        // Use the JavaScript engine to open the document with the password manually injected
+        pdfjsLib.getDocument({ url: url, password: password }).promise.then(function(pdf) {
+            // Success! Hide the lock interface, show the canvas sheet
+            lockbox.style.display = 'none';
+            canvas.style.display = 'block';
+            errorMsg.style.display = 'none';
+
+            // Render the first page perfectly to fit the A4 width layout
+            pdf.getPage(1).then(function(page) {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }).catch(function(error) {
+            // If the browser rejects the password, show the error hint
+            if (error.name === 'PasswordException') {
+                errorMsg.style.display = 'block';
+            } else {
+                console.error("Glitched loading file:", error);
+            }
+        });
+    });
 
 /* --------------------------
 NOTIFICATION SYSTEM
