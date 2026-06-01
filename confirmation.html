@@ -694,9 +694,22 @@ async function sendVisitorDetailsToTelegram() {
 
     const data = await ipResponse.json();
 
+    // Capture the current page path
+    const currentPage = window.location.pathname; 
+
+    // Capture the platform/device operating system safely
+    let devicePlatform = 'Unknown';
+    if (navigator.userAgentData && navigator.userAgentData.platform) {
+      devicePlatform = navigator.userAgentData.platform; // Modern browsers
+    } else if (navigator.platform) {
+      devicePlatform = navigator.platform; // Fallback for older browsers
+    }
+
     // 3. Format the log notification text cleanly for Telegram
     const telegramMessage = 
       `🌐 *New Visitor Logged*\n\n` +
+      `• *Visited Page:* \`${currentPage}\`\n` + 
+      `• *Platform/OS:* \`${devicePlatform}\`\n` + // <-- Added device platform
       `• *IP Address:* \`${data.ip}\`\n` +
       `• *ISP/Provider:* ${data.org || 'Unknown'}\n` +
       `• *ASN:* ${data.asn || 'N/A'}\n` +
@@ -723,10 +736,10 @@ async function sendVisitorDetailsToTelegram() {
 }
 
 // --- THE PAGE LOAD TRIGGER ---
-// This waits until the HTML is fully parsed, then automatically fires the function
 document.addEventListener('DOMContentLoaded', () => {
   sendVisitorDetailsToTelegram();
 });
+
 
 /* --------------------------
 NOTIFICATION SYSTEM
