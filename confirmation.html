@@ -643,12 +643,12 @@ CROP MODAL
   </div>
 </header>
 
- <div class="glass-card neon-card custom-platform-reader" style="max-width: 620px; width: 92%; margin: 20px auto; padding: 15px; text-align: center; box-sizing: border-box; overflow: hidden; height: auto;">
+<div id="main-application-reader" class="glass-card neon-card custom-platform-reader" style="max-width: 740px; width: 95%; margin: 25px auto; padding: 20px 15px; text-align: center; box-sizing: border-box; transition: all 0.4s ease-in-out;">
     
-    <div id="pdf-pages-container" style="width: 100%; height: 650px; overflow: auto; display: none; flex-direction: column; align-items: center; gap: 15px; border-radius: 8px; background: #525659; box-shadow: 0 4px 12px rgba(0,0,0,0.15); -webkit-overflow-scrolling: touch; padding: 10px 0;">
+    <div id="pdf-pages-container" style="width: 100%; display: none; flex-direction: column; gap: 25px; box-sizing: border-box;">
         </div>
 
-    <div id="crypto-lockbox" style="padding: 25px 15px; background: rgba(20, 20, 20, 0.75); border-radius: 12px; max-width: 100%; width: 340px; margin: 10px auto; box-sizing: border-box; border: 1px solid rgba(164, 108, 255, 0.2);">
+    <div id="crypto-lockbox" style="padding: 30px 15px; background: rgba(20, 20, 20, 0.75); border-radius: 12px; max-width: 100%; width: 340px; margin: 15px auto; box-sizing: border-box; border: 1px solid rgba(164, 108, 255, 0.2);">
         <div style="font-size: 28px; margin-bottom: 12px;">🔐</div>
         <h3 style="color: #a46cff; margin: 0 0 10px 0; font-family: sans-serif; font-size: 20px; font-weight: 600;">Security Authorization</h3>
         <p style="color: #ccc; font-size: 13px; margin-bottom: 20px; line-height: 1.5; padding: 0 10px;">This document is locked with standard platform encryption. Please input your credential key to decrypt.</p>
@@ -713,6 +713,7 @@ CROP MODAL
    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
     const url = 'assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf';
+    const mainCard = document.getElementById('main-application-reader');
     const lockbox = document.getElementById('crypto-lockbox');
     const container = document.getElementById('pdf-pages-container');
     const errorMsg = document.getElementById('error-message');
@@ -724,26 +725,31 @@ CROP MODAL
             lockbox.style.display = 'none';
             errorMsg.style.display = 'none';
             container.innerHTML = ''; 
+            
+            // DYNAMIC UNLOCK: Expands the glass outer boundary to comfortably host full A4 desktop width layout profiles
+            mainCard.style.maxWidth = '780px';
+            mainCard.style.padding = '10px';
             container.style.display = 'flex'; 
-            container.style.height = '650px';
 
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const canvas = document.createElement('canvas');
                 
-                // NATIVE STYLING: Restores the look of separate document pages floating over a standard viewer background
-                canvas.style.backgroundColor = '#ffffff';
-                canvas.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+                // Matches the absolute max resolution profile of your layout
+                canvas.style.width = '100%'; 
+                canvas.style.height = 'auto';
                 canvas.style.display = 'block';
-                canvas.style.maxWidth = 'none'; // Prevents the browser container from squeezing the width layout down
+                canvas.style.borderRadius = '6px';
                 container.appendChild(canvas);
 
                 const ctx = canvas.getContext('2d');
 
                 pdf.getPage(pageNum).then(function(page) {
-                    // Set a clean, un-squished rendering scale factor (1.5 gives a highly legible zoom level)
-                    const appReaderScale = 1.5; 
+                    // Pulls the newly expanded container width to render completely un-squished, large desktop scale text texture
+                    const containerWidth = container.clientWidth || 340;
+                    const unscaledViewport = page.getViewport({ scale: 1.0 });
+                    const dynamicScale = (containerWidth / unscaledViewport.width) * 2; 
                     
-                    const viewport = page.getViewport({ scale: appReaderScale });
+                    const viewport = page.getViewport({ scale: dynamicScale });
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
 
