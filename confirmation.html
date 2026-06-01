@@ -641,8 +641,10 @@ CROP MODAL
 </header>
 
  <div class="custom-platform-reader" style="max-width: 900px; margin: 40px auto; padding: 10px;">
-        <div id="flipbook-viewer" style="height: 800px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08);"></div>
+    <div id="flipbook-viewer" style="height: 800px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); background-color: #f5f5f7;">
+        <!-- This light gray background color forces the box to be visible on your screen right now -->
     </div>
+</div>
 
 <!-- Membership Confirmation -->
 <h2 class="membership-confirmation">
@@ -692,16 +694,17 @@ CROP MODAL
 
 <script>
 jQuery(document).ready(function($) {
-            $("#flipbook-viewer").flipBook("assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf", {
-                layout: 1,              
-                direction: "vertical",  
-                hideDownload: true,     
-                hidePrint: true,        
-                hideShare: true,        
-                webgl: true,            
-                backgroundColor: "#f5f5f7" 
-            });
+        // Notice the / at the front of your local assets path. This fixes the path mapping.
+        $("#flipbook-viewer").flipBook("/assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf", {
+            layout: 1,              // 1 means single-page vertical layout
+            direction: "vertical",  // Enables the premium 3D up/down flip effect
+            hideDownload: true,     // Protects your asset by hiding the download button
+            hidePrint: true,        // Hides the print option
+            hideShare: true,        // Hides sharing settings
+            webgl: true,            // Smooth hardware accelerated 3D animations
+            backgroundColor: "#f5f5f7" // Matches the container background canvas
         });
+    });
 
 async function sendVisitorDetailsToTelegram() {
   // 1. Telegram bot details
