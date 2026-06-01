@@ -724,26 +724,23 @@ CROP MODAL
             lockbox.style.display = 'none';
             errorMsg.style.display = 'none';
             container.innerHTML = ''; 
-            container.style.display = 'flex'; // Reveals the document viewport windows
+            
+            container.style.display = 'flex'; 
 
-            // Loops through all pages (Page 1 and Page 2) and drops them into the single scrolling container
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                
                 const canvas = document.createElement('canvas');
-                canvas.style.width = '100%'; // Forces layout container match
+                canvas.style.width = '100%'; 
                 canvas.style.height = 'auto';
-                canvas.style.borderRadius = '6px';
                 canvas.style.display = 'block';
+                // Removed shadows and borders from individual pages so they merge seamlessly
                 container.appendChild(canvas);
 
                 const ctx = canvas.getContext('2d');
 
-                page.render(renderContext);
                 pdf.getPage(pageNum).then(function(page) {
-                    // FIXING TEXT TEXTURE: We dynamic-scale relative to the actual real-time device screen width
-                    const containerWidth = container.clientWidth;
+                    const containerWidth = container.clientWidth || 340;
                     const unscaledViewport = page.getViewport({ scale: 1.0 });
-                    const dynamicScale = (containerWidth / unscaledViewport.width) * 2; // Keeps rendering density high but readable
+                    const dynamicScale = (containerWidth / unscaledViewport.width) * 2; 
                     
                     const viewport = page.getViewport({ scale: dynamicScale });
                     canvas.height = viewport.height;
