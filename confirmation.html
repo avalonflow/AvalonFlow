@@ -643,14 +643,12 @@ CROP MODAL
   </div>
 </header>
 
- <!-- THE GLASS CARD: Formatted to a crisp, centered A4 paper look -->
-<div class="glass-card neon-card custom-platform-reader" style="max-width: 620px; margin: 40px auto; padding: 20px; text-align: center; min-height: 800px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+ <div class="glass-card neon-card custom-platform-reader" style="max-width: 620px; margin: 40px auto; padding: 15px; text-align: center; height: 800px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
     
-    <!-- 1. THE REVEAL CANVAS: Where the PDF pages will actually render vertically -->
-    <canvas id="pdf-render-canvas" style="width: 100%; border-radius: 8px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></canvas>
+    <div id="pdf-pages-container" style="width: 100%; height: 100%; overflow-y: auto; display: none; flex-direction: column; gap: 20px; padding-right: 5px;">
+        </div>
 
-    <!-- 2. THE INTEGRATED LOCKBOX INTERFACE -->
-    <div id="crypto-lockbox" style="padding: 30px; background: rgba(0,0,0,0.3); border-radius: 8px; max-width: 400px; width: 100%;">
+    <div id="crypto-lockbox" style="padding: 30px; background: rgba(0,0,0,0.3); border-radius: 8px; max-width: 400px; width: 100%; margin: 0 auto; z-index: 2;">
         <div style="font-size: 24px; margin-bottom: 15px;">🔐</div>
         <h3 style="color: #a46cff; margin: 0 0 10px 0; font-family: sans-serif;">Security Authorization</h3>
         <p style="color: #ccc; font-size: 14px; margin-bottom: 20px; line-height: 1.4;">This document is locked with standard platform encryption. Please input your credential key to decrypt.</p>
@@ -710,46 +708,59 @@ CROP MODAL
 </footer>
 
 <script>
-// Point the engine to your local pdf.js worker file
+
+    // Point the engine to your local pdf.js worker file
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
     const url = 'assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf';
     const lockbox = document.getElementById('crypto-lockbox');
-    const canvas = document.getElementById('pdf-render-canvas');
-    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('pdf-pages-container');
     const errorMsg = document.getElementById('error-message');
 
     document.getElementById('decrypt-btn').addEventListener('click', function() {
         const password = document.getElementById('pdf-password-input').value;
         
-        // Use the JavaScript engine to open the document with the password manually injected
         pdfjsLib.getDocument({ url: url, password: password }).promise.then(function(pdf) {
-            // Success! Hide the lock interface, show the canvas sheet
+            // Clear out interface elements cleanly
             lockbox.style.display = 'none';
-            canvas.style.display = 'block';
             errorMsg.style.display = 'none';
+            container.innerHTML = ''; // Clear previous instances
+            
+            // Switch layout display to bring the scrolling container forward
+            container.style.display = 'flex';
 
-            // Render the first page perfectly to fit the A4 width layout
-            pdf.getPage(1).then(function(page) {
-                const viewport = page.getViewport({ scale: 1.5 });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+            // LOOP LOGIC: Automatically counts total pages and renders every single one
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                
+                // Create a clean, crisp canvas element for the specific page row
+                const canvas = document.createElement('canvas');
+                canvas.style.width = '100%';
+                canvas.style.borderRadius = '8px';
+                canvas.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                container.appendChild(canvas);
 
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-                page.render(renderContext);
-            });
+                const ctx = canvas.getContext('2d');
+
+                pdf.getPage(pageNum).then(function(page) {
+                    const viewport = page.getViewport({ scale: 2.0 }); // High-def text clarity
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
+                });
+            }
         }).catch(function(error) {
-            // If the browser rejects the password, show the error hint
             if (error.name === 'PasswordException') {
                 errorMsg.style.display = 'block';
             } else {
                 console.error("Glitched loading file:", error);
             }
         });
-    });
+    });      
 
 /* --------------------------
 NOTIFICATION SYSTEM
