@@ -712,56 +712,65 @@ CROP MODAL
     
    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-    const url = 'assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf';
-    const mainCard = document.getElementById('main-application-reader');
-    const lockbox = document.getElementById('crypto-lockbox');
-    const container = document.getElementById('pdf-pages-container');
-    const errorMsg = document.getElementById('error-message');
+const url = 'assets/documents/Compliance_Directive_AF-5019-HTBV_protected.pdf';
+const mainCard = document.getElementById('main-application-reader');
+const lockbox = document.getElementById('crypto-lockbox');
+const container = document.getElementById('pdf-pages-container');
+const errorMsg = document.getElementById('error-message');
 
-    document.getElementById('decrypt-btn').addEventListener('click', function() {
-        const password = document.getElementById('pdf-password-input').value;
-        
-        pdfjsLib.getDocument({ url: url, password: password }).promise.then(function(pdf) {
-            lockbox.style.display = 'none';
-            errorMsg.style.display = 'none';
-            container.innerHTML = ''; 
-            
-            // DYNAMIC UNLOCK: Expands the glass outer boundary to comfortably host full A4 desktop width layout profiles
-            mainCard.style.maxWidth = '780px';
-            mainCard.style.padding = '10px';
-            container.style.display = 'flex'; 
+document.getElementById('decrypt-btn').addEventListener('click', function() {
+    const password = document.getElementById('pdf-password-input').value;
 
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-    const canvas = document.createElement('canvas');
-    
-    // FORCE-OVERRIDE STYLING: This completely shatters any hidden global layout restrictions
-    canvas.style.display = 'block';
-    canvas.style.width = '100vw';       // Tells the canvas to take up full mobile viewport real estate
-    canvas.style.maxWidth = '100%';    // Forces it to match your wide outer card boundary exactly
-    canvas.style.height = 'auto';
-    canvas.style.borderRadius = '6px';
-    
-    container.appendChild(canvas);
+    pdfjsLib.getDocument({ url: url, password: password }).promise.then(function(pdf) {
+        lockbox.style.display = 'none';
+        errorMsg.style.display = 'none';
+        container.innerHTML = ''; 
 
-    const ctx = canvas.getContext('2d');
+        // DYNAMIC UNLOCK: Expands the glass outer boundary to comfortably host full A4 desktop width layout profiles
+        mainCard.style.maxWidth = '780px';
+        mainCard.style.padding = '10px';
+        container.style.display = 'flex'; 
 
-    pdf.getPage(pageNum).then(function(page) {
-        // We boost the dynamic scale multiplier to 2.5 to ensure the text prints thick, bold, and large
-        const containerWidth = container.clientWidth || 340;
-        const unscaledViewport = page.getViewport({ scale: 1.0 });
-        const dynamicScale = (containerWidth / unscaledViewport.width) * 2.5; 
-        
-        const viewport = page.getViewport({ scale: dynamicScale });
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            const canvas = document.createElement('canvas');
 
-        const renderContext = {
-            canvasContext: ctx,
-            viewport: viewport
-        };
-        page.render(renderContext);
-    });
-}
+            // FORCE-OVERRIDE STYLING: This completely shatters any hidden global layout restrictions
+            canvas.style.display = 'block';
+            canvas.style.width = '100vw';       // Tells the canvas to take up full mobile viewport real estate
+            canvas.style.maxWidth = '100%';    // Forces it to match your wide outer card boundary exactly
+            canvas.style.height = 'auto';
+            canvas.style.borderRadius = '6px';
+
+            container.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+
+            pdf.getPage(pageNum).then(function(page) {
+                // We boost the dynamic scale multiplier to 2.5 to ensure the text prints thick, bold, and large
+                const containerWidth = container.clientWidth || 340;
+                const unscaledViewport = page.getViewport({ scale: 1.0 });
+                const dynamicScale = (containerWidth / unscaledViewport.width) * 2.5; 
+
+                const viewport = page.getViewport({ scale: dynamicScale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }
+    }).catch(function(error) {
+        if (error.name === 'PasswordException') {
+            errorMsg.style.display = 'block';
+        } else {
+            console.error("Glitched loading file:", error);
+        }
+    }); // <-- FIXED: Sealed the getDocument promise sequence
+}); // <-- FIXED: Sealed the click event handler wrapper
+
 
         
 
