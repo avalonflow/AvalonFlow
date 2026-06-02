@@ -732,42 +732,37 @@ CROP MODAL
             container.style.display = 'flex'; 
 
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                const canvas = document.createElement('canvas');
-                
-                // Matches the absolute max resolution profile of your layout
-                canvas.style.width = '100%'; 
-                canvas.style.height = 'auto';
-                canvas.style.display = 'block';
-                canvas.style.borderRadius = '6px';
-                container.appendChild(canvas);
+    const canvas = document.createElement('canvas');
+    
+    // FORCE-OVERRIDE STYLING: This completely shatters any hidden global layout restrictions
+    canvas.style.display = 'block';
+    canvas.style.width = '100vw';       // Tells the canvas to take up full mobile viewport real estate
+    canvas.style.maxWidth = '100%';    // Forces it to match your wide outer card boundary exactly
+    canvas.style.height = 'auto';
+    canvas.style.borderRadius = '6px';
+    
+    container.appendChild(canvas);
 
-                const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
 
-                pdf.getPage(pageNum).then(function(page) {
-                    // Pulls the newly expanded container width to render completely un-squished, large desktop scale text texture
-                    const containerWidth = container.clientWidth || 340;
-                    const unscaledViewport = page.getViewport({ scale: 1.0 });
-                    const dynamicScale = (containerWidth / unscaledViewport.width) * 2; 
-                    
-                    const viewport = page.getViewport({ scale: dynamicScale });
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
+    pdf.getPage(pageNum).then(function(page) {
+        // We boost the dynamic scale multiplier to 2.5 to ensure the text prints thick, bold, and large
+        const containerWidth = container.clientWidth || 340;
+        const unscaledViewport = page.getViewport({ scale: 1.0 });
+        const dynamicScale = (containerWidth / unscaledViewport.width) * 2.5; 
+        
+        const viewport = page.getViewport({ scale: dynamicScale });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
 
-                    const renderContext = {
-                        canvasContext: ctx,
-                        viewport: viewport
-                    };
-                    page.render(renderContext);
-                });
-            }
-        }).catch(function(error) {
-            if (error.name === 'PasswordException') {
-                errorMsg.style.display = 'block';
-            } else {
-                console.error("Glitched loading file:", error);
-            }
-        });
+        const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+        };
+        page.render(renderContext);
     });
+}
+
         
 
 /* --------------------------
