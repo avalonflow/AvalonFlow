@@ -1872,8 +1872,26 @@ const notification = document.getElementById("rewardNotification");
 
 if (!notification) return; // safety check  
 
-// Welcome message first  
-notification.textContent = "Welcome To Retention Bonus Tab";  
+// --- Extract first name gently ---
+let firstName = "";
+const localData = localStorage.getItem("section2Data");
+
+if (localData) {
+    try {
+        const savedData = JSON.parse(localData);
+        if (savedData.fullName) {
+            const rawFirstName = savedData.fullName.trim().split(" ")[0];
+            firstName = rawFirstName.charAt(0).toUpperCase() + rawFirstName.slice(1).toLowerCase();
+        }
+    } catch (e) {
+        console.error("Failed to parse registration name metrics.");
+    }
+}
+
+const nameString = firstName ? `, ${firstName}` : "";
+
+// Welcome message first with targeted name
+notification.textContent = `Welcome${nameString} To Retention Bonus Tab`;  
 notification.classList.add("show");  
 
 setTimeout(() => {  
@@ -1906,7 +1924,8 @@ setTimeout(() => {
 // Hide notification  
 setTimeout(() => {  
     notification.classList.remove("show");  
-}, 5500);  
+}, 5500);
+
 
 animate();  
 window.history.replaceState({}, document.title, window.location.pathname);
