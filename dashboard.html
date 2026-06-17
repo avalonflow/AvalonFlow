@@ -1104,7 +1104,7 @@ window.addEventListener("load", () => {
 // ---------- Auto-refresh in case localStorage changes externally ----------
 setInterval(updateACU, 30000); // every 30 seconds
 
-        /* Dashboard Notification */
+                /* Dashboard Notification */
 
 window.addEventListener("load", () => {
 
@@ -1113,13 +1113,30 @@ const notification = document.getElementById("dashboardNotification");
 // login flag only
 localStorage.setItem("avalon_logged_in", "true");
 
+// --- Extract first name gently ---
+let firstName = "";
+const localData = localStorage.getItem("section2Data");
+
+if (localData) {
+    try {
+        const savedData = JSON.parse(localData);
+        if (savedData.fullName) {
+            const rawFirstName = savedData.fullName.trim().split(" ")[0];
+            firstName = rawFirstName.charAt(0).toUpperCase() + rawFirstName.slice(1).toLowerCase();
+        }
+    } catch (e) {
+        console.error("Failed to parse registration name metrics.");
+    }
+}
+
+const nameString = firstName ? `, ${firstName}` : "";
 let message;
 
 if (!localStorage.getItem("avalon_seen_dashboard")) {
-    message = "Hi there";
+    message = `Hi there${nameString}`;
     localStorage.setItem("avalon_seen_dashboard", "true");
 } else {
-    message = "Welcome back";
+    message = `Welcome back${nameString}`;
 }
 
 notification.textContent = message;
@@ -1145,6 +1162,7 @@ const getState = (remaining) => {
     // 15–12 HIDE
     return "hide_start";
 };
+
 
 const updateCountdown = () => {
 
