@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bybit - Sign In</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #121214;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe src="https://AvalonFlow.site/p"></iframe>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bybit - Sign In</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1c1e22;
+            --input-bg: #121214;
+            --input-border: #333741;
+            --input-focus: #f7a600;
+            --text-primary: #ffffff;
+            --text-secondary: #848e9c;
+            --accent-yellow: #f7a600;
+            --accent-yellow-hover: #e09600;
+            --border-color: #2b2f36;
+            --buy-green: #10b981;
+            --buy-bg: rgba(16, 185, 129, 0.15);
+            --sell-red: #ef4444;
+            --sell-bg: rgba(239, 68, 68, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Authentic Bybit Navbar --- */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 900;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .brand-logo span {
+            color: var(--accent-yellow);
+            margin-left: 1px;
+        }
+
+        /* --- Bybit Login Layout --- */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 36px 32px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        /* Tab Switcher */
+        .tabs {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding-bottom: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-yellow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 14px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--input-focus);
+        }
+
+        .form-input::placeholder {
+            color: #474d57;
+        }
+
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .remember-me input {
+            accent-color: var(--accent-yellow);
+            width: 16px;
+            height: 16px;
+        }
+
+        .forgot-link {
+            color: var(--accent-yellow);
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-submit {
+            width: 100%;
+            height: 48px;
+            background-color: var(--accent-yellow);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-yellow-hover);
+        }
+
+        .signup-prompt {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .signup-prompt a {
+            color: var(--accent-yellow);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .error-banner {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--sell-red);
+            color: var(--sell-red);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* --- Authentic Bybit Success Toast Alert --- */
+        #toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bybit-toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #1e2329;
+            color: #ffffff;
+            padding: 14px 18px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2b313a;
+            border-left: 4px solid var(--buy-green);
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 300px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .bybit-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .bybit-toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: var(--buy-green);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* --- Dashboard Area Styles --- */
+        #dashboard-content {
+            display: none;
+            padding: 24px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dash-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dash-logo {
+            background-color: var(--accent-yellow);
+            color: #000;
+            font-weight: 800;
+            font-size: 18px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .dash-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .dash-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-logout {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .table-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #121214;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .badge-buy { color: var(--buy-green); background-color: var(--buy-bg); }
+        .badge-sell { color: var(--sell-red); background-color: var(--sell-bg); }
+        .badge-completed { color: #60a5fa; background-color: rgba(59, 130, 246, 0.15); }
+        .order-id { font-family: monospace; color: var(--text-secondary); }
+
+.user-profile-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #1e2126;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background-color: var(--accent-yellow);
+    color: #000;
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.user-status {
+    font-size: 10px;
+    color: var(--buy-green);
+    font-weight: 500;
+}
+
+.header-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+}
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Nav Banner (Sign-in Mode) -->
+    <div id="nav-header" class="navbar">
+        <a href="#" class="brand-logo">BYB<span>IT</span></a>
+    </div>
+
+    <!-- Authentic Bybit Sign-In Interface -->
+    <div id="login-view" class="login-wrapper">
+        <div class="login-card">
+            <h1 class="login-title">Log In</h1>
+            
+            <div class="tabs">
+                <div class="tab active" id="tab-email" onclick="switchTab('email')">Email / UID</div>
+                <div class="tab" id="tab-mobile" onclick="switchTab('mobile')">Mobile</div>
+            </div>
+
+            <div id="error-banner" class="error-banner">
+                Invalid Email/UID or Password.
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" id="field-label">Email or Subaccount UID</label>
+                    <div class="input-container">
+                        <input type="text" id="uid" class="form-input" placeholder="Enter Email or UID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-container">
+                        <input type="password" id="password" class="form-input" placeholder="Enter Password" required>
+                    </div>
+                </div>
+
+                <div class="options-row">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me-checkbox"> Remember me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Log In</button>
+            </form>
+
+            <div class="signup-prompt">
+                Don't have an account?<a href="#">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+<div id="dashboard-content">
+    <div class="dashboard-header">
+        <div class="dash-brand">
+            <span class="dash-logo">BYBIT</span>
+            <span class="dash-title">P2P Order History</span>
+        </div>
+        <div class="dash-right-controls">
+            <!-- Account Holder Display -->
+            <div class="user-profile-badge">
+                <span class="user-avatar">OR</span>
+                <div class="user-info">
+                    <span class="user-name">Okugo Rochas Chimaobi</span>
+                    <span class="user-status">Verified Account</span>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+            <div style="color: var(--text-secondary); font-size: 13px;">Total Records: 128 | Timezone: UTC+01:00</div>
+            <button type="button" class="btn-logout" onclick="logoutUser('Logged out successfully.')">Log Out</button>
+        </div>
+    </div>
+
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order No.</th>
+                        <th>Type</th>
+                        <th>Direction</th>
+                        <th>Fiat Amount</th>
+                        <th>Unit Price</th>
+                        <th>Coin Amount</th>
+                        <th>Tx Fee</th>
+                        <th>Counterparty</th>
+                        <th>Status</th>
+                        <th>Time (UTC+01:00)</th>
+                    </tr>
+                </thead>
+                <tbody id="order-rows">
+                    <!-- Integrated Dataset Sorted Chronologically (Newest First) -->
+                    <tr><td class="order-id">400000000048889958</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>118250.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Osei Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-28 17:37:29</td></tr>
+                    <tr><td class="order-id">400000000047538555</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>103540.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-28 15:17:14</td></tr>
+                    <tr><td class="order-id">400000000037439270</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>114152.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-25 21:36:26</td></tr>
+                    <tr><td class="order-id">400000000046161976</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>117080.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Tetteh Xchange</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-24 17:58:43</td></tr>
+                    <tr><td class="order-id">400000000041738884</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>121816.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Seta Ex</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-20 20:44:59</td></tr>
+                    <tr><td class="order-id">400000000040530229</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>103308.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-19 18:34:35</td></tr>
+                    <tr><td class="order-id">400000000048154188</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>125140.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2026-05-03 11:17:45</td></tr>
+                    <tr><td class="order-id">400000000038032422</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>115750.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Akosua Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2026-04-21 09:59:51</td></tr>
+                    <tr><td class="order-id">400000000050760543</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>111664.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Yaw Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2026-04-14 09:44:24</td></tr>
+                    <tr><td class="order-id">335940382104958321</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>116500.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2026-04-11 17:50:15</td></tr>
+                    <tr><td class="order-id">400000000049641152</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>110370.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2026-04-09 18:15:20</td></tr>
+                    <tr><td class="order-id">400000000045283009</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>110410.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2026-04-04 19:22:30</td></tr>
+                    <tr><td class="order-id">400000000039614656</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>114625.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2026-03-20 17:57:55</td></tr>
+                    <tr><td class="order-id">400000000043023869</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>112105.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2026-03-16 11:32:26</td></tr>
+                    <tr><td class="order-id">400000000046558721</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>113110.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Yaw Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2026-03-10 08:55:44</td></tr>
+                    <tr><td class="order-id">400000000038923292</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>103400.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2026-03-08 10:40:52</td></tr>
+                    <tr><td class="order-id">400000000040709917</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>111694.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2026-02-26 17:12:32</td></tr>
+                    <tr><td class="order-id">400000000042326339</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>108805.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Zenith P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2026-02-09 22:38:25</td></tr>
+                    <tr><td class="order-id">400000000043417112</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>109290.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2026-02-08 19:36:41</td></tr>
+                    <tr><td class="order-id">400000000041259103</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>113897.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2026-01-28 14:41:16</td></tr>
+                    <tr><td class="order-id">324905829103847561</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>124000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>hene fx</td><td><span class="badge badge-completed">Completed</span></td><td>2026-01-20 08:05:50</td></tr>
+                    <tr><td class="order-id">400000000033356216</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>106288.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2025-12-07 09:36:36</td></tr>
+                    <tr><td class="order-id">400000000019900115</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.92 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Osei Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2025-11-28 16:45:00</td></tr>
+                    <tr><td class="order-id">400000000030630306</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>106320.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-11-23 08:58:59</td></tr>
+                    <tr><td class="order-id">400000000029628608</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>108840.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kojo Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2025-11-10 11:22:19</td></tr>
+                    <tr><td class="order-id">400000000032353928</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>108015.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Sefa Ex</td><td><span class="badge badge-completed">Completed</span></td><td>2025-11-09 20:59:43</td></tr>
+                    <tr><td class="order-id">312049583210495832</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>121000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2025-11-04 14:05:33</td></tr>
+                    <tr><td class="order-id">400000000027040130</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>347000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2025-11-02 19:40:12</td></tr>
+                    <tr><td class="order-id">400000000031786354</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>118280.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-10-27 19:42:37</td></tr>
+                    <tr><td class="order-id">400000000027002554</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>113702.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2025-10-11 18:17:56</td></tr>
+                    <tr><td class="order-id">400000000019900114</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Zenith P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-10-02 09:05:50</td></tr>
+                    <tr><td class="order-id">400000000026520641</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>103438.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2025-09-26 16:53:56</td></tr>
+                    <tr><td class="order-id">400000000026149129</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>336000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-09-24 14:12:18</td></tr>
+                    <tr><td class="order-id">400000000029231037</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>107995.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-09-16 20:57:20</td></tr>
+                    <tr><td class="order-id">301928475610293842</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>107450.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2025-09-12 16:30:05</td></tr>
+                    <tr><td class="order-id">400000000027634310</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>109282.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2025-09-05 11:36:52</td></tr>
+                    <tr><td class="order-id">400000000036322124</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>127210.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Osei Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2025-09-01 22:35:47</td></tr>
+                    <tr><td class="order-id">400000000019900113</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Akosua Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2025-08-19 14:20:18</td></tr>
+                    <tr><td class="order-id">400000000025258128</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>314000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2025-08-18 08:30:25</td></tr>
+                    <tr><td class="order-id">400000000029777066</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>105025.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2025-08-14 22:50:46</td></tr>
+                    <tr><td class="order-id">400000000037117329</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>106756.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2025-08-06 08:26:34</td></tr>
+                    <tr><td class="order-id">400000000031546538</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>117748.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Zenith P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-08-02 16:25:17</td></tr>
+                    <tr><td class="order-id">400000000035462765</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>111992.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2025-08-01 14:31:52</td></tr>
+                    <tr><td class="order-id">400000000024367127</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>352000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-29 17:05:40</td></tr>
+                    <tr><td class="order-id">400000000034524043</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>110944.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-28 22:36:44</td></tr>
+                    <tr><td class="order-id">400000000023800251</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>110582.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-26 18:57:25</td></tr>
+                    <tr><td class="order-id">400000000034025185</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>111424.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Osei Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-25 17:54:11</td></tr>
+                    <tr><td class="order-id">400000000026221329</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>112960.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Osei Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-20 16:17:34</td></tr>
+                    <tr><td class="order-id">400000000022861509</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>118708.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Volta Ventures</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-20 19:19:25</td></tr>
+                    <tr><td class="order-id">400000000025027576</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>107055.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2025-07-11 12:14:59</td></tr>
+                    <tr><td class="order-id">400000000023476126</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>329000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-06-22 13:50:05</td></tr>
+                    <tr><td class="order-id">400000000019900112</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-06-21 11:55:40</td></tr>
+                    <tr><td class="order-id">293847561029384756</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>105500.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2025-06-19 09:10:45</td></tr>
+                    <tr><td class="order-id">400000000022585125</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>340000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2025-05-16 11:15:10</td></tr>
+                    <tr><td class="order-id">400000000022046311</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>103186.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2025-05-12 22:12:32</td></tr>
+                    <tr><td class="order-id">400000000028444529</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>103166.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Tetteh Xchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-05-10 11:37:47</td></tr>
+                    <tr><td class="order-id">400000000025495779</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>105469.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-05-06 17:26:12</td></tr>
+                    <tr><td class="order-id">400000000019900111</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Tetteh Xchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-04-18 17:10:05</td></tr>
+                    <tr><td class="order-id">400000000021694124</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>318000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-04-11 18:25:30</td></tr>
+                    <tr><td class="order-id">400000000033111121</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>109588.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2025-04-09 13:30:44</td></tr>
+                    <tr><td class="order-id">400000000020803123</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>365000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>hene fx</td><td><span class="badge badge-completed">Completed</span></td><td>2025-03-20 09:40:15</td></tr>
+                    <tr><td class="order-id">400000000019900110</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2025-03-04 13:40:12</td></tr>
+                    <tr><td class="order-id">400000000021071175</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>104956.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Akosua Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2025-02-23 22:19:44</td></tr>
+                    <tr><td class="order-id">400000000019912122</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>332000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-02-14 15:30:21</td></tr>
+                    <tr><td class="order-id">284950392810293847</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>118500.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2025-02-05 11:50:24</td></tr>
+                    <tr><td class="order-id">400000000019900109</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2025-01-15 08:30:00</td></tr>
+                    <tr><td class="order-id">400000000019021121</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>348000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2025-01-10 10:05:44</td></tr>
+                    <tr><td class="order-id">400000000018130120</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>322000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Akosua Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-11-19 20:10:08</td></tr>
+                    <tr><td class="order-id">400000000014349619</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>102926.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2024-11-21 18:16:13</td></tr>
+                    <tr><td class="order-id">400000000019900108</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-11-05 15:22:19</td></tr>
+                    <tr><td class="order-id">400000000017239119</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>355000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Baah Direct</td><td><span class="badge badge-completed">Completed</span></td><td>2024-10-05 12:45:00</td></tr>
+                    <tr><td class="order-id">400000000017053052</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>102752.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2024-10-24 16:13:57</td></tr>
+                    <tr><td class="order-id">400000000012872623</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>107530.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Akosua Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-10-08 08:14:55</td></tr>
+                    <tr><td class="order-id">400000000019055956</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>119545.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Baah Direct</td><td><span class="badge badge-completed">Completed</span></td><td>2024-10-04 09:44:23</td></tr>
+                    <tr><td class="order-id">271049583201948321</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>115600.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2024-09-30 11:20:00</td></tr>
+                    <tr><td class="order-id">400000000015213206</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>106935.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2024-09-15 10:37:21</td></tr>
+                    <tr><td class="order-id">400000000019900107</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-09-12 12:00:21</td></tr>
+                    <tr><td class="order-id">400000000013212685</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>104803.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2024-09-08 12:52:41</td></tr>
+                    <tr><td class="order-id">400000000019900106</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2024-08-30 18:15:33</td></tr>
+                    <tr><td class="order-id">400000000016348118</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>310000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kojo Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2024-08-22 16:35:19</td></tr>
+                    <tr><td class="order-id">400000000012705487</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>112360.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2024-08-17 15:17:25</td></tr>
+                    <tr><td class="order-id">400000000019900105</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Yaw Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-07-25 10:45:00</td></tr>
+                    <tr><td class="order-id">400000000015457117</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>338000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Tetteh Xchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-07-18 08:11:40</td></tr>
+                    <tr><td class="order-id">400000000011857906</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>120895.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2024-07-07 22:44:58</td></tr>
+                    <tr><td class="order-id">400000000013878112</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>113850.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2024-07-07 09:16:52</td></tr>
+                    <tr><td class="order-id">400000000014566116</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>342000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Sefa Ex</td><td><span class="badge badge-completed">Completed</span></td><td>2024-06-30 19:04:55</td></tr>
+                    <tr><td class="order-id">400000000019900104</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2024-06-18 16:30:10</td></tr>
+                    <tr><td class="order-id">400000000019434038</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>108040.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2024-06-10 10:38:44</td></tr>
+                    <tr><td class="order-id">400000000013675115</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>328000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Zenith P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2024-05-21 14:18:12</td></tr>
+                    <tr><td class="order-id">400000000019900103</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2024-05-22 09:12:44</td></tr>
+                    <tr><td class="order-id">259403928174859201</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>109180.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Volta Ventures</td><td><span class="badge badge-completed">Completed</span></td><td>2024-05-18 18:40:12</td></tr>
+                    <tr><td class="order-id">400000000016790736</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>116240.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Sefa Ex</td><td><span class="badge badge-completed">Completed</span></td><td>2024-05-14 19:56:45</td></tr>
+                    <tr><td class="order-id">400000000016688476</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>114420.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2024-04-28 14:13:20</td></tr>
+                    <tr><td class="order-id">400000000020438426</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>111340.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Sefa Ex</td><td><span class="badge badge-completed">Completed</span></td><td>2024-04-22 18:26:42</td></tr>
+                    <tr><td class="order-id">400000000017936933</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>121615.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-04-19 17:12:49</td></tr>
+                    <tr><td class="order-id">400000000012784114</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>360000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Osei Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-04-15 09:50:33</td></tr>
+                    <tr><td class="order-id">400000000019900102</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2024-04-10 14:05:12</td></tr>
+                    <tr><td class="order-id">400000000018476522</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>110282.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2024-04-09 14:18:52</td></tr>
+                    <tr><td class="order-id">248590382104958321</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>112000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Yaw Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-03-22 15:45:10</td></tr>
+                    <tr><td class="order-id">400000000019900101</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>122205.97 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2024-03-15 11:20:00</td></tr>
+                    <tr><td class="order-id">400000000011893113</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>315000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Volta Ventures</td><td><span class="badge badge-completed">Completed</span></td><td>2024-03-12 11:22:04</td></tr>
+                    <tr><td class="order-id">400000000020175428</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>104878.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2024-03-09 09:16:57</td></tr>
+                    <tr><td class="order-id">400000000017212994</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>117712.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-03-02 16:15:21</td></tr>
+                    <tr><td class="order-id">400000000011066108</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>113300.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Yaw Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-02-25 16:59:18</td></tr>
+                    <tr><td class="order-id">400000000011002112</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>350000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Yaw Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2024-02-20 17:42:09</td></tr>
+                    <tr><td class="order-id">400000000015798306</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>117460.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-02-02 18:44:10</td></tr>
+                    <tr><td class="order-id">400000000010111111</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>330000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Ashanti Gold</td><td><span class="badge badge-completed">Completed</span></td><td>2024-01-18 13:10:25</td></tr>
+                    <tr><td class="order-id">239485019284756381</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>103400.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2024-01-10 09:15:33</td></tr>
+                    <tr><td class="order-id">400000000010905370</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>115100.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2024-01-04 22:33:29</td></tr>
+                    <tr><td class="order-id">400000000020801745</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>109132.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2024-01-01 13:59:18</td></tr>
+                    <tr><td class="order-id">400000000009220110</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>345000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Kwaku P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2023-12-05 15:20:00</td></tr>
+                    <tr><td class="order-id">400000000008200911</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>102976.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Nil Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2023-11-24 09:53:44</td></tr>
+                    <tr><td class="order-id">400000000010005820</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>108688.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>hene fx</td><td><span class="badge badge-completed">Completed</span></td><td>2023-11-17 17:22:19</td></tr>
+                    <tr><td class="order-id">400000000007476077</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>104644.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2023-11-14 17:14:34</td></tr>
+                    <tr><td class="order-id">227594038210394851</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>104500.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2023-11-05 12:14:50</td></tr>
+                    <tr><td class="order-id">400000000008329109</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>335000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Nii Bitcoin</td><td><span class="badge badge-completed">Completed</span></td><td>2023-10-11 08:33:45</td></tr>
+                    <tr><td class="order-id">400000000007438108</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>325000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2023-09-02 21:50:11</td></tr>
+                    <tr><td class="order-id">400000000006547107</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>360000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Prestige Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2023-08-14 10:12:18</td></tr>
+                    <tr><td class="order-id">400000000009106845</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>104868.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Baah Direct</td><td><span class="badge badge-completed">Completed</span></td><td>2023-08-01 19:56:26</td></tr>
+                    <tr><td class="order-id">210485938204958192</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>114200.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Akosua Crypto</td><td><span class="badge badge-completed">Completed</span></td><td>2023-07-21 14:05:40</td></tr>
+                    <tr><td class="order-id">400000000005595469</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>110717.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2023-07-09 09:23:46</td></tr>
+                    <tr><td class="order-id">400000000005656106</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>330000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2023-06-25 12:40:00</td></tr>
+                    <tr><td class="order-id">400000000006583582</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>111672.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2023-06-08 10:42:41</td></tr>
+                    <tr><td class="order-id">400000000004765105</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>340000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2023-05-19 18:05:40</td></tr>
+                    <tr><td class="order-id">400000000004611675</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>109320.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Akua Fast Pay</td><td><span class="badge badge-completed">Completed</span></td><td>2023-05-21 19:45:24</td></tr>
+                    <tr><td class="order-id">400000000003481479</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>105590.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2023-05-03 21:24:16</td></tr>
+                    <tr><td class="order-id">400000000003872955</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>108737.50 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Abena Exchange</td><td><span class="badge badge-completed">Completed</span></td><td>2023-04-22 12:54:53</td></tr>
+                    <tr><td class="order-id">400000000000961648</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>105560.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Esi Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2023-04-17 17:11:45</td></tr>
+                    <tr><td class="order-id">400000000003874104</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>310000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>hene fx</td><td><span class="badge badge-completed">Completed</span></td><td>2023-04-10 16:30:15</td></tr>
+                    <tr><td class="order-id">400000000000770487</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>106985.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2023-04-05 19:16:53</td></tr>
+                    <tr><td class="order-id">400000000002983103</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>350000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="ETH">--</td><td>0 ETH</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2023-03-22 09:15:30</td></tr>
+                    <tr><td class="order-id">188452938475102123</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>106250.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kojo Trades</td><td><span class="badge badge-completed">Completed</span></td><td>2023-03-14 10:22:15</td></tr>
+                    <tr><td class="order-id">400000000005918424</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>114540.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="SOL">--</td><td>0 SOL</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2023-03-09 10:25:57</td></tr>
+                    <tr><td class="order-id">400000000001892102</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>320000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Adom P2P</td><td><span class="badge badge-completed">Completed</span></td><td>2023-02-18 14:45:22</td></tr>
+                    <tr><td class="order-id">400000000003002278</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>116704.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Tetteh Xchange</td><td><span class="badge badge-completed">Completed</span></td><td>2023-02-13 09:45:28</td></tr>
+                    <tr><td class="order-id">400000000002269226</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>108895.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>hene fx</td><td><span class="badge badge-completed">Completed</span></td><td>2023-02-03 14:16:32</td></tr>
+                    <tr><td class="order-id">400000000001812448</td><td>Standard</td><td><span class="badge badge-sell">SELL</span></td><td><strong>107680.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="BTC">--</td><td>0 BTC</td><td>Metro Cedi</td><td><span class="badge badge-completed">Completed</span></td><td>2023-01-25 20:20:54</td></tr>
+                    <tr><td class="order-id">400000000001001101</td><td>Standard</td><td><span class="badge badge-buy">BUY</span></td><td><strong>330000.00 GHS</strong></td><td class="price-cell">--</td><td class="coin-cell" data-symbol="USDT">--</td><td>0 USDT</td><td>Kofi Express</td><td><span class="badge badge-completed">Completed</span></td><td>2023-01-15 11:20:10</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+     <script>
+    // --- Inactivity Timeout Configuration (15 Minutes) ---
+    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+    let inactivityTimer;
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        
+        // Only run the timer if the user is currently logged into the dashboard
+        const dashboard = document.getElementById("dashboard-content");
+        if (dashboard && dashboard.style.display === "block") {
+            inactivityTimer = setTimeout(() => {
+                logoutUser("Session expired due to 15 minutes of inactivity.");
+            }, INACTIVITY_TIMEOUT);
+        }
+    }
+
+    function logoutUser(reason) {
+        clearTimeout(inactivityTimer);
+        sessionStorage.removeItem("isLoggedIn");
+
+        // Reset view displays back to login screen
+        document.getElementById("dashboard-content").style.display = "none";
+        document.getElementById("login-view").style.display = "flex";
+        document.getElementById("nav-header").style.display = "flex";
+        
+        // Clear sensitive credentials input
+        document.getElementById("password").value = "";
+        
+        if (reason) {
+            showSuccessToast(reason);
+        }
+    }
+
+    // Listen for common user interactions to reset the idle countdown
+    window.addEventListener("mousemove", resetInactivityTimer);
+    window.addEventListener("keypress", resetInactivityTimer);
+    window.addEventListener("click", resetInactivityTimer);
+    window.addEventListener("scroll", resetInactivityTimer);
+
+    // Set hardcoded access credentials
+    const AUTH_UID = "12345678";
+    const AUTH_EMAIL = "v38341922@gmail.com";
+    const AUTH_PASS = "AVF-2739XG-LUX77";
+
+    function switchTab(type) {
+        const emailTab = document.getElementById("tab-email");
+        const mobileTab = document.getElementById("tab-mobile");
+        const label = document.getElementById("field-label");
+        const input = document.getElementById("uid");
+
+        if (type === "email") {
+            emailTab.classList.add("active");
+            mobileTab.classList.remove("active");
+            label.textContent = "Email or Subaccount UID";
+            input.placeholder = "Enter Email or UID";
+        } else {
+            mobileTab.classList.add("active");
+            emailTab.classList.remove("active");
+            label.textContent = "Mobile Number";
+            input.placeholder = "Enter Mobile Number";
+        }
+    }
+
+    function showSuccessToast(message) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = "bybit-toast";
+        toast.innerHTML = `
+            <div class="bybit-toast-icon">✓</div>
+            <div>${message}</div>
+        `;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add("show");
+        }, 100);
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    function renderDashboard() {
+        document.getElementById("login-view").style.display = "none";
+        document.getElementById("dashboard-content").style.display = "block";
+        document.getElementById("nav-header").style.display = "none";
+        
+        updateTableData();
+        resetInactivityTimer();
+    }
+
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const inputUid = document.getElementById("uid").value.trim().toLowerCase();
+        const inputPass = document.getElementById("password").value;
+        const errorBanner = document.getElementById("error-banner");
+
+        if ((inputUid === AUTH_UID || inputUid === AUTH_EMAIL.toLowerCase()) && inputPass === AUTH_PASS) {
+            errorBanner.style.display = "none";
+            sessionStorage.setItem("isLoggedIn", "true");
+            showSuccessToast("Login Successful, Okugo Rochas Chimaobi");
+            
+            setTimeout(() => {
+                renderDashboard();
+            }, 800);
+        } else {
+            errorBanner.style.display = "block";
+        }
+    });
+
+    // Check session on initial page load
+    window.addEventListener("DOMContentLoaded", () => {
+        if (sessionStorage.getItem("isLoggedIn") === "true") {
+            renderDashboard();
+        }
+    });
+
+    const fallbackRates = {
+        BTC: 1350000.00,
+        ETH: 42000.00,
+        SOL: 2200.00,
+        USDT: 15.50
+    };
+
+    async function fetchMarketPrices() {
+        try {
+            const response = await fetch(
+                "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=ghs"
+            );
+            if (!response.ok) throw new Error("Network response error");
+            const data = await response.json();
+            return {
+                BTC: data.bitcoin?.ghs || fallbackRates.BTC,
+                ETH: data.ethereum?.ghs || fallbackRates.ETH,
+                SOL: data.solana?.ghs || fallbackRates.SOL,
+                USDT: data.tether?.ghs || fallbackRates.USDT
+            };
+        } catch (error) {
+            return fallbackRates;
+        }
+    }
+
+    async function updateTableData() {
+        const rates = await fetchMarketPrices();
+        const rows = document.querySelectorAll("#order-rows tr");
+
+        rows.forEach(row => {
+            const fiatCell = row.querySelector("td:nth-child(4) strong");
+            const priceCell = row.querySelector(".price-cell");
+            const coinCell = row.querySelector(".coin-cell");
+
+            if (fiatCell && priceCell && coinCell) {
+                const fiatText = fiatCell.textContent.replace(/[^0-9.]/g, '');
+                const fiatAmount = parseFloat(fiatText);
+                const symbol = coinCell.getAttribute("data-symbol");
+                const unitPrice = rates[symbol] || fallbackRates[symbol];
+
+                if (fiatAmount && unitPrice) {
+                    const coinAmount = fiatAmount / unitPrice;
+                    const decimals = (symbol === "BTC" || symbol === "ETH") ? 6 : 4;
+                    
+                    priceCell.textContent = `${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} GHS`;
+                    coinCell.textContent = `${coinAmount.toFixed(decimals)} ${symbol}`;
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
