@@ -788,36 +788,47 @@
         }
     });
 
+        // Fallback rates categorized by currency and coin symbol
     const fallbackRates = {
-        BTC: 1350000.00,
-        ETH: 42000.00,
-        SOL: 2200.00,
-        USDT: 15.50
+        GHS: { BTC: 1350000.00, ETH: 42000.00, SOL: 2200.00, USDT: 15.50 },
+        NGN: { BTC: 165000000.00, ETH: 5200000.00, SOL: 260000.00, USDT: 1650.00 },
+        USD: { BTC: 95000.00, ETH: 3400.00, SOL: 180.00, USDT: 1.00 },
+        EUR: { BTC: 88000.00, ETH: 3150.00, SOL: 165.00, USDT: 0.92 }
     };
 
-    async function fetchMarketPrices() {
+    // Cache market rates per currency so we don't spam the API for every single row
+    const rateCache = {};
+
+    async function fetchMarketPriceForCurrency(currency) {
+        if (rateCache[currency]) return rateCache[currency];
+
+        const vsCurr = currency.toLowerCase();
         try {
             const response = await fetch(
-                "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=ghs"
+                `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=${vsCurr}`
             );
             if (!response.ok) throw new Error("Network response error");
             const data = await response.json();
-            return {
-                BTC: data.bitcoin?.ghs || fallbackRates.BTC,
-                ETH: data.ethereum?.ghs || fallbackRates.ETH,
-                SOL: data.solana?.ghs || fallbackRates.SOL,
-                USDT: data.tether?.ghs || fallbackRates.USDT
+            
+            const currFallback = fallbackRates[currency] || fallbackRates.GHS;
+            const rates = {
+                BTC: data.bitcoin?.[vsCurr] || currFallback.BTC,
+                ETH: data.ethereum?.[vsCurr] || currFallback.ETH,
+                SOL: data.solana?.[vsCurr] || currFallback.SOL,
+                USDT: data.tether?.[vsCurr] || currFallback.USDT
             };
+
+            rateCache[currency] = rates;
+            return rates;
         } catch (error) {
-            return fallbackRates;
+            return fallbackRates[currency] || fallbackRates.GHS;
         }
     }
 
     async function updateTableData() {
-        const rates = await fetchMarketPrices();
         const rows = document.querySelectorAll("#order-rows tr");
 
-        rows.forEach(row => {
+        for (const row of rows) {
             const fiatCell = row.querySelector("td:nth-child(4) strong");
             const priceCell = row.querySelector(".price-cell");
             const coinCell = row.querySelector(".coin-cell");
@@ -828,7 +839,10 @@
                 const symbol = coinCell.getAttribute("data-symbol");
                 const currencyMatch = fiatCell.textContent.match(/[A-Z]{3}$/);
                 const currency = currencyMatch ? currencyMatch[0] : "GHS";
-                const unitPrice = rates[symbol] || fallbackRates[symbol];
+
+                // Fetch or retrieve rates specific to this row's currency
+                const currencyRates = await fetchMarketPriceForCurrency(currency);
+                const unitPrice = currencyRates[symbol] || (fallbackRates[currency] && fallbackRates[currency][symbol]) || 1;
 
                 if (fiatAmount && unitPrice) {
                     const coinAmount = fiatAmount / unitPrice;
@@ -838,7 +852,7 @@
                     coinCell.textContent = `${coinAmount.toFixed(decimals)} ${symbol}`;
                 }
             }
-        });
+        }
     }
 
 </script>
